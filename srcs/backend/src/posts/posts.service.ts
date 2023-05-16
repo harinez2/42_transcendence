@@ -8,4 +8,8 @@ export class PostsService {
     findAll(): PostType[] {
         return this.posts;
     }
+
+    create(post: PostType) {
+        this.posts.push(post);
+    }
 }
