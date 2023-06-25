@@ -8,12 +8,18 @@ export const authOptions = {
       clientSecret: process.env.FORTY_TWO_CLIENT_SECRET,
     })
   ],
-  // callbacks: {
-  //   async session({ session, token, user }) {
-  //     session.user.accessToken = token.accessToken;
-  //     return session // The return type will match the one returned in `useSession()`
-  //   },
-  // },
+  callbacks: {
+    async session({ session, token }: any) {
+      session.user.accessToken = token.accessToken;
+      return session // The return type will match the one returned in `useSession()`
+    },
+    async jwt({ token, account }: any) {
+      if (account) {
+        token.accessToken = account.access_token;
+      }
+      return token
+    }
+  },
 };
 
 
