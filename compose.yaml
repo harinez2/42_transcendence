@@ -1,11 +1,66 @@
 version: '3'
 
 services:
+  frontend:
+    depends_on:
+      - backend
+      - db
+    container_name: frontend
+    hostname: frontend
+    build: ./srcs/frontend
+    image: frontend:${TAG}
+    ports:
+      - "3000:3000"
+    restart: always
+    env_file:
+      - .env
+    tty: true
+    networks:
+      - docker-network
+
+  backend:
+    depends_on:
+      - db
+    container_name: backend
+    hostname: backend
+    build: ./srcs/backend
+    image: backend:${TAG}
+    ports:
+      - "5000:5000"
+    restart: always
+    env_file:
+      - .env
+    tty: true
+    networks:
+      - docker-network
+
   db:
     image: postgres:latest
+    container_name: db
+    hostname: postgres
+    restart: always
     ports:
       - "5432:5432"
     environment:
       - POSTGRES_USER=johndoe
       - POSTGRES_PASSWORD=randompassword
       - POSTGRES_DB=mydb
+    env_file:
+      - .env
+    #tty: true
+    volumes:
+      - DB:/var/lib/postgres/db/data 
+    networks:
+      - docker-network
+
+volumes:
+  DB:
+    driver: local
+    driver_opts:
+      type: none
+      device:  /home/ft_trans/data/db
+      o: bind
+
+networks:
+  docker-network:
+    driver: bridge
