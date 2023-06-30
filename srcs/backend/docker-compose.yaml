@@ -16,3 +16,9 @@ services:
       - POSTGRES_DB=mydb
     env_file:
       - sample.env
+    networks:
+      - docker-network
+
+networks:
+  docker-network:
+    driver: bridge

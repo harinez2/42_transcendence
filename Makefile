@@ -52,8 +52,6 @@ fclean : clean volume_clean image_clean
 
 re : fclean all
 
-.DEFAULT_GOAL=setup
-
 setup:
 	@echo "Setting up git hooks..."
 	git config commit.template .commit_template

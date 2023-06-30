@@ -2,6 +2,9 @@ FROM debian:bookworm
 
 WORKDIR /api
 
+ENV PORT=5000
+EXPOSE 5000
+
 RUN set -ex \
     && apt update \
     && apt install -y  \
@@ -21,26 +24,19 @@ COPY tsconfig.json ./
 COPY package.json package-lock.json ./
 COPY . .
 
-# RUN npm i -g @nestjs/cli \
-#     && npm i --save-dev @types/node \
-#     && npm i --save-dev @types/bcrypt \
-#     && npm i --save-dev webpack \
-#     && npm i @prisma/client \
-#     # && rm -rf node_modules \
-#     && npm i
+RUN npm i -g @nestjs/cli \
+    && npm i --save-dev @types/node \
+    && npm i --save-dev @types/bcrypt \
+    && npm i --save-dev webpack 
 
-# RUN npx prisma migrate dev --name init \
-#     && npm i @prisma/client
+RUN npm i @prisma/client \
+    # && npm i -g npx \
+    # && npx prisma generate  \
+    # && npx prisma migrate dev --name test \
+    && npm i
 
 # RUN npm ci --only=production \
 #     && npm cache clean --force \
 #     && npm run build
 
-# RUN npm run build
-RUN npm i
-
-ENV PORT=5000
-EXPOSE 5000
-
 CMD ["npm", "run", "start"]
-# CMD ["npm", "run", "start:dev"]
