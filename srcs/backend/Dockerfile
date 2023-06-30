@@ -13,9 +13,9 @@ RUN set -ex \
 
 # ENV NODE_ENV=production
 
-RUN npm install -g typescript@latest
-RUN curl -fsSL https://deb.nodesource.com/setup_lts.x | bash -
-RUN apt-get install -y nodejs
+# RUN npm install -g typescript@latest
+# RUN curl -fsSL https://deb.nodesource.com/setup_lts.x | bash -
+# RUN apt-get install -y nodejs
 
 COPY tsconfig.json ./
 COPY package.json package-lock.json ./
@@ -37,9 +37,10 @@ COPY . .
 #     && npm run build
 
 # RUN npm run build
+RUN npm i
 
 ENV PORT=5000
 EXPOSE 5000
 
-# CMD ["npm", "run", "start"]
-CMD ["npm", "run", "start:dev"]
+CMD ["npm", "run", "start"]
+# CMD ["npm", "run", "start:dev"]
