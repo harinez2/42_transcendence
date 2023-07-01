@@ -5,4 +5,4 @@
 # Compiled files
 **/node_modules/
 **/npm-debug.log
-**/.next/
+**/dist/
