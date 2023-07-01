@@ -20,24 +20,27 @@ services:
 
   backend:
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     container_name: backend
     hostname: backend
     build: ./srcs/backend
     image: backend:${TAG}
     ports:
       - "5000:5000"
+      - "5555:5555" # for Prisma Studio
     restart: always
-    env_file:
-      - ./srcs/backend/sample.env
+    environment:
+      - DATABASE_URL=postgresql://johndoe:randompassword@db:5432/mydb?schema=public
     tty: true
     networks:
       - docker-network
 
   db:
-    image: postgres:latest
     container_name: db
     hostname: postgres
+    build: ./srcs/db
+    image: db:${TAG}
     restart: always
     ports:
       - "5432:5432"
@@ -55,11 +58,6 @@ services:
 
 volumes:
   DB:
-    driver: local
-    driver_opts:
-      type: none
-      device:  /home/ft_trans/data/db
-      o: bind
 
 networks:
   docker-network:
