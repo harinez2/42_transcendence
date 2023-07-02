@@ -4,20 +4,20 @@ import { PostType } from './post.interface';
 
 @Controller('posts')
 export class PostsController {
-    constructor(private readonly postsService: PostsService) {}
+  constructor(private readonly postsService: PostsService) {}
 
-    @Get()
-    findAll() {
-        return this.postsService.findAll();
-    }
+  @Get()
+  findAll() {
+    return this.postsService.findAll();
+  }
 
-    @Get(':id')
-    findById(@Param('id') id: string): PostType {
-        return this.postsService.findById(id);
-    }
+  @Get(':id')
+  findById(@Param('id') id: string): PostType {
+    return this.postsService.findById(id);
+  }
 
-    @Post()
-    create(@Body() post: PostType): void {
-        this.postsService.create(post);
-    }
+  @Post()
+  create(@Body() post: PostType): void {
+    this.postsService.create(post);
+  }
 }
