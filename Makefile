@@ -45,7 +45,7 @@ volume_clean :
 	docker volume prune -f
 
 image_clean:
-	docker rmi $$(docker images -a -q)
+	docker rmi $$(docker images -a -q) || true
 
 fclean : clean volume_clean image_clean
 # sudo rm -rf $(DATA)

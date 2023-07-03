@@ -1,42 +1,15 @@
-FROM debian:bookworm
+FROM node:latest
 
 WORKDIR /api
 
-ENV PORT=5000
-EXPOSE 5000
+COPY package*.json ./
+RUN npm ci # --only=production
 
-RUN set -ex \
-    && apt update \
-    && apt install -y  \
-    npm \
-    vim \
-    curl \
-    && apt clean \
-    && rm -rf /var/lib/apt/lists/*
+COPY --chmod=755 docker-entrypoint.sh /usr/local/bin/
+ENTRYPOINT ["docker-entrypoint.sh"]
 
-# ENV NODE_ENV=production
-
-# RUN npm install -g typescript@latest
-# RUN curl -fsSL https://deb.nodesource.com/setup_lts.x | bash -
-# RUN apt-get install -y nodejs
-
-COPY tsconfig.json ./
-COPY package.json package-lock.json ./
 COPY . .
 
-RUN npm i -g @nestjs/cli \
-    && npm i --save-dev @types/node \
-    && npm i --save-dev @types/bcrypt \
-    && npm i --save-dev webpack 
-
-RUN npm i @prisma/client \
-    # && npm i -g npx \
-    # && npx prisma generate  \
-    # && npx prisma migrate dev --name test \
-    && npm i
-
-# RUN npm ci --only=production \
-#     && npm cache clean --force \
-#     && npm run build
+EXPOSE 5000
 
 CMD ["npm", "run", "start"]
