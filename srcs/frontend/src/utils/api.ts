@@ -1,16 +1,16 @@
-
 export async function getAllPosts() {
-    const response = await fetch("http://localhost:5000/posts", {
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+      const response = await fetch(`${apiUrl}/posts`, {
         method: "GET",
-    });
-    const data = await response.json();
-    return data;
-}
-
-export async function getPostById(id: string) {
-    const response = await fetch(`http://localhost:5000/posts/${id}`, {
-        method: "GET",
-    });
-    const data = await response.json();
-    return data;
-}
+      });
+      if (!response.ok) {
+        throw new Error("Network response was not OK");
+      }
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error("Error fetching posts:", error);
+      throw error;
+    }
+  }

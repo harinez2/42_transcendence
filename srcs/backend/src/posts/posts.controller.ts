@@ -12,8 +12,8 @@ export class PostsController {
   }
 
   @Get(':id')
-  findById(@Param('id') id: string): PostType {
-    return this.postsService.findById(id);
+  async findById(@Param('id') id: string): Promise<PostType> {
+    return await this.postsService.findById(id);
   }
 
   @Post()
