@@ -1,0 +1,8 @@
+# Git files
+**/.git
+**/.gitignore
+
+# Compiled files
+**/node_modules/
+**/npm-debug.log
+**/dist/
