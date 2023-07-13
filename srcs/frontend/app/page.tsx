@@ -1,6 +1,6 @@
-import { getAllPosts } from '@/utils/api'
+import { getAllPosts } from '../utils/api'
 import PostComponent from './post'
-import { PostType } from '@/utils/Types'
+import { PostType } from '../utils/Types'
 
 
 export async function GetPosts() {
