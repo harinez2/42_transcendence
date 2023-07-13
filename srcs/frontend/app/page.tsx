@@ -1,7 +1,6 @@
-import { getAllPosts } from '../utils/api'
-import PostComponent from './post'
-import { PostType } from '../utils/Types'
-
+import { getAllPosts } from "../utils/api";
+import PostComponent from "./post";
+import { PostType } from "../utils/Types";
 
 export async function GetPosts() {
   const posts: PostType[] = await getAllPosts();
@@ -14,11 +13,10 @@ export async function GetPosts() {
 }
 
 const Page = async () => {
-
   const posts: PostType[] = await getAllPosts();
   // set props from getStaticProps
-  // require props  
-  return <PostComponent posts={posts} />
-}
+  // require props
+  return <PostComponent posts={posts} />;
+};
 
-export default Page
+export default Page;
