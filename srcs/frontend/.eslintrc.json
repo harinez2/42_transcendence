@@ -4,8 +4,10 @@
     "prettier",
     "eslint:recommended",
     "plugin:react/recommended",
-    "plugin:react-hooks/recommended"
+    "plugin:react-hooks/recommended",
+    "plugin:tailwindcss/recommended"
   ],
+  "plugins": ["tailwindcss"],
   "rules": {
     // https://ja.legacy.reactjs.org/blog/2020/09/22/introducing-the-new-jsx-transform.html#eslint
     // 不要な設定
