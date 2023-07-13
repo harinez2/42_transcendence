@@ -3,7 +3,7 @@
 all : buildup
 
 buildup :
-	docker-compose up --build
+	docker compose up --build
 
 dev : build up
 
@@ -12,31 +12,31 @@ dev : build up
 # 	$(DATA)/db
 
 build :
-	docker-compose build --no-cache
+	docker compose build --no-cache
 
 up :
-	docker-compose up -d
+	docker compose up -d
 
 frontend :
-	cd frontend && docker-compose exec frontend /bin/bash
+	cd frontend && docker compose exec frontend /bin/bash
 
 format_frontend :
-	docker-compose exec frontend npm run format
+	docker compose exec frontend npm run format
 
 lint_frontend :
-	docker-compose exec frontend npm run lint
+	docker compose exec frontend npm run lint
 
 backend :
-	cd backend && docker-compose exec backend /bin/bash
+	cd backend && docker compose exec backend /bin/bash
 
 format_backend :
-	docker-compose exec backend npm run format
+	docker compose exec backend npm run format
 
 lint_backend :
-	docker-compose exec backend npm run lint
+	docker compose exec backend npm run lint
 
 down :
-	docker-compose down
+	docker compose down
 
 clean : down
 	docker system prune -a -f
