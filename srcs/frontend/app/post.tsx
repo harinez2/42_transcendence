@@ -1,7 +1,7 @@
 'use client'
 import { Inter } from 'next/font/google'
 import styles from "../styles/Home.module.css"
-import { PostType } from '@/utils/Types'
+import { PostType } from '../utils/Types'
 type Props = {
     posts: PostType[];
 };
