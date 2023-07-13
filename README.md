@@ -7,3 +7,6 @@
 ```bash
 make setup
 ```
+
+以下のツールをインストールしてください
+- [`direnv`](https://github.com/direnv/direnv)
