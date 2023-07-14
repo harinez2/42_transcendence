@@ -1,9 +1,17 @@
 
 # ==== Emojis ====
-# 🐛  :bug: バグ修正
-# 👍  :+1: 機能改善
-# ✨  :sparkles: 部分的な機能追加（🎉レベルの機能を構成するひとつひとつの部品）
-# 🎉  :tada: 盛大に祝うべき大きな機能追加（機能名がついてデプロイする単位）
-# ♻️  :recycle: リファクタリング
-# 🚀  :rocket: パフォーマンス改善
-# 📝  :memo: ドキュメント追加
+# 🐛  :bug:              バグ修正 (fix)
+# 👍  :+1:               機能改善 (fix/feat)
+# ✨  :sparkles:         部分的な機能追加（🎉レベルの機能を構成するひとつひとつの部品）(feat)
+# 🎉  :tada:             盛大に祝うべき大きな機能追加（機能名がついてデプロイする単位）(feat)
+# ♻️   :recycle:          リファクタリング (refactor)
+# 🚀  :rocket:           パフォーマンス改善 (feat)
+# 📝  :memo:             ドキュメント追加 (docs)
+# 👕  :shirt:            Lintエラーの修正やコードスタイルの修正 (style)
+# 🚿  :shower:           不要な機能・使われなくなった機能の削除 (refactor)
+# 💚  :green_heart:      テストやCIの修正・改善 (test)
+# ➕  :heavy_plus_sign:  リソース・ライブラリの追加 (chore)
+# ➖  :heavy_minus_sign: リソース・ライブラリの削除 (chore)
+# 🆙  :up:               依存パッケージなどのアップデート (chore)
+# 👮  :cop:              セキュリティ関連の修正 (fix)
+# 🚧  :construction:     WIP(Work In Progress)
