@@ -54,6 +54,6 @@ re : fclean all
 
 setup:
 	@echo "Setting up git hooks..."
-	git config commit.template .commit_template
+	git config --local commit.template .commit_template
 
 .PHONY: all buildup frontend format_frontend lint_frontend backend format_backend lint_backend down clean volume_clean image_clean fclean re setup
