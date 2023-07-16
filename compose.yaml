@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 
 services:
   frontend:
@@ -14,7 +14,6 @@ services:
     restart: always
     env_file:
       - .env
-    tty: true
     networks:
       - docker-network
 
@@ -30,9 +29,8 @@ services:
       - "5000:5000"
       - "5555:5555" # for Prisma Studio
     restart: always
-    environment:
-      - DATABASE_URL=postgresql://johndoe:randompassword@db:5432/mydb?schema=public
-    tty: true
+    env_file:
+      - .env
     networks:
       - docker-network
 
@@ -44,15 +42,10 @@ services:
     restart: always
     ports:
       - "5432:5432"
-    environment:
-      - POSTGRES_USER=johndoe
-      - POSTGRES_PASSWORD=randompassword
-      - POSTGRES_DB=mydb
     env_file:
       - .env
-    #tty: true
     volumes:
-      - DB:/var/lib/postgresql/data 
+      - DB:/var/lib/postgresql/data
     networks:
       - docker-network
 
