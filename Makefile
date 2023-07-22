@@ -39,7 +39,7 @@ all: build up
 notice:
 	@printf "$(GR)"
 	@cat $(HEADER) 2>/dev/null || printf "$(RC)"
-	@printf "\n$(CY)Make sure to configure $(YE)/etc/hosts$(CY)!$(RC)\n\n"
+	@printf "\n$(CY)Make sure to configure $(YE).envrc.private$(CY)!$(RC)\n"
 
 up: notice
 ifeq ($(DETACH), 1)
@@ -48,7 +48,7 @@ else
 	$(DOCKER_COMP) up
 endif
 
-build:
+build: notice
 	$(DOCKER_COMP) build --no-cache
 
 .PHONY: all notice up build

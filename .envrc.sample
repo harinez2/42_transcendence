@@ -1,0 +1,15 @@
+# This file `.envrc.sample` is a template for `.envrc.private`.
+# Do `cp .envrc.sample .envrc.private` and edit `.envrc.private`
+
+# 42API
+export FORTY_TWO_CLIENT_ID=u-******
+export FORTY_TWO_CLIENT_SECRET=s-*****
+
+# Database
+export POSTGRES_USER=*****
+export POSTGRES_PASSWORD=*****
+export POSTGRES_DB=*****
+
+# NextAuth
+export NEXTAUTH_URL=http://localhost:3000
+export NEXTAUTH_SECRET=*****
