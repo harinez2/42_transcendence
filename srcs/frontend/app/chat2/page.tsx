@@ -48,11 +48,6 @@ const ChatUI = () => {
                 username={username}
               />
             ))}
-            {/* <MessageComponent comment={"hoge"} />
-          <MessageComponent comment={"fuga"} />
-          <MessageComponent comment={"ff"} />
-          <MessageComponent comment={"ttt"} />
-          <MessageComponent comment={"xxx"} /> */}
           </div>
         </div>
       </div>
