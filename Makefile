@@ -1,59 +1,111 @@
-# DATA := /home/ft_trans/data
+# **************************************************************************** #
+#   _ _ ___   _____ ___    _   _  _ ___  ___ ___ _  _ ___  ___ _  _  ___ ___   #
+#  | | |_  ) |_   _| _ \  /_\ | \| / __|/ __| __| \| |   \| __| \| |/ __| __|  #
+#  |_  _/ /    | | |   / / _ \| .` \__ \ (__| _|| .` | |) | _|| .` | (__| _|   #
+#    |_/___|   |_| |_|_\/_/ \_\_|\_|___/\___|___|_|\_|___/|___|_|\_|\___|___|  #
+# **************************************************************************** #
 
-all : buildup
+NAME		:= transcendence
 
-buildup :
-	docker-compose up --build
+PROJECT_DIR	:= ./
+DOCKER_COMP	:= docker compose -p $(NAME) --project-directory $(PROJECT_DIR)
 
-dev : build up
+HEADER		:= header.txt
+RM			:= rm -f
+UNAME		:= $(shell uname)
 
-# makedir : build up
-# 	sudo mkdir -p \
-# 	$(DATA)/db
+# **************************************************************************** #
 
-build :
-	docker-compose build --no-cache
+ifeq ($(UNAME), Darwin)
+	# mac
+endif
 
-up :
-	docker-compose up -d
+GR	= \033[32;1m
+RE	= \033[31;1m
+YE	= \033[33;1m
+CY	= \033[36;1m
+RC	= \033[0m
 
-frontend :
-	cd frontend && docker-compose exec frontend /bin/bash
+ifeq ($(DEBUG_MAKE), 1)
+PRINT_INFO = $(warning [$@] <- [$?] ($^))
+else
+PRINT_INFO :=
+endif
 
-format_frontend :
-	docker-compose exec frontend npm run format
+# **************************************************************************** #
 
-lint_frontend :
-	docker-compose exec frontend npm run lint
+all: notice
+    docker-compose up --build
 
-backend :
-	cd backend && docker-compose exec backend /bin/bash
+notice:
+	@printf "$(GR)"
+	@cat $(HEADER) 2>/dev/null || printf "$(RC)"
+	@printf "\n$(CY)Make sure to configure $(YE).envrc.private$(CY)!$(RC)\n"
 
-format_backend :
-	docker-compose exec backend npm run format
+up: notice
+ifeq ($(DETACH), 1)
+	$(DOCKER_COMP) up --detach --wait
+else
+	$(DOCKER_COMP) up
+endif
 
-lint_backend :
-	docker-compose exec backend npm run lint
+build: notice
+	$(DOCKER_COMP) build --no-cache
 
-down :
-	docker-compose down
+.PHONY: all notice up build
 
-clean : down
-	docker system prune -a -f
+# **************************************************************************** #
 
-volume_clean :
-	docker volume prune -f
+db:
+ifeq ($(DETACH), 1)
+	$(DOCKER_COMP) up db --detach --wait
+else
+	$(DOCKER_COMP) up db
+endif
 
-image_clean:
-	docker rmi $$(docker images -a -q) || true
+studio:
+	docker exec backend npm run studio
 
-fclean : clean volume_clean image_clean
-# sudo rm -rf $(DATA)
+.PHONY: db studio
 
-re : fclean all
+# **************************************************************************** #
+
+logs:
+ifeq ($(DETACH), 1)
+	$(DOCKER_COMP) logs
+else
+	$(DOCKER_COMP) logs -f
+endif
+
+down:
+	$(DOCKER_COMP) down
+
+clean:
+	$(DOCKER_COMP) down --volumes --remove-orphans
+
+cleanimage:
+	$(DOCKER_COMP) down --rmi all --remove-orphans
+
+fclean: clean cleanimage
+
+re: fclean all
+
+dockerclean:
+	@printf "$(RE)docker container rm -f \`docker container ls -aq\` || true$(RC)\n"
+	@docker container rm -f `docker container ls -aq` || true
+	@printf "$(RE)docker volume rm -f \`docker volume ls -q\` || true$(RC)\n"
+	@docker volume rm -f `docker volume ls -q` || true
+	@printf "$(RE)docker network rm -f \`docker network ls -q\` || true$(RC)\n"
+	@docker network rm -f `docker network ls -q` || true
+	@printf "$(RE)docker image rm -f \`docker image ls -aq\` || true$(RC)\n"
+	@docker image rm -f `docker image ls -aq` || true
+	@printf "$(RE)docker system prune -af$(RC)\n"
+	@docker system prune -af
 
 setup:
-	@echo "Setting up git hooks..."
+	@printf "$(GR)Setting up git hooks...$(RC)\n"
 	git config --local commit.template .commit_template
 
-.PHONY: all buildup frontend format_frontend lint_frontend backend format_backend lint_backend down clean volume_clean image_clean fclean re setup
+.PHONY: logs down clean cleanimage fclean re setup
+
+# **************************************************************************** #
