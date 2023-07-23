@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 
 services:
   frontend:
@@ -12,9 +12,12 @@ services:
     ports:
       - "3000:3000"
     restart: always
-    env_file:
-      - .env
-    tty: true
+    environment:
+      - NEXT_PUBLIC_API_URL=http://backend:5000
+      - NEXTAUTH_URL=${NEXTAUTH_URL}
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
+      - FORTY_TWO_CLIENT_ID=${FORTY_TWO_CLIENT_ID}
+      - FORTY_TWO_CLIENT_SECRET=${FORTY_TWO_CLIENT_SECRET}
     networks:
       - docker-network
 
@@ -31,8 +34,7 @@ services:
       - "5555:5555" # for Prisma Studio
     restart: always
     environment:
-      - DATABASE_URL=postgresql://johndoe:randompassword@db:5432/mydb?schema=public
-    tty: true
+      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}?schema=public
     networks:
       - docker-network
 
@@ -45,14 +47,11 @@ services:
     ports:
       - "5432:5432"
     environment:
-      - POSTGRES_USER=johndoe
-      - POSTGRES_PASSWORD=randompassword
-      - POSTGRES_DB=mydb
-    env_file:
-      - .env
-    #tty: true
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
     volumes:
-      - DB:/var/lib/postgresql/data 
+      - DB:/var/lib/postgresql/data
     networks:
       - docker-network
 
