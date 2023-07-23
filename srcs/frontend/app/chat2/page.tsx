@@ -1,8 +1,24 @@
 import ChannelName from "./channel_name";
 import ChannelCategory from "./channel_category";
-import Message from "./message";
+import MessageComponent from "./message";
+import { Message } from "./message";
 
 const ChatUI = () => {
+  const username = "user 1";
+
+  const Messages: Array<Message> = [
+    {
+      id: 1,
+      comment: "hoge",
+      createdAt: "2021-10-10",
+    },
+    {
+      id: 2,
+      comment: "fuga",
+      createdAt: "2022-12-12",
+    },
+  ];
+
   return (
     <>
       <div className="flex">
@@ -23,12 +39,21 @@ const ChatUI = () => {
             </ul>
           </div>
         </aside>
-        <div className="grow flex-col-reverse">
-          <Message comment={"hoge"} />
-          <Message comment={"fuga"} />
-          <Message comment={"ff"} />
-          <Message comment={"ttt"} />
-          <Message comment={"xxx"} />
+        <div className="container bg-gray-700">
+          <div className="grow flex-col-reverse divide-y divide-gray-500/30 px-4">
+            {Messages.map((message) => (
+              <MessageComponent
+                key={message.id}
+                message={message}
+                username={username}
+              />
+            ))}
+            {/* <MessageComponent comment={"hoge"} />
+          <MessageComponent comment={"fuga"} />
+          <MessageComponent comment={"ff"} />
+          <MessageComponent comment={"ttt"} />
+          <MessageComponent comment={"xxx"} /> */}
+          </div>
         </div>
       </div>
     </>
