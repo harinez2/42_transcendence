@@ -34,7 +34,8 @@ endif
 
 # **************************************************************************** #
 
-all: build up
+all: notice
+    docker-compose up --build
 
 notice:
 	@printf "$(GR)"
