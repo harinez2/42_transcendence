@@ -24,7 +24,7 @@ const ChatUI = () => {
       <div className="flex">
         <aside
           id="separator-sidebar"
-          className="left-0 top-0 z-40 h-screen w-64 shrink-0 -translate-x-full transition-transform sm:translate-x-0"
+          className="left-0 top-0 z-40 h-screen w-64 translate-x-0 transition-transform"
           aria-label="Sidebar"
         >
           <div className="h-full overflow-y-auto bg-gray-800 px-3 py-4 ">
