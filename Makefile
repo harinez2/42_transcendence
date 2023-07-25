@@ -102,10 +102,17 @@ dockerclean:
 	@printf "$(RE)docker system prune -af$(RC)\n"
 	@docker system prune -af
 
+db-up:
+	docker-compose up -d db
+
+front-dev-local:
+	npm --prefix ./srcs/frontend run dev
+
+backend-dev-local:
+	npm --prefix ./srcs/backend run start:dev
+
 setup:
 	@printf "$(GR)Setting up git hooks...$(RC)\n"
 	git config --local commit.template .commit_template
 
-.PHONY: logs down clean cleanimage fclean re setup
-
-# **************************************************************************** #
+.PHONY: logs down clean cleanimage fclean re setup db-up front-dev-local backend-dev-local
