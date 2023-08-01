@@ -27,7 +27,7 @@ export class PostsService {
         createdAt: new Date(post.createdAt),
       },
     });
-  
+
     return {
       id: createdPost.id.toString(),
       title: createdPost.title,

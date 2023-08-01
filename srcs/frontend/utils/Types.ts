@@ -5,3 +5,9 @@ export interface PostType {
   author: string;
   createdAt: string;
 }
+
+export type User = {
+  id: number;
+  nickname: string;
+  status: string;
+};
