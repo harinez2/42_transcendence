@@ -2,6 +2,7 @@
 # Do `cp .envrc.sample .envrc.private` and edit `.envrc.private`
 
 # 42API
+#   These values can be generated in 42 intranet API setting page.
 export FORTY_TWO_CLIENT_ID=u-******
 export FORTY_TWO_CLIENT_SECRET=s-*****
 
@@ -11,5 +12,7 @@ export POSTGRES_PASSWORD=*****
 export POSTGRES_DB=*****
 
 # NextAuth
+#   NEXTAUTH_SECRET is a random value.
+#   It is recommended to generate by executing `openssl rand -base64 32`.
 export NEXTAUTH_URL=http://localhost:3000
 export NEXTAUTH_SECRET=*****
