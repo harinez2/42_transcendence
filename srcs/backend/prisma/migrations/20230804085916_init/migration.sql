@@ -9,7 +9,8 @@ CREATE TABLE "User" (
 
 -- CreateTable
 CREATE TABLE "ChatChannels" (
-    "channel_id" SERIAL NOT NULL,
+    "channelId" SERIAL NOT NULL,
+    "channelName" TEXT NOT NULL,
     "owner" TEXT NOT NULL,
     "admin" TEXT NOT NULL,
     "users" TEXT[],
@@ -17,18 +18,18 @@ CREATE TABLE "ChatChannels" (
     "channelType" TEXT NOT NULL,
     "hashedPassword" TEXT,
 
-    CONSTRAINT "ChatChannels_pkey" PRIMARY KEY ("channel_id")
+    CONSTRAINT "ChatChannels_pkey" PRIMARY KEY ("channelId")
 );
 
 -- CreateTable
 CREATE TABLE "ChatMessages" (
-    "message_id" SERIAL NOT NULL,
-    "channel_id" INTEGER NOT NULL,
+    "messageId" SERIAL NOT NULL,
+    "channelId" INTEGER NOT NULL,
     "sender" TEXT NOT NULL,
     "content" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "ChatMessages_pkey" PRIMARY KEY ("message_id")
+    CONSTRAINT "ChatMessages_pkey" PRIMARY KEY ("messageId")
 );
 
 -- CreateTable

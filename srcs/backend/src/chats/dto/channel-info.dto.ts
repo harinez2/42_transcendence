@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class ChannelInfoDto {
   @ApiProperty()
-  channel_id: number;
+  channelId: number;
 
   @ApiProperty()
   owner: string;
@@ -19,6 +19,6 @@ export class ChannelInfoDto {
   @ApiProperty()
   channelType: string;
 
-  @ApiProperty({ required: false })
-  hashedPassword: string = '';
+  @ApiProperty()
+  isPassword: boolean;
 }

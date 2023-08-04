@@ -13,12 +13,12 @@ export class ChatsController {
   @ApiBody({ type: CreateChannelDto })
   @ApiResponse({
     status: 201,
-    description: '戻り値なし',
-    type: null,
+    description: '作成したチャンネル情報を返却',
+    type: ChannelInfoDto,
   })
   @Post()
-  createChannel(@Body() createChannelDto: CreateChannelDto): void {
-    this.chatsService.createChannel(createChannelDto);
+  createChannel(@Body() createChannelDto: CreateChannelDto): Promise<ChannelInfoDto> {
+    return this.chatsService.createChannel(createChannelDto);
   }
 
   @ApiOperation({ summary: 'チャンネル一覧を取得する' })
@@ -44,7 +44,7 @@ export class ChatsController {
     type: ChannelInfoDto,
   })
   @Get(':id')
-  async findById(@Param('id') id: string): Promise<ChannelInfoDto> {
+  async findById(@Param('id') id: number): Promise<ChannelInfoDto> {
     return await this.chatsService.findById(id);
   }
 

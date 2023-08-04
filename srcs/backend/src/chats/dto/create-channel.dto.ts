@@ -1,6 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateChannelDto {
+  @ApiProperty({ example: 'general' })
+  channelName: string;
+
   @ApiProperty({ example: 'owner' })
   owner: string;
 

@@ -16,6 +16,7 @@ export class ChatsService {
     try {
       const createdPost = await this.prisma.chatChannels.create({
         data: {
+          channelName: createChannelDto.channelName,
           owner: createChannelDto.owner,
           admin: createChannelDto.owner,
           createdAt: new Date(),
@@ -23,7 +24,7 @@ export class ChatsService {
           hashedPassword: hashedPassword,
         },
       });
-      return createdPost;
+      return this.createChannelInfoDto(createdPost);
     } catch (error) {
       console.error('Failed to create channel.', error);
       throw error;
@@ -32,17 +33,29 @@ export class ChatsService {
 
   async findAllChannel(): Promise<ChannelInfoDto[]> {
     const posts = await this.prisma.chatChannels.findMany();
-    return posts;
+    return posts.map((post) => this.createChannelInfoDto(post));
   }
 
-  async findById(channel_id: string): Promise<ChannelInfoDto> {
+  async findById(channelId: number): Promise<ChannelInfoDto> {
     const post = await this.prisma.chatChannels.findUnique({
-      where: { channel_id: Number(channel_id) },
+      where: { channelId: channelId },
     });
     if (post) {
-      return post;
+      return this.createChannelInfoDto(post);
     }
     return undefined;
+  }
+
+  private createChannelInfoDto(post: any): ChannelInfoDto {
+    return {
+      channelId: post.channelId.toString(),
+      owner: post.owner,
+      admin: post.admin,
+      users: post.users,
+      createdAt: post.createdAt.toISOString(),
+      channelType: post.channelType,
+      isPassword: post.hashedPassword ? true : false,
+    };
   }
 
 }
