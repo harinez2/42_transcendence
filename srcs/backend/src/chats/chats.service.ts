@@ -1,5 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateChannelDto } from './dto/create-channel.dto';
+import { UpdateChannelDto } from './dto/update-channel.dto';
 import { ChannelInfoDto } from './dto/channel-info.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { hash } from 'bcrypt';
@@ -44,6 +45,27 @@ export class ChatsService {
       return this.createChannelInfoDto(post);
     }
     return undefined;
+  }
+
+  async updateChannel(channelId: number, updateChannelDto: UpdateChannelDto)
+      : Promise<ChannelInfoDto> {
+    const hashedPassword
+    = updateChannelDto.password
+      ? await hash(updateChannelDto.password, 10) as string : null;
+
+    const post = await this.prisma.chatChannels.update({
+      where: { channelId: channelId },
+      data: {
+        channelName: updateChannelDto.channelName,
+        admin: updateChannelDto.admin,
+        channelType: updateChannelDto.channelType,
+        hashedPassword: hashedPassword,
+      },
+    });
+    if (!post) {
+      throw new NotFoundException();
+    }
+    return this.createChannelInfoDto(post);
   }
 
   private createChannelInfoDto(post: any): ChannelInfoDto {

@@ -1,6 +1,7 @@
-import { Controller, Get, Post, Param, Body } from '@nestjs/common';
+import { Controller, Get, Post, Put, Param, Body } from '@nestjs/common';
 import { ChatsService } from './chats.service';
 import { CreateChannelDto } from './dto/create-channel.dto';
+import { UpdateChannelDto } from './dto/update-channel.dto';
 import { ChannelInfoDto } from './dto/channel-info.dto';
 import { ApiOperation, ApiBody, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 
@@ -35,7 +36,7 @@ export class ChatsController {
   @ApiOperation({ summary: '指定したチャンネルIDの情報を取得する' })
   @ApiParam({
     name: 'id',
-    type: Number,
+    type: 'string',
     example: 1,
   })
   @ApiResponse({
@@ -44,8 +45,26 @@ export class ChatsController {
     type: ChannelInfoDto,
   })
   @Get(':id')
-  async findById(@Param('id') id: number): Promise<ChannelInfoDto> {
-    return await this.chatsService.findById(id);
+  async findById(@Param('id') id: string): Promise<ChannelInfoDto> {
+    return await this.chatsService.findById(Number(id));
+  }
+
+  @ApiOperation({ summary: '指定したチャンネルIDの情報を更新する' })
+  @ApiParam({
+    name: 'id',
+    type: 'string',
+    example: 1,
+  })
+  @ApiBody({ type: UpdateChannelDto })
+  @ApiResponse({
+    status: 200,
+    description: '指定したチャンネルIDの情報を返却',
+    type: ChannelInfoDto,
+  })
+  @Put(':id')
+  async updateChannel(@Param('id') id: string, @Body() updateChannelDto: UpdateChannelDto)
+      : Promise<ChannelInfoDto> {
+    return await this.chatsService.updateChannel(Number(id), updateChannelDto);
   }
 
 }
