@@ -68,6 +68,15 @@ export class ChatsService {
     return this.createChannelInfoDto(post);
   }
 
+  async deleteChannel(channelId: number) : Promise<void> {
+    const post = await this.prisma.chatChannels.delete({
+      where: { channelId: channelId },
+    });
+    if (!post) {
+      throw new NotFoundException(`Channel with ID ${channelId} not found.`);
+    }
+  }
+
   private createChannelInfoDto(post: any): ChannelInfoDto {
     return {
       channelId: post.channelId.toString(),

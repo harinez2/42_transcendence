@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Param, Body } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body } from '@nestjs/common';
 import { ChatsService } from './chats.service';
 import { CreateChannelDto } from './dto/create-channel.dto';
 import { UpdateChannelDto } from './dto/update-channel.dto';
@@ -65,6 +65,22 @@ export class ChatsController {
   async updateChannel(@Param('id') id: string, @Body() updateChannelDto: UpdateChannelDto)
       : Promise<ChannelInfoDto> {
     return await this.chatsService.updateChannel(Number(id), updateChannelDto);
+  }
+
+  @ApiOperation({ summary: '指定したチャンネルIDの情報を削除する' })
+  @ApiParam({
+    name: 'id',
+    type: 'string',
+    example: 1,
+  })
+  @ApiResponse({
+    status: 200,
+    description: '戻り値なし',
+    type: null,
+  })
+  @Delete(':id')
+  async deleteChannel(@Param('id') id: string) : Promise<void> {
+    return await this.chatsService.deleteChannel(Number(id));
   }
 
 }
