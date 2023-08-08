@@ -3,6 +3,7 @@ import SidebarCategory from "./sidebar_category";
 import MessageComponent from "./message";
 import { Message } from "./message";
 import { User } from "./user";
+
 import UserComponent from "./user";
 
 const ChatUI = () => {
