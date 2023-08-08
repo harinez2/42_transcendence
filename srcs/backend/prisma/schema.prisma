@@ -11,11 +11,38 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+//--------------------------------------------------------------------------
+// user
+
 model User {
   id       Int    @id @default(autoincrement())
   username String @unique
   email    String
 }
+
+//--------------------------------------------------------------------------
+// chat
+
+model ChatChannels {
+  channel_id      Int       @id @default(autoincrement())
+  owner           String
+  admin           String
+  users           String[]
+  createdAt       DateTime
+  channelType     String
+  hashedPassword  String?
+}
+
+model ChatMessages {
+  message_id      Int     @id @default(autoincrement())
+  channel_id      Int
+  sender          String
+  content         String
+  createdAt       DateTime
+}
+
+//--------------------------------------------------------------------------
+// 削除予定
 
 model Post {
   id        Int      @id @default(autoincrement())
