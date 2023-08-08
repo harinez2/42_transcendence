@@ -19,6 +19,26 @@ async function main() {
   //   },
   // });
   // console.log({ user1, user2 });
+
+  // ダミーユーザー作成
+  await prisma.user.create({
+    data: {
+      username: 'user01',
+      email: 'user01@example.com',
+    },
+  });
+
+  // generalチャンネル作成
+  await prisma.chatChannels.create({
+    data: {
+      channelName: 'general',
+      owner: 'user01',
+      admin: 'user01',
+      createdAt: new Date(),
+      channelType: 'public',
+      hashedPassword: '',
+    },
+  });
 }
 
 main()
