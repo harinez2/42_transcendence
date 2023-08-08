@@ -27,7 +27,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
     });
   }
 
-  handleError(e: any): any {
+  handleError(e: any): HttpException {
     const c_red = '\x1b[31m';
     const c_default = '\x1b[39m';
 
