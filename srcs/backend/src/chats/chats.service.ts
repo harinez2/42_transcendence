@@ -1,8 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { CreateChannelDto } from './dto/create-channel.dto';
 import { UpdateChannelDto } from './dto/update-channel.dto';
 import { ChannelInfoDto } from './dto/channel-info.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { Prisma } from '@prisma/client';
 import { hash } from 'bcrypt';
 
 @Injectable()
@@ -13,7 +14,7 @@ export class ChatsService {
     const hashedPassword
         = createChannelDto.password
           ? await hash(createChannelDto.password, 10) as string : null;
-  
+
     try {
       const createdPost = await this.prisma.chatChannels.create({
         data: {
@@ -26,25 +27,32 @@ export class ChatsService {
         },
       });
       return this.createChannelInfoDto(createdPost);
-    } catch (error) {
-      console.error('Failed to create channel.', error);
-      throw error;
+    } catch (e) {
+      throw this.prisma.handleError(e);
     }
   }
 
   async findAllChannel(): Promise<ChannelInfoDto[]> {
-    const posts = await this.prisma.chatChannels.findMany();
-    return posts.map((post) => this.createChannelInfoDto(post));
+    try {
+      const posts = await this.prisma.chatChannels.findMany();
+      return posts.map((post) => this.createChannelInfoDto(post));
+    } catch (e) {
+      throw this.prisma.handleError(e);
+    }
   }
 
   async findById(channelId: number): Promise<ChannelInfoDto> {
-    const post = await this.prisma.chatChannels.findUnique({
-      where: { channelId: channelId },
-    });
-    if (post) {
+    try {
+      const post = await this.prisma.chatChannels.findUnique({
+        where: { channelId: channelId },
+      });
+      if (!post) {
+        throw new NotFoundException();
+      }
       return this.createChannelInfoDto(post);
+    } catch (e) {
+      throw this.prisma.handleError(e);
     }
-    return undefined;
   }
 
   async updateChannel(channelId: number, updateChannelDto: UpdateChannelDto)
@@ -53,27 +61,35 @@ export class ChatsService {
     = updateChannelDto.password
       ? await hash(updateChannelDto.password, 10) as string : null;
 
-    const post = await this.prisma.chatChannels.update({
-      where: { channelId: channelId },
-      data: {
-        channelName: updateChannelDto.channelName,
-        admin: updateChannelDto.admin,
-        channelType: updateChannelDto.channelType,
-        hashedPassword: hashedPassword,
-      },
-    });
-    if (!post) {
-      throw new NotFoundException();
+    try {
+      const post = await this.prisma.chatChannels.update({
+        where: { channelId: channelId },
+        data: {
+          channelName: updateChannelDto.channelName,
+          admin: updateChannelDto.admin,
+          channelType: updateChannelDto.channelType,
+          hashedPassword: hashedPassword,
+        },
+      });
+      if (!post) {
+        throw new NotFoundException();
+      }
+      return this.createChannelInfoDto(post);
+    } catch (e) {
+      throw this.prisma.handleError(e);
     }
-    return this.createChannelInfoDto(post);
   }
 
   async deleteChannel(channelId: number) : Promise<void> {
-    const post = await this.prisma.chatChannels.delete({
-      where: { channelId: channelId },
-    });
-    if (!post) {
-      throw new NotFoundException(`Channel with ID ${channelId} not found.`);
+    try {
+      const post = await this.prisma.chatChannels.delete({
+        where: { channelId: channelId },
+      });
+      if (!post) {
+        throw new NotFoundException();
+      }
+    } catch (e) {
+      throw this.prisma.handleError(e);
     }
   }
 
