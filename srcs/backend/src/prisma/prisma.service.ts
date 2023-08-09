@@ -72,6 +72,10 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
 
   private handleKnownRequestError(e: any): any {
     switch (e.code) {
+      case 'P2002': // unique制約違反
+        return new BadRequestException("Unique constraint failed.");
+        break;
+
       case 'P2015': // 関連レコードが見つからない
       case 'P2018': // レコードが見つからない
       case 'P2021': // テーブルが見つからない
