@@ -5,7 +5,7 @@ export class MessageDto {
   channelId: number;
 
   @ApiProperty({ example: 'login' })
-  sender: string;
+  senderId: number;
 
   @ApiProperty({ example: 'some message' })
   content: string;

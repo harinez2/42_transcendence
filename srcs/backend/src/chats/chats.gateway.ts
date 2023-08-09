@@ -53,7 +53,7 @@ export class ChatsGateway {
   // messageイベント受信
   @SubscribeMessage('message')
   async handleMessage(@MessageBody() data: MessageDto) {
-    console.log(`channelId: ${data.channelId}, sender: ${data.sender}, ` +
+    console.log(`channelId: ${data.channelId}, sender: ${data.senderId}, ` +
       `content: ${data.content}`);
     this.broadcast('message', data);
 
@@ -61,7 +61,7 @@ export class ChatsGateway {
     await this.prisma.chatMessages.create({
       data: {
         channelId: data.channelId,
-        sender: data.sender,
+        senderId: data.senderId,
         content: data.content,
         createdAt: new Date(),
       },

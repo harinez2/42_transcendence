@@ -1,24 +1,31 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Publicity } from '../chats.interface';
 
 export class ChannelInfoDto {
   @ApiProperty()
   channelId: number;
 
   @ApiProperty()
-  owner: string;
-
-  @ApiProperty()
-  admin: string;
-
-  @ApiProperty()
-  users: string[];
+  channelName: string;
 
   @ApiProperty()
   createdAt: Date;
 
   @ApiProperty()
-  channelType: string;
+  channelType: Publicity;
 
   @ApiProperty()
   isPassword: boolean;
+
+  @ApiProperty()
+  users: {
+    // @ApiProperty()
+    owner: number;
+
+    // @ApiProperty()
+    admin: number[];
+
+    // @ApiProperty()
+    user: number[];
+  }
 }

@@ -3,7 +3,7 @@ import { CreateChannelDto } from './dto/create-channel.dto';
 import { UpdateChannelDto } from './dto/update-channel.dto';
 import { ChannelInfoDto } from './dto/channel-info.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { Prisma } from '@prisma/client';
+import { Publicity, UserType } from './chats.interface';
 import { hash } from 'bcrypt';
 
 @Injectable()
@@ -16,26 +16,55 @@ export class ChatsService {
           ? await hash(createChannelDto.password, 10) as string : null;
 
     try {
-      const createdPost = await this.prisma.chatChannels.create({
+      // ChatChannelsテーブルとChatChannelUsersテーブルを同時に更新
+      const createdPost = await this.prisma.chatChannelUsers.create({
         data: {
-          channelName: createChannelDto.channelName,
-          owner: createChannelDto.owner,
-          admin: createChannelDto.owner,
-          createdAt: new Date(),
-          channelType: createChannelDto.channelType,
-          hashedPassword: hashedPassword,
+          channel: {
+            create: {
+              channelName: createChannelDto.channelName,
+              createdAt: new Date(),
+              channelType: createChannelDto.channelType,
+              hashedPassword: hashedPassword,
+            }
+          },
+          user: {
+            connect: { id: createChannelDto.ownerId },
+          },
+          type: UserType.OWNER,
         },
       });
-      return this.createChannelInfoDto(createdPost);
+
+      this.addChannelUsers(createdPost.channelId, createChannelDto.ownerId, UserType.ADMIN);
+      this.addChannelUsers(createdPost.channelId, createChannelDto.ownerId, UserType.USER);
+      return this.findById(createdPost.channelId);
     } catch (e) {
       throw this.prisma.handleError(e);
+    }
+  }
+
+  async addChannelUsers(channelId: number, userId : number, type: UserType):  Promise<boolean> {
+    try {
+      const query = await this.prisma.chatChannelUsers.create({
+        data: {
+          channelId: channelId,
+          userId: userId,
+          type: type,
+        },
+      });
+      if (!query) {
+        throw new BadRequestException();
+      }
+      return true;
+    } catch (e) {
+      return false;
     }
   }
 
   async findAllChannel(): Promise<ChannelInfoDto[]> {
     try {
       const posts = await this.prisma.chatChannels.findMany();
-      return posts.map((post) => this.createChannelInfoDto(post));
+      const channelInfoPromises = posts.map((post) => this.createChannelInfoDto(post));
+      return await Promise.all(channelInfoPromises);
     } catch (e) {
       throw this.prisma.handleError(e);
     }
@@ -66,7 +95,6 @@ export class ChatsService {
         where: { channelId: channelId },
         data: {
           channelName: updateChannelDto.channelName,
-          admin: updateChannelDto.admin,
           channelType: updateChannelDto.channelType,
           hashedPassword: hashedPassword,
         },
@@ -88,20 +116,44 @@ export class ChatsService {
       if (!post) {
         throw new NotFoundException();
       }
+      await this.prisma.chatChannelUsers.deleteMany({
+        where: { channelId: channelId },
+      });
     } catch (e) {
       throw this.prisma.handleError(e);
     }
   }
 
-  private createChannelInfoDto(post: any): ChannelInfoDto {
+  private async createChannelInfoDto(post: any): Promise<ChannelInfoDto> {
+    const owner = await this.prisma.chatChannelUsers.findFirst({
+      where: {
+        channelId: post.channelId,
+        type: UserType.OWNER,
+      },
+    });
+    const admins = await this.prisma.chatChannelUsers.findMany({
+      where: {
+        channelId: post.channelId,
+        type: UserType.ADMIN,
+      },
+    });
+    const users = await this.prisma.chatChannelUsers.findMany({
+      where: {
+        channelId: post.channelId,
+        type: UserType.USER,
+      },
+    });
     return {
       channelId: post.channelId.toString(),
-      owner: post.owner,
-      admin: post.admin,
-      users: post.users,
+      channelName: post.channelName,
       createdAt: post.createdAt.toISOString(),
       channelType: post.channelType,
       isPassword: post.hashedPassword ? true : false,
+      users: {
+        owner: owner.userId,
+        admin: admins.map(admin => admin.userId),
+        user: users.map(user => user.userId),
+      }
     };
   }
 
