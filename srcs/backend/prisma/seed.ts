@@ -1,25 +1,9 @@
 import { PrismaClient } from '@prisma/client';
-// import { hash } from 'bcrypt';
+import { Publicity, UserType } from '../src/chats/chats.interface';
 
 const prisma = new PrismaClient();
 
 async function main() {
-  // const hashedPassword1 = await hash('password1', 10);
-  // const user1 = await prisma.user.create({
-  //   data: {
-  //     username: 'Alice',
-  //     password: hashedPassword1,
-  //   },
-  // });
-  // const hashedPassword2 = await hash('password2', 10);
-  // const user2 = await prisma.user.create({
-  //   data: {
-  //     username: 'Bob',
-  //     password: hashedPassword2,
-  //   },
-  // });
-  // console.log({ user1, user2 });
-
   // ダミーユーザー作成
   await prisma.user.create({
     data: {
@@ -32,11 +16,32 @@ async function main() {
   await prisma.chatChannels.create({
     data: {
       channelName: 'general',
-      owner: 'user01',
-      admin: 'user01',
       createdAt: new Date(),
-      channelType: 'public',
+      channelType: Publicity.PUBLIC,
       hashedPassword: '',
+    },
+  });
+
+  // generalチャンネルのユーザ設定
+  await prisma.chatChannelUsers.create({
+    data: {
+      channelId: 1,
+      userId: 1,
+      type: UserType.OWNER,
+    },
+  });
+  await prisma.chatChannelUsers.create({
+    data: {
+      channelId: 1,
+      userId: 1,
+      type: UserType.ADMIN,
+    },
+  });
+  await prisma.chatChannelUsers.create({
+    data: {
+      channelId: 1,
+      userId: 1,
+      type: UserType.USER,
     },
   });
 }
