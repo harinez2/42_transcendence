@@ -27,16 +27,19 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
     });
   }
 
+  // ref: https://www.prisma.io/docs/reference/api-reference/error-reference
   handleError(e: any): HttpException {
     const c_red = '\x1b[31m';
     const c_default = '\x1b[39m';
 
+    // HttpExceptionの継承クラスであればそのまま返す
     if (e instanceof HttpException) {
       console.error(`${c_red}HttpException${c_default}`);
       this.printConsole(e);
       return e;
     }
 
+    // Prisma起因の例外であれば、適切なHttpException継承クラスを返す
     let exception;
     if (e instanceof Prisma.PrismaClientKnownRequestError) {
       console.error(`${c_red}Prisma error: ${e.code}${c_default}`, e.message);
