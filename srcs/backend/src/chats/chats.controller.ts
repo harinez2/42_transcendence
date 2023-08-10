@@ -4,6 +4,7 @@ import { CreateChannelDto } from './dto/create-channel.dto';
 import { UpdateChannelDto } from './dto/update-channel.dto';
 import { ChannelInfoDto } from './dto/channel-info.dto';
 import { ApiOperation, ApiBody, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { UserType } from './chats.interface';
 
 @Controller('chats')
 @ApiTags('chats')
@@ -81,6 +82,56 @@ export class ChatsController {
   @Delete(':id')
   async deleteChannel(@Param('id') id: string) : Promise<void> {
     return await this.chatsService.deleteChannel(Number(id));
+  }
+
+  @ApiOperation({ summary: '指定したユーザに指定したチャンネルのadmin権限を付与する' })
+  @ApiParam({
+    name: 'channelid',
+    type: 'string',
+    example: 1,
+  })
+  @ApiParam({
+    name: 'userid',
+    type: 'string',
+    example: 1,
+  })
+  @ApiResponse({
+    status: 200,
+    description: '指定したチャンネルIDの情報を返却',
+    type: ChannelInfoDto,
+  })
+  @Put(':channelid/user/:userid/admin')
+  async addAdminRights(
+      @Param('channelid') channelId: string,
+      @Param('userid') userId: string)
+      : Promise<ChannelInfoDto> {
+    return await this.chatsService.addChannelUsers(
+        Number(channelId), Number(userId), UserType.ADMIN);
+  }
+
+  @ApiOperation({ summary: '指定したユーザに指定したチャンネルのadmin権限をはく奪する' })
+  @ApiParam({
+    name: 'channelid',
+    type: 'string',
+    example: 1,
+  })
+  @ApiParam({
+    name: 'userid',
+    type: 'string',
+    example: 1,
+  })
+  @ApiResponse({
+    status: 200,
+    description: '指定したチャンネルIDの情報を返却',
+    type: ChannelInfoDto,
+  })
+  @Delete(':channelid/user/:userid/admin')
+  async removeAdminRights(
+      @Param('channelid') channelId: string,
+      @Param('userid') userId: string)
+      : Promise<ChannelInfoDto> {
+    return await this.chatsService.removeChannelUsers(
+        Number(channelId), Number(userId), UserType.ADMIN);
   }
 
 }
