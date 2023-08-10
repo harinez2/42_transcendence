@@ -134,4 +134,64 @@ export class ChatsController {
         Number(channelId), Number(userId), UserType.ADMIN);
   }
 
+  @ApiOperation({ summary: '指定したユーザが指定したチャンネルに入室する' })
+  @ApiParam({
+    name: 'channelid',
+    type: 'string',
+    example: '1',
+  })
+  @ApiBody({
+    schema: {
+      properties: {
+        userId: {
+          type: 'string',
+          example: '1',
+        }
+      }
+    }
+  })
+  @ApiResponse({
+    status: 200,
+    description: '指定したチャンネルIDの情報を返却',
+    type: ChannelInfoDto,
+  })
+  @Put(':channelid/join')
+  async joinChannel(
+      @Param('channelid') channelId: string,
+      @Body() joinRequest: { userId: string })
+      : Promise<ChannelInfoDto> {
+    return await this.chatsService.addChannelUsers(
+        Number(channelId), Number(joinRequest.userId), UserType.USER);
+  }
+
+  @ApiOperation({ summary: '指定したユーザが指定したチャンネルから退室する' })
+  @ApiParam({
+    name: 'channelid',
+    type: 'string',
+    example: '1',
+  })
+  @ApiBody({
+    schema: {
+      properties: {
+        userId: {
+          type: 'string',
+          example: '1',
+        }
+      }
+    }
+  })
+  @ApiResponse({
+    status: 200,
+    description: '指定したチャンネルIDの情報を返却',
+    type: ChannelInfoDto,
+  })
+  @Delete(':channelid/leave')
+  async leaveChannel(
+      @Param('channelid') channelId: string,
+      @Body() leaveRequest: { userId: string })
+      : Promise<ChannelInfoDto> {
+    return await this.chatsService.removeChannelUsers(
+        Number(channelId), Number(leaveRequest.userId), UserType.USER);
+  }
+
 }
