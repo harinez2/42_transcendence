@@ -38,7 +38,7 @@ export class ChatsController {
   @ApiParam({
     name: 'id',
     type: 'string',
-    example: 1,
+    example: '1',
   })
   @ApiResponse({
     status: 200,
@@ -54,7 +54,7 @@ export class ChatsController {
   @ApiParam({
     name: 'id',
     type: 'string',
-    example: 1,
+    example: '1',
   })
   @ApiBody({ type: UpdateChannelDto })
   @ApiResponse({
@@ -72,7 +72,7 @@ export class ChatsController {
   @ApiParam({
     name: 'id',
     type: 'string',
-    example: 1,
+    example: '1',
   })
   @ApiResponse({
     status: 200,
@@ -84,57 +84,67 @@ export class ChatsController {
     return await this.chatsService.deleteChannel(Number(id));
   }
 
-  @ApiOperation({ summary: '指定したユーザに指定したチャンネルのadmin権限を付与する' })
+  @ApiOperation({ summary: '指定したチャンネルのadmin権限を付与する' })
   @ApiParam({
     name: 'channelid',
     type: 'string',
-    example: 1,
+    example: '1',
   })
-  @ApiParam({
-    name: 'userid',
-    type: 'string',
-    example: 1,
+  @ApiBody({
+    schema: {
+      properties: {
+        userId: {
+          type: 'string',
+          example: '1',
+        }
+      }
+    }
   })
   @ApiResponse({
     status: 200,
     description: '指定したチャンネルIDの情報を返却',
     type: ChannelInfoDto,
   })
-  @Put(':channelid/user/:userid/admin')
+  @Put(':channelid/admin')
   async addAdminRights(
       @Param('channelid') channelId: string,
-      @Param('userid') userId: string)
+      @Body() addAdminRequest: { userId: string })
       : Promise<ChannelInfoDto> {
     return await this.chatsService.addChannelUsers(
-        Number(channelId), Number(userId), UserType.ADMIN);
+        Number(channelId), Number(addAdminRequest.userId), UserType.ADMIN);
   }
 
-  @ApiOperation({ summary: '指定したユーザに指定したチャンネルのadmin権限をはく奪する' })
+  @ApiOperation({ summary: '指定したチャンネルのadmin権限をはく奪する' })
   @ApiParam({
     name: 'channelid',
     type: 'string',
-    example: 1,
+    example: '1',
   })
-  @ApiParam({
-    name: 'userid',
-    type: 'string',
-    example: 1,
+  @ApiBody({
+    schema: {
+      properties: {
+        userId: {
+          type: 'string',
+          example: '1',
+        }
+      }
+    }
   })
   @ApiResponse({
     status: 200,
     description: '指定したチャンネルIDの情報を返却',
     type: ChannelInfoDto,
   })
-  @Delete(':channelid/user/:userid/admin')
+  @Delete(':channelid/admin')
   async removeAdminRights(
       @Param('channelid') channelId: string,
-      @Param('userid') userId: string)
+      @Body() removeAdminRequest: { userId: string })
       : Promise<ChannelInfoDto> {
     return await this.chatsService.removeChannelUsers(
-        Number(channelId), Number(userId), UserType.ADMIN);
+        Number(channelId), Number(removeAdminRequest.userId), UserType.ADMIN);
   }
 
-  @ApiOperation({ summary: '指定したユーザが指定したチャンネルに入室する' })
+  @ApiOperation({ summary: '指定したチャンネルに入室する' })
   @ApiParam({
     name: 'channelid',
     type: 'string',
@@ -164,7 +174,7 @@ export class ChatsController {
         Number(channelId), Number(joinRequest.userId), UserType.USER);
   }
 
-  @ApiOperation({ summary: '指定したユーザが指定したチャンネルから退室する' })
+  @ApiOperation({ summary: '指定したチャンネルから退室する' })
   @ApiParam({
     name: 'channelid',
     type: 'string',
