@@ -15,31 +15,43 @@ datasource db {
 // user
 
 model User {
-  id       Int    @id @default(autoincrement())
-  username String @unique
-  email    String
+  id                   Int      @id @default(autoincrement())
+  email                String   @unique
+  username             String   @unique
+  staff                Boolean  @default(false)
+  password             String?
+  profile              Profile?
+  twoFactorAuthEnabled Boolean  @default(false)
+  twoFactorAuthSecret  String?
+}
+
+model Profile {
+  id     Int    @id @default(autoincrement())
+  bio    String
+  userId Int    @unique
+  user   User   @relation(fields: [userId], references: [id])
 }
 
 //--------------------------------------------------------------------------
 // chat
 
 model ChatChannels {
-  channelId       Int       @id @default(autoincrement())
-  channelName     String
-  owner           String
-  admin           String
-  users           String[]
-  createdAt       DateTime
-  channelType     String
-  hashedPassword  String?
+  channelId      Int      @id @default(autoincrement())
+  channelName    String
+  owner          String
+  admin          String
+  users          String[]
+  createdAt      DateTime
+  channelType    String
+  hashedPassword String?
 }
 
 model ChatMessages {
-  messageId       Int     @id @default(autoincrement())
-  channelId       Int
-  sender          String
-  content         String
-  createdAt       DateTime
+  messageId Int      @id @default(autoincrement())
+  channelId Int
+  sender    String
+  content   String
+  createdAt DateTime
 }
 
 //--------------------------------------------------------------------------
