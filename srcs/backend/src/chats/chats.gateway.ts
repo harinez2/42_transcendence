@@ -60,7 +60,7 @@ export class ChatsGateway {
   @SubscribeMessage('message')
   async handleMessage(@MessageBody() data: MessageDto) {
     try {
-      console.log(`channelId: ${data.channelId}, sender: ${data.senderId}, ` +
+      console.log(`channelId: ${data.channelId}, senderId: ${data.senderId}, ` +
         `content: ${data.content}`);
 
       // メッセージをブロードキャスト
