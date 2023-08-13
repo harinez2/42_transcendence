@@ -4,6 +4,7 @@ import {
   WebSocketGateway,
   WebSocketServer,
   ConnectedSocket,
+  WsException,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -42,31 +43,44 @@ export class ChatsGateway {
   // 過去のチャットログをDBから取得
   @SubscribeMessage('getPastMessages')
   async handleGetPastMessages(@ConnectedSocket() client: Socket, @MessageBody() data: any) {
-    const posts = await this.prisma.chatMessages.findMany({
-      where: { channelId: data.channelId },
-    });
-    for (let post of posts) {
-      client.emit('message', post);
+    try {
+      const posts = await this.prisma.chatMessages.findMany({
+        where: { channelId: data.channelId },
+      });
+      for (let post of posts) {
+        client.emit('message', post);
+      }
+
+    } catch(e) {
+      throw new WsException(e.message);
     }
   }
 
   // messageイベント受信
   @SubscribeMessage('message')
   async handleMessage(@MessageBody() data: MessageDto) {
-    console.log(`channelId: ${data.channelId}, sender: ${data.senderId}, ` +
-      `content: ${data.content}`);
-    this.broadcast('message', data);
+    try {
+      console.log(`channelId: ${data.channelId}, sender: ${data.senderId}, ` +
+        `content: ${data.content}`);
 
-    // DBに保存
-    await this.prisma.chatMessages.create({
-      data: {
-        channelId: data.channelId,
-        senderId: data.senderId,
-        content: data.content,
-        createdAt: new Date(),
-      },
-    });
+      // メッセージをブロードキャスト
+      this.broadcast('message', data);
+
+      // DBに保存
+      await this.prisma.chatMessages.create({
+        data: {
+          channelId: data.channelId,
+          senderId: data.senderId,
+          content: data.content,
+          createdAt: new Date(),
+        },
+      });
+    } catch(e) {
+      throw new WsException(e.message);
+    }
   }
+
+  //-------------------------------------------------------------------------
 
   private broadcast(event: string, data: MessageDto) {
     for (let c of this.clients) {
