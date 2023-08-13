@@ -5,7 +5,6 @@ import { ChannelInfoDto } from './dto/channel-info.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Publicity, UserType } from './chats.interface';
 import { hash } from 'bcrypt';
-import { type } from 'os';
 
 @Injectable()
 export class ChatsService {
