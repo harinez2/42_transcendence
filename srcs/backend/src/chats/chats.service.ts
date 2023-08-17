@@ -284,7 +284,10 @@ async unbanUsers(channelId: number, bannedUserId: number): Promise<ChannelInfoDt
         user: users.map(user => user.userId),
       },
       bannedUsers: bans.map(user => user.bannedUserId),
-      mutedUsers: mutes.map(user => user.mutedUserId),
+      mutedUsers: mutes.map(user => ({
+        mutedUserId: user.mutedUserId,
+        muteUntil: user.muteUntil,
+      })),
     };
   }
 
