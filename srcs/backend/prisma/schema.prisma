@@ -24,11 +24,12 @@ model User {
   twoFactorAuthEnabled Boolean  @default(false)
   twoFactorAuthSecret  String?
 
+  blockedBy            UserBlock[] @relation("BlockedBy")
+  blocked              UserBlock[] @relation("Blocked")
   channelUsers         ChatChannelUsers[]
   chatMessages         ChatMessages[]
-  muting               ChatBlockMute[] @relation("Muting")
-  mutedBy              ChatBlockMute[] @relation("MutedBy")
   banned               ChatBan[]
+  muted                ChatMute[]
 }
 
 model Profile {
@@ -36,6 +37,16 @@ model Profile {
   bio    String
   userId Int    @unique
   user   User   @relation(fields: [userId], references: [id])
+}
+
+model UserBlock {
+  id              Int             @id @default(autoincrement())
+  user            User            @relation("BlockedBy", fields: [userId], references: [id])
+  userId          Int             // relation scalar field  (used in 'user')
+  blockedUser     User            @relation("Blocked", fields: [blockedUserId], references: [id])
+  blockedUserId   Int             // relation scalar field  (used in 'blockedUser')
+
+  @@unique([userId, blockedUserId])
 }
 
 //--------------------------------------------------------------------------
@@ -60,7 +71,8 @@ model ChatChannels {
   hashedPassword  String?
   users           ChatChannelUsers[]
   chatMessages    ChatMessages[]
-  banUsers        ChatBan[]
+  bannedUsers     ChatBan[]
+  mutedUsers      ChatMute[]
 }
 
 model ChatChannelUsers {
@@ -82,21 +94,25 @@ model ChatMessages {
   createdAt       DateTime
 }
 
-model ChatBlockMute {
-  id              Int             @id @default(autoincrement())
-  fromUser        User            @relation("Muting", fields: [fromUserId], references: [id])
-  fromUserId      Int             // relation scalar field  (used in 'fromUser')
-  toUser          User            @relation("MutedBy", fields: [toUserId], references: [id])
-  toUserId        Int             // relation scalar field  (used in 'toUser')
-  muteUntil       DateTime?
-}
-
 model ChatBan {
   id              Int             @id @default(autoincrement())
   channel         ChatChannels    @relation(fields: [channelId], references: [channelId])
   channelId       Int             // relation scalar field  (used in 'channel')
-  user            User            @relation(fields: [userId], references: [id])
-  userId          Int             // relation scalar field  (used in 'user')
+  bannedUser      User            @relation(fields: [bannedUserId], references: [id])
+  bannedUserId    Int             // relation scalar field  (used in 'bannedUser')
+
+  @@unique([channelId, bannedUserId])
+}
+
+model ChatMute {
+  id              Int             @id @default(autoincrement())
+  channel         ChatChannels    @relation(fields: [channelId], references: [channelId])
+  channelId       Int             // relation scalar field  (used in 'channel')
+  mutedUser       User            @relation(fields: [mutedUserId], references: [id])
+  mutedUserId     Int             // relation scalar field  (used in 'mutedUser')
+  muteUntil       DateTime
+
+  @@unique([channelId, mutedUserId])
 }
 
 //--------------------------------------------------------------------------

@@ -30,5 +30,8 @@ export class ChannelInfoDto {
   }
 
   @ApiProperty()
-  banUsers: number[];
+  bannedUsers: number[];
+
+  @ApiProperty()
+  mutedUsers: number[];
 }

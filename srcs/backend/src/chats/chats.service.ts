@@ -153,12 +153,12 @@ export class ChatsService {
 
   // ban operations
 
-  async banUser(channelId: number, userId : number): Promise<ChannelInfoDto> {
+  async banUser(channelId: number, bannedUserId : number): Promise<ChannelInfoDto> {
   try {
     const query = await this.prisma.chatBan.create({
       data: {
         channelId: channelId,
-        userId: userId,
+        bannedUserId: bannedUserId,
       },
     });
     if (!query) {
@@ -170,12 +170,12 @@ export class ChatsService {
   }
 }
 
-async unbanUsers(channelId: number, userId: number): Promise<ChannelInfoDto> {
+async unbanUsers(channelId: number, bannedUserId: number): Promise<ChannelInfoDto> {
   try {
     const query = await this.prisma.chatBan.deleteMany({
       where: {
         channelId: channelId,
-        userId: userId,
+        bannedUserId: bannedUserId,
       },
     });
     if (!query) {
@@ -186,6 +186,44 @@ async unbanUsers(channelId: number, userId: number): Promise<ChannelInfoDto> {
     throw this.prisma.handleError(e);
   }
 }
+
+  // mute operations
+
+  async muteUser(channelId: number, mutedUserId : number, muteUntil: Date)
+      : Promise<ChannelInfoDto> {
+    try {
+      const query = await this.prisma.chatMute.create({
+        data: {
+          channelId: channelId,
+          mutedUserId: mutedUserId,
+          muteUntil: muteUntil,
+        },
+      });
+      if (!query) {
+        throw new BadRequestException();
+      }
+      return this.findById(channelId);
+    } catch (e) {
+      throw this.prisma.handleError(e);
+    }
+  }
+
+  async unmuteUsers(channelId: number, mutedUserId: number): Promise<ChannelInfoDto> {
+    try {
+      const query = await this.prisma.chatMute.deleteMany({
+        where: {
+          channelId: channelId,
+          mutedUserId: mutedUserId,
+        },
+      });
+      if (!query) {
+        throw new NotFoundException();
+      }
+      return this.findById(channelId);
+    } catch (e) {
+      throw this.prisma.handleError(e);
+    }
+  }
 
   //------------------------------------------------------------------------------
   // private functions
@@ -229,6 +267,11 @@ async unbanUsers(channelId: number, userId: number): Promise<ChannelInfoDto> {
         channelId: post.channelId,
       },
     });
+    const mutes = await this.prisma.chatMute.findMany({
+      where: {
+        channelId: post.channelId,
+      },
+    });
     return {
       channelId: post.channelId.toString(),
       channelName: post.channelName,
@@ -240,7 +283,8 @@ async unbanUsers(channelId: number, userId: number): Promise<ChannelInfoDto> {
         admin: admins.map(admin => admin.userId),
         user: users.map(user => user.userId),
       },
-      banUsers: bans.map(user => user.userId),
+      bannedUsers: bans.map(user => user.bannedUserId),
+      mutedUsers: mutes.map(user => user.mutedUserId),
     };
   }
 

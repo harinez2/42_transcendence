@@ -27,6 +27,15 @@ CREATE TABLE "Profile" (
 );
 
 -- CreateTable
+CREATE TABLE "UserBlock" (
+    "id" SERIAL NOT NULL,
+    "userId" INTEGER NOT NULL,
+    "blockedUserId" INTEGER NOT NULL,
+
+    CONSTRAINT "UserBlock_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "ChatChannels" (
     "channelId" SERIAL NOT NULL,
     "channelName" TEXT NOT NULL,
@@ -59,22 +68,22 @@ CREATE TABLE "ChatMessages" (
 );
 
 -- CreateTable
-CREATE TABLE "ChatBlockMute" (
-    "id" SERIAL NOT NULL,
-    "fromUserId" INTEGER NOT NULL,
-    "toUserId" INTEGER NOT NULL,
-    "muteUntil" TIMESTAMP(3),
-
-    CONSTRAINT "ChatBlockMute_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
 CREATE TABLE "ChatBan" (
     "id" SERIAL NOT NULL,
     "channelId" INTEGER NOT NULL,
-    "userId" INTEGER NOT NULL,
+    "bannedUserId" INTEGER NOT NULL,
 
     CONSTRAINT "ChatBan_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "ChatMute" (
+    "id" SERIAL NOT NULL,
+    "channelId" INTEGER NOT NULL,
+    "mutedUserId" INTEGER NOT NULL,
+    "muteUntil" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "ChatMute_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -98,10 +107,25 @@ CREATE UNIQUE INDEX "User_username_key" ON "User"("username");
 CREATE UNIQUE INDEX "Profile_userId_key" ON "Profile"("userId");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "UserBlock_userId_blockedUserId_key" ON "UserBlock"("userId", "blockedUserId");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "ChatChannels_channelName_key" ON "ChatChannels"("channelName");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "ChatBan_channelId_bannedUserId_key" ON "ChatBan"("channelId", "bannedUserId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "ChatMute_channelId_mutedUserId_key" ON "ChatMute"("channelId", "mutedUserId");
 
 -- AddForeignKey
 ALTER TABLE "Profile" ADD CONSTRAINT "Profile_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "UserBlock" ADD CONSTRAINT "UserBlock_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "UserBlock" ADD CONSTRAINT "UserBlock_blockedUserId_fkey" FOREIGN KEY ("blockedUserId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "ChatChannelUsers" ADD CONSTRAINT "ChatChannelUsers_channelId_fkey" FOREIGN KEY ("channelId") REFERENCES "ChatChannels"("channelId") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -116,13 +140,13 @@ ALTER TABLE "ChatMessages" ADD CONSTRAINT "ChatMessages_channelId_fkey" FOREIGN 
 ALTER TABLE "ChatMessages" ADD CONSTRAINT "ChatMessages_senderId_fkey" FOREIGN KEY ("senderId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "ChatBlockMute" ADD CONSTRAINT "ChatBlockMute_fromUserId_fkey" FOREIGN KEY ("fromUserId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "ChatBlockMute" ADD CONSTRAINT "ChatBlockMute_toUserId_fkey" FOREIGN KEY ("toUserId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
 ALTER TABLE "ChatBan" ADD CONSTRAINT "ChatBan_channelId_fkey" FOREIGN KEY ("channelId") REFERENCES "ChatChannels"("channelId") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "ChatBan" ADD CONSTRAINT "ChatBan_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "ChatBan" ADD CONSTRAINT "ChatBan_bannedUserId_fkey" FOREIGN KEY ("bannedUserId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "ChatMute" ADD CONSTRAINT "ChatMute_channelId_fkey" FOREIGN KEY ("channelId") REFERENCES "ChatChannels"("channelId") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "ChatMute" ADD CONSTRAINT "ChatMute_mutedUserId_fkey" FOREIGN KEY ("mutedUserId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
