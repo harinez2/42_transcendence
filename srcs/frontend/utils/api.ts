@@ -1,7 +1,8 @@
+import { API_PATH } from "@/config";
+
 export async function getAllPosts() {
   try {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-    const response = await fetch(`${apiUrl}/posts`, {
+    const response = await fetch(`${API_PATH}/posts`, {
       method: "GET",
       cache: "no-store",
     });
