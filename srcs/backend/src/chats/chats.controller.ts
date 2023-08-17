@@ -36,7 +36,7 @@ export class ChatsController {
 
   @ApiOperation({ summary: '指定したチャンネルの情報を取得する' })
   @ApiParam({
-    name: 'id',
+    name: 'channelid',
     type: 'string',
     example: '1',
   })
@@ -45,14 +45,14 @@ export class ChatsController {
     description: '指定したチャンネルIDの情報を返却',
     type: ChannelInfoDto,
   })
-  @Get(':id')
-  async findById(@Param('id') id: string): Promise<ChannelInfoDto> {
-    return await this.chatsService.findById(Number(id));
+  @Get(':channelid')
+  async findById(@Param('channelid') channelId: string): Promise<ChannelInfoDto> {
+    return await this.chatsService.findById(Number(channelId));
   }
 
   @ApiOperation({ summary: 'チャンネル情報を更新する' })
   @ApiParam({
-    name: 'id',
+    name: 'channelid',
     type: 'string',
     example: '1',
   })
@@ -62,15 +62,17 @@ export class ChatsController {
     description: '指定したチャンネルIDの情報を返却',
     type: ChannelInfoDto,
   })
-  @Put(':id')
-  async updateChannel(@Param('id') id: string, @Body() updateChannelDto: UpdateChannelDto)
-      : Promise<ChannelInfoDto> {
-    return await this.chatsService.updateChannel(Number(id), updateChannelDto);
+  @Put(':channelid')
+  async updateChannel(
+      @Param('channelid') channelId: string,
+      @Body() updateChannelDto: UpdateChannelDto
+  ) : Promise<ChannelInfoDto> {
+    return await this.chatsService.updateChannel(Number(channelId), updateChannelDto);
   }
 
   @ApiOperation({ summary: 'チャンネルを削除する' })
   @ApiParam({
-    name: 'id',
+    name: 'channelid',
     type: 'string',
     example: '1',
   })
@@ -79,9 +81,9 @@ export class ChatsController {
     description: '戻り値なし',
     type: null,
   })
-  @Delete(':id')
-  async deleteChannel(@Param('id') id: string) : Promise<void> {
-    return await this.chatsService.deleteChannel(Number(id));
+  @Delete(':channelid')
+  async deleteChannel(@Param('channelid') channelId: string) : Promise<void> {
+    return await this.chatsService.deleteChannel(Number(channelId));
   }
 
   @ApiOperation({ summary: 'Admin権限を付与する' })
@@ -105,7 +107,7 @@ export class ChatsController {
     description: '指定したチャンネルIDの情報を返却',
     type: ChannelInfoDto,
   })
-  @Put(':channelid/admin')
+  @Put(':channelid/admins')
   async addAdminRights(
       @Param('channelid') channelId: string,
       @Body() addAdminRequest: { userId: string })
@@ -135,7 +137,7 @@ export class ChatsController {
     description: '指定したチャンネルIDの情報を返却',
     type: ChannelInfoDto,
   })
-  @Delete(':channelid/admin')
+  @Delete(':channelid/admins')
   async removeAdminRights(
       @Param('channelid') channelId: string,
       @Body() removeAdminRequest: { userId: string })
@@ -165,7 +167,7 @@ export class ChatsController {
     description: '指定したチャンネルIDの情報を返却',
     type: ChannelInfoDto,
   })
-  @Put(':channelid/join')
+  @Put(':channelid/users')
   async joinChannel(
       @Param('channelid') channelId: string,
       @Body() joinRequest: { userId: string })
@@ -195,7 +197,7 @@ export class ChatsController {
     description: '指定したチャンネルIDの情報を返却',
     type: ChannelInfoDto,
   })
-  @Delete(':channelid/leave')
+  @Delete(':channelid/users')
   async leaveChannel(
       @Param('channelid') channelId: string,
       @Body() leaveRequest: { userId: string })
@@ -270,7 +272,7 @@ export class ChatsController {
     description: '指定したチャンネルIDの情報を返却',
     type: ChannelInfoDto,
   })
-  @Delete(':channelid/unban')
+  @Delete(':channelid/ban')
   async unbanUser(
       @Param('channelid') channelId: string,
       @Body() unbanRequest: { bannedUserId: string })
@@ -350,7 +352,7 @@ export class ChatsController {
     description: '指定したチャンネルIDの情報を返却',
     type: ChannelInfoDto,
   })
-  @Delete(':channelid/unmute')
+  @Delete(':channelid/mute')
   async unmuteUser(
       @Param('channelid') channelId: string,
       @Body() unmuteRequest: { mutedUserId: string })
