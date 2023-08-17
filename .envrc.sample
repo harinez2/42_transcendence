@@ -1,18 +1,21 @@
 # This file `.envrc.sample` is a template for `.envrc.private`.
 # Do `cp .envrc.sample .envrc.private` and edit `.envrc.private`
 
+# Front
+export NEXT_PUBLIC_FRONT_URL=http://localhost:3000
+
 # 42API
 #   These values can be generated in 42 intranet API setting page.
 export FORTY_TWO_CLIENT_ID=u-******
 export FORTY_TWO_CLIENT_SECRET=s-*****
+export FORTY_TWO_CALLBACK_URL=http://localhost:3000/api/auth/42/callback
+
+# JWT
+#   JWT_SECRET is a random value.
+#   It is recommended to generate by executing `openssl rand -base64 32`.
+export JWT_SECRET=*****
 
 # Database
 export POSTGRES_USER=*****
 export POSTGRES_PASSWORD=*****
 export POSTGRES_DB=*****
-
-# NextAuth
-#   NEXTAUTH_SECRET is a random value.
-#   It is recommended to generate by executing `openssl rand -base64 32`.
-export NEXTAUTH_URL=http://localhost:3000
-export NEXTAUTH_SECRET=*****

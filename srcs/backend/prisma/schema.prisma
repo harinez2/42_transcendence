@@ -15,11 +15,23 @@ datasource db {
 // user
 
 model User {
-  id              Int             @id @default(autoincrement())
-  username        String          @unique
-  email           String
-  channelUsers    ChatChannelUsers[]
-  chatMessages    ChatMessages[]
+  id                   Int      @id @default(autoincrement())
+  email                String   @unique
+  username             String   @unique
+  staff                Boolean  @default(false)
+  password             String?
+  profile              Profile?
+  twoFactorAuthEnabled Boolean  @default(false)
+  twoFactorAuthSecret  String?
+  channelUsers         ChatChannelUsers[]
+  chatMessages         ChatMessages[]
+}
+
+model Profile {
+  id     Int    @id @default(autoincrement())
+  bio    String
+  userId Int    @unique
+  user   User   @relation(fields: [userId], references: [id])
 }
 
 //--------------------------------------------------------------------------

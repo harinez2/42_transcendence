@@ -4,6 +4,7 @@ import { INestApplication, Injectable, OnModuleInit,
   InternalServerErrorException,
   HttpException } from '@nestjs/common';
 import { PrismaClient, Prisma } from '@prisma/client';
+import { DATABASE_URL } from 'config';
 
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleInit {
@@ -11,7 +12,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
     super({
       datasources: {
         db: {
-          url: process.env.DATABASE_URL,
+          url: DATABASE_URL,
         },
       },
     });
