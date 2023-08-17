@@ -189,6 +189,28 @@ async unbanUsers(channelId: number, bannedUserId: number): Promise<ChannelInfoDt
 
   // mute operations
 
+  async getActiveMutes(channelId: number)
+      : Promise<Array<{ mutedUserId: number; muteUntil: Date }>> {
+    try {
+      const activeMutes = await this.prisma.chatMute.findMany({
+        where: {
+          channelId: channelId,
+          muteUntil: {
+            // 現在時刻より後のものだけを抽出
+            gt: new Date(),
+          },
+        },
+      });
+
+      return activeMutes.map(mute => ({
+        mutedUserId: mute.mutedUserId,
+        muteUntil: mute.muteUntil,
+      }));
+    } catch (e) {
+      throw this.prisma.handleError(e);
+    }
+  }
+
   async muteUser(channelId: number, mutedUserId : number, muteUntil: Date)
       : Promise<ChannelInfoDto> {
     try {

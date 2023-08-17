@@ -262,6 +262,23 @@ export class ChatsController {
     return await this.chatsService.unbanUsers(Number(channelId), Number(unbanRequest.bannedUserId));
   }
 
+  @ApiOperation({ summary: '現在Muteしているユーザ一覧を取得する(タイムアウトは含まない)' })
+  @ApiParam({
+    name: 'channelid',
+    type: 'string',
+    example: '1',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '指定したチャンネルIDの情報を返却',
+    type: Array<{ mutedUserId: Number; muteUntil: Date }>,
+  })
+  @Get(':channelid/mute')
+  async getActiveMutes(@Param('channelid') channelId: string)
+      : Promise<Array<{ mutedUserId: number; muteUntil: Date }>> {
+    return await this.chatsService.getActiveMutes(Number(channelId));
+  }
+
   @ApiOperation({ summary: 'ユーザをMuteする' })
   @ApiParam({
     name: 'channelid',
