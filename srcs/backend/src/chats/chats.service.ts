@@ -47,7 +47,7 @@ export class ChatsService {
   async findAllChannel(): Promise<ChannelInfoDto[]> {
     try {
       const posts = await this.prisma.chatChannels.findMany();
-      const channelInfoPromises = posts.map((post) => this.createChannelInfoDto(post));
+      const channelInfoPromises = posts.map(async (post) => await this.createChannelInfoDto(post));
       return await Promise.all(channelInfoPromises);
     } catch (e) {
       throw this.prisma.handleError(e);
@@ -62,7 +62,7 @@ export class ChatsService {
       if (!post) {
         throw new NotFoundException();
       }
-      return this.createChannelInfoDto(post);
+      return await this.createChannelInfoDto(post);
     } catch (e) {
       throw this.prisma.handleError(e);
     }
@@ -86,7 +86,7 @@ export class ChatsService {
       if (!post) {
         throw new NotFoundException();
       }
-      return this.createChannelInfoDto(post);
+      return await this.createChannelInfoDto(post);
     } catch (e) {
       throw this.prisma.handleError(e);
     }
