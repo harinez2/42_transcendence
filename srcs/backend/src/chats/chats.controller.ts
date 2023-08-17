@@ -34,7 +34,7 @@ export class ChatsController {
     return this.chatsService.findAllChannel();
   }
 
-  @ApiOperation({ summary: '指定したチャンネルIDの情報を取得する' })
+  @ApiOperation({ summary: '指定したチャンネルの情報を取得する' })
   @ApiParam({
     name: 'id',
     type: 'string',
@@ -50,7 +50,7 @@ export class ChatsController {
     return await this.chatsService.findById(Number(id));
   }
 
-  @ApiOperation({ summary: '指定したチャンネルIDの情報を更新する' })
+  @ApiOperation({ summary: 'チャンネル情報を更新する' })
   @ApiParam({
     name: 'id',
     type: 'string',
@@ -68,7 +68,7 @@ export class ChatsController {
     return await this.chatsService.updateChannel(Number(id), updateChannelDto);
   }
 
-  @ApiOperation({ summary: '指定したチャンネルIDの情報を削除する' })
+  @ApiOperation({ summary: 'チャンネルを削除する' })
   @ApiParam({
     name: 'id',
     type: 'string',
@@ -84,7 +84,7 @@ export class ChatsController {
     return await this.chatsService.deleteChannel(Number(id));
   }
 
-  @ApiOperation({ summary: '指定したチャンネルのadmin権限を付与する' })
+  @ApiOperation({ summary: 'Admin権限を付与する' })
   @ApiParam({
     name: 'channelid',
     type: 'string',
@@ -114,7 +114,7 @@ export class ChatsController {
         Number(channelId), Number(addAdminRequest.userId), UserType.ADMIN);
   }
 
-  @ApiOperation({ summary: '指定したチャンネルのadmin権限をはく奪する' })
+  @ApiOperation({ summary: 'Admin権限をはく奪する' })
   @ApiParam({
     name: 'channelid',
     type: 'string',
@@ -144,7 +144,7 @@ export class ChatsController {
         Number(channelId), Number(removeAdminRequest.userId), UserType.ADMIN);
   }
 
-  @ApiOperation({ summary: '指定したチャンネルに入室する' })
+  @ApiOperation({ summary: 'チャンネルに入室する' })
   @ApiParam({
     name: 'channelid',
     type: 'string',
@@ -174,7 +174,7 @@ export class ChatsController {
         Number(channelId), Number(joinRequest.userId), UserType.USER);
   }
 
-  @ApiOperation({ summary: '指定したチャンネルから退室する' })
+  @ApiOperation({ summary: 'チャンネルから退室する' })
   @ApiParam({
     name: 'channelid',
     type: 'string',
@@ -202,6 +202,23 @@ export class ChatsController {
       : Promise<ChannelInfoDto> {
     return await this.chatsService.removeChannelUsers(
         Number(channelId), Number(leaveRequest.userId), UserType.USER);
+  }
+
+  @ApiOperation({ summary: '現在Banしているユーザ一覧を取得する' })
+  @ApiParam({
+    name: 'channelid',
+    type: 'string',
+    example: '1',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '指定したチャンネルIDの情報を返却',
+    type: { bannedUserId: number },
+  })
+  @Get(':channelid/ban')
+  async getBans(@Param('channelid') channelId: string)
+      : Promise<{ bannedUsers: number[] }> {
+    return await this.chatsService.getBans(Number(channelId));
   }
 
   @ApiOperation({ summary: 'ユーザをBanする' })
