@@ -23,8 +23,12 @@ model User {
   profile              Profile?
   twoFactorAuthEnabled Boolean  @default(false)
   twoFactorAuthSecret  String?
+
   channelUsers         ChatChannelUsers[]
   chatMessages         ChatMessages[]
+  muting               ChatBlockMute[] @relation("Muting")
+  mutedBy              ChatBlockMute[] @relation("MutedBy")
+  banned               ChatBan[]
 }
 
 model Profile {
@@ -56,6 +60,7 @@ model ChatChannels {
   hashedPassword  String?
   users           ChatChannelUsers[]
   chatMessages    ChatMessages[]
+  banUsers        ChatBan[]
 }
 
 model ChatChannelUsers {
@@ -75,6 +80,23 @@ model ChatMessages {
   senderId        Int             // relation scalar field  (used in 'sender')
   content         String
   createdAt       DateTime
+}
+
+model ChatBlockMute {
+  id              Int             @id @default(autoincrement())
+  fromUser        User            @relation("Muting", fields: [fromUserId], references: [id])
+  fromUserId      Int             // relation scalar field  (used in 'fromUser')
+  toUser          User            @relation("MutedBy", fields: [toUserId], references: [id])
+  toUserId        Int             // relation scalar field  (used in 'toUser')
+  muteUntil       DateTime?
+}
+
+model ChatBan {
+  id              Int             @id @default(autoincrement())
+  channel         ChatChannels    @relation(fields: [channelId], references: [channelId])
+  channelId       Int             // relation scalar field  (used in 'channel')
+  user            User            @relation(fields: [userId], references: [id])
+  userId          Int             // relation scalar field  (used in 'user')
 }
 
 //--------------------------------------------------------------------------
