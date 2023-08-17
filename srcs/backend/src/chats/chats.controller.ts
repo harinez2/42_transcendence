@@ -213,7 +213,6 @@ export class ChatsController {
   @ApiResponse({
     status: 200,
     description: '指定したチャンネルIDの情報を返却',
-    type: { bannedUserId: number },
   })
   @Get(':channelid/ban')
   async getBans(@Param('channelid') channelId: string)
