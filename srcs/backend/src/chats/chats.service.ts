@@ -192,16 +192,40 @@ async unbanUsers(channelId: number, bannedUserId: number): Promise<ChannelInfoDt
   async muteUser(channelId: number, mutedUserId : number, muteUntil: Date)
       : Promise<ChannelInfoDto> {
     try {
-      const query = await this.prisma.chatMute.create({
-        data: {
+      const existingMute = await this.prisma.chatMute.findFirst({
+        where: {
           channelId: channelId,
           mutedUserId: mutedUserId,
-          muteUntil: muteUntil,
         },
       });
-      if (!query) {
-        throw new BadRequestException();
+
+      if (existingMute) {
+        // すでに登録がある場合、muteUntilのみ書き換える
+        const updatedMute = await this.prisma.chatMute.update({
+          where: {
+            id: existingMute.id,
+          },
+          data: {
+            muteUntil: muteUntil,
+          },
+        });
+        if (!updatedMute) {
+          throw new BadRequestException();
+        }
+      } else {
+        // 登録がない場合は新規追加
+        const createdMute = await this.prisma.chatMute.create({
+          data: {
+            channelId: channelId,
+            mutedUserId: mutedUserId,
+            muteUntil: muteUntil,
+          },
+        });
+        if (!createdMute) {
+          throw new BadRequestException();
+        }
       }
+
       return this.findById(channelId);
     } catch (e) {
       throw this.prisma.handleError(e);
