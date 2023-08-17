@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException, ForbiddenException } from '@nestjs/common';
 import { CreateChannelDto } from './dto/create-channel.dto';
 import { UpdateChannelDto } from './dto/update-channel.dto';
 import { ChannelInfoDto } from './dto/channel-info.dto';
@@ -171,6 +171,11 @@ export class ChatsService {
 
   async banUser(channelId: number, bannedUserId : number): Promise<ChannelInfoDto> {
   try {
+    // OwnerはBanできないのでチェック
+    if (await this.isChannelUsers(channelId, bannedUserId, UserType.OWNER)) {
+      throw new ForbiddenException('Owners cannot be banned.');
+    }
+
     const query = await this.prisma.chatBan.create({
       data: {
         channelId: channelId,
@@ -230,6 +235,11 @@ async unbanUsers(channelId: number, bannedUserId: number): Promise<ChannelInfoDt
   async muteUser(channelId: number, mutedUserId : number, muteUntil: Date)
       : Promise<ChannelInfoDto> {
     try {
+      // OwnerはMuteできないのでチェック
+      if (await this.isChannelUsers(channelId, mutedUserId, UserType.OWNER)) {
+        throw new ForbiddenException('Owners cannot be muted.');
+      }
+
       const existingMute = await this.prisma.chatMute.findFirst({
         where: {
           channelId: channelId,
