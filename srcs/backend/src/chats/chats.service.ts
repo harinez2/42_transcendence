@@ -153,6 +153,22 @@ export class ChatsService {
 
   // ban operations
 
+  async getBans(channelId: number) : Promise<{ bannedUsers: number[] }> {
+    try {
+      const bans = await this.prisma.chatBan.findMany({
+        where: {
+          channelId: channelId,
+        },
+      });
+
+      return {
+        bannedUsers: bans.map(ban => ban.bannedUserId),
+      };
+    } catch (e) {
+      throw this.prisma.handleError(e);
+    }
+  }
+
   async banUser(channelId: number, bannedUserId : number): Promise<ChannelInfoDto> {
   try {
     const query = await this.prisma.chatBan.create({
