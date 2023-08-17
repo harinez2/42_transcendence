@@ -204,4 +204,62 @@ export class ChatsController {
         Number(channelId), Number(leaveRequest.userId), UserType.USER);
   }
 
+  @ApiOperation({ summary: 'ユーザをBanする' })
+  @ApiParam({
+    name: 'channelid',
+    type: 'string',
+    example: '1',
+  })
+  @ApiBody({
+    schema: {
+      properties: {
+        userId: {
+          type: 'string',
+          example: '1',
+        }
+      }
+    }
+  })
+  @ApiResponse({
+    status: 200,
+    description: '指定したチャンネルIDの情報を返却',
+    type: ChannelInfoDto,
+  })
+  @Put(':channelid/ban')
+  async banUser(
+      @Param('channelid') channelId: string,
+      @Body() banRequest: { userId: string })
+      : Promise<ChannelInfoDto> {
+    return await this.chatsService.banUser(Number(channelId), Number(banRequest.userId));
+  }
+
+  @ApiOperation({ summary: 'ユーザのBanを解除する' })
+  @ApiParam({
+    name: 'channelid',
+    type: 'string',
+    example: '1',
+  })
+  @ApiBody({
+    schema: {
+      properties: {
+        userId: {
+          type: 'string',
+          example: '1',
+        }
+      }
+    }
+  })
+  @ApiResponse({
+    status: 200,
+    description: '指定したチャンネルIDの情報を返却',
+    type: ChannelInfoDto,
+  })
+  @Delete(':channelid/unban')
+  async unbanUser(
+      @Param('channelid') channelId: string,
+      @Body() unbanRequest: { userId: string })
+      : Promise<ChannelInfoDto> {
+    return await this.chatsService.unbanUsers(Number(channelId), Number(unbanRequest.userId));
+  }
+
 }

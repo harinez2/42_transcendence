@@ -59,6 +59,25 @@ CREATE TABLE "ChatMessages" (
 );
 
 -- CreateTable
+CREATE TABLE "ChatBlockMute" (
+    "id" SERIAL NOT NULL,
+    "fromUserId" INTEGER NOT NULL,
+    "toUserId" INTEGER NOT NULL,
+    "muteUntil" TIMESTAMP(3),
+
+    CONSTRAINT "ChatBlockMute_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "ChatBan" (
+    "id" SERIAL NOT NULL,
+    "channelId" INTEGER NOT NULL,
+    "userId" INTEGER NOT NULL,
+
+    CONSTRAINT "ChatBan_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "Post" (
     "id" SERIAL NOT NULL,
     "title" TEXT NOT NULL,
@@ -95,3 +114,15 @@ ALTER TABLE "ChatMessages" ADD CONSTRAINT "ChatMessages_channelId_fkey" FOREIGN 
 
 -- AddForeignKey
 ALTER TABLE "ChatMessages" ADD CONSTRAINT "ChatMessages_senderId_fkey" FOREIGN KEY ("senderId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "ChatBlockMute" ADD CONSTRAINT "ChatBlockMute_fromUserId_fkey" FOREIGN KEY ("fromUserId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "ChatBlockMute" ADD CONSTRAINT "ChatBlockMute_toUserId_fkey" FOREIGN KEY ("toUserId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "ChatBan" ADD CONSTRAINT "ChatBan_channelId_fkey" FOREIGN KEY ("channelId") REFERENCES "ChatChannels"("channelId") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "ChatBan" ADD CONSTRAINT "ChatBan_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

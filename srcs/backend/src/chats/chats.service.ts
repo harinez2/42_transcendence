@@ -10,6 +10,8 @@ import { hash } from 'bcrypt';
 export class ChatsService {
   constructor(private prisma: PrismaService) {}
 
+  // channel operations
+
   async createChannel(createChannelDto: CreateChannelDto): Promise<ChannelInfoDto> {
     const hashedPassword
         = createChannelDto.password
@@ -90,6 +92,24 @@ export class ChatsService {
     }
   }
 
+  async deleteChannel(channelId: number) : Promise<void> {
+    try {
+      const post = await this.prisma.chatChannels.delete({
+        where: { channelId: channelId },
+      });
+      if (!post) {
+        throw new NotFoundException();
+      }
+      await this.prisma.chatChannelUsers.deleteMany({
+        where: { channelId: channelId },
+      });
+    } catch (e) {
+      throw this.prisma.handleError(e);
+    }
+  }
+
+  // add/remove users
+
   async addChannelUsers(
       channelId: number, userId : number, type: UserType): Promise<ChannelInfoDto> {
     try {
@@ -131,23 +151,44 @@ export class ChatsService {
     }
   }
 
-  async deleteChannel(channelId: number) : Promise<void> {
-    try {
-      const post = await this.prisma.chatChannels.delete({
-        where: { channelId: channelId },
-      });
-      if (!post) {
-        throw new NotFoundException();
-      }
-      await this.prisma.chatChannelUsers.deleteMany({
-        where: { channelId: channelId },
-      });
-    } catch (e) {
-      throw this.prisma.handleError(e);
+  // ban operations
+
+  async banUser(channelId: number, userId : number): Promise<ChannelInfoDto> {
+  try {
+    const query = await this.prisma.chatBan.create({
+      data: {
+        channelId: channelId,
+        userId: userId,
+      },
+    });
+    if (!query) {
+      throw new BadRequestException();
     }
+    return this.findById(channelId);
+  } catch (e) {
+    throw this.prisma.handleError(e);
   }
+}
+
+async unbanUsers(channelId: number, userId: number): Promise<ChannelInfoDto> {
+  try {
+    const query = await this.prisma.chatBan.deleteMany({
+      where: {
+        channelId: channelId,
+        userId: userId,
+      },
+    });
+    if (!query) {
+      throw new NotFoundException();
+    }
+    return this.findById(channelId);
+  } catch (e) {
+    throw this.prisma.handleError(e);
+  }
+}
 
   //------------------------------------------------------------------------------
+  // private functions
 
   private async isChannelUsers(
       channelId: number, userId : number, type: UserType): Promise<boolean> {
@@ -183,6 +224,11 @@ export class ChatsService {
         type: UserType.USER,
       },
     });
+    const bans = await this.prisma.chatBan.findMany({
+      where: {
+        channelId: post.channelId,
+      },
+    });
     return {
       channelId: post.channelId.toString(),
       channelName: post.channelName,
@@ -193,7 +239,8 @@ export class ChatsService {
         owner: owner.userId,
         admin: admins.map(admin => admin.userId),
         user: users.map(user => user.userId),
-      }
+      },
+      banUsers: bans.map(user => user.userId),
     };
   }
 
