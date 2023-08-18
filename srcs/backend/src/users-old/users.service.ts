@@ -7,27 +7,27 @@ import { UpdateUserDto } from './dto/update-user.dto';
 export class UsersService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(createUserDto: CreateUserDto) {
-    return await this.prisma.user.create({
-      data: createUserDto,
-    });
-  }
-
   async findAll() {
-    return await this.prisma.user.findMany();
+    return this.prisma.user.findMany();
   }
 
   async findOne(id: number) {
     const user = await this.prisma.user.findUnique({
-      where: { id: id },
+      where: { id },
     });
     if (!user) throw new NotFoundException();
     return user;
   }
 
+  async create(createUserDto: CreateUserDto) {
+    return this.prisma.user.create({
+      data: createUserDto,
+    });
+  }
+
   async update(id: number, updateUserDto: UpdateUserDto) {
     const user = await this.prisma.user.update({
-      where: { id: id },
+      where: { id },
       data: updateUserDto,
     });
     if (!user) throw new NotFoundException();
@@ -36,21 +36,15 @@ export class UsersService {
 
   async remove(id: number) {
     const user = await this.prisma.user.delete({
-      where: { id: id },
+      where: { id },
     });
     if (!user) throw new NotFoundException();
     return user;
   }
 
-  async findUsername(username: string) {
-    return await this.prisma.user.findFirst({
-      where: { username: username },
-    });
-  }
-
-  async findStaff(username: string) {
-    return await this.prisma.user.findFirst({
-      where: { username: username, staff: true },
+  async findOneByUsername(username: string) {
+    return this.prisma.user.findUnique({
+      where: { username },
     });
   }
 }
