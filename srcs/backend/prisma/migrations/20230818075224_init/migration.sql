@@ -113,6 +113,9 @@ CREATE UNIQUE INDEX "UserBlock_userId_blockedUserId_key" ON "UserBlock"("userId"
 CREATE UNIQUE INDEX "ChatChannels_channelName_key" ON "ChatChannels"("channelName");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "ChatChannelUsers_channelId_userId_type_key" ON "ChatChannelUsers"("channelId", "userId", "type");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "ChatBan_channelId_bannedUserId_key" ON "ChatBan"("channelId", "bannedUserId");
 
 -- CreateIndex
