@@ -60,12 +60,24 @@ export class ChatsGateway {
   @SubscribeMessage('message')
   async handleMessage(@MessageBody() data: MessageDto) {
     try {
+      // ミュートされたユーザの発言の場合は例外を投げる
+      const muteInfo = await this.prisma.chatMute.findUnique({
+        where: {
+          channelId_mutedUserId: {
+            channelId: data.channelId,
+            mutedUserId: data.senderId,
+          },
+        },
+      });
+      if (muteInfo && muteInfo.muteUntil > new Date()) {
+        throw new WsException('Cannot send the message because the user is muted.');
+      }
+
       console.log(`channelId: ${data.channelId}, senderId: ${data.senderId}, ` +
         `content: ${data.content}`);
 
       // メッセージをブロードキャスト
       this.broadcast('message', data);
-
       // DBに保存
       await this.prisma.chatMessages.create({
         data: {

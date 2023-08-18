@@ -94,15 +94,36 @@ export class ChatsService {
 
   async deleteChannel(channelId: number) : Promise<void> {
     try {
-      const post = await this.prisma.chatChannels.delete({
+      // ユーザ権限、メッセージ、Ban、Muteの各テーブルを削除
+      const deleteChatChannelUsers = this.prisma.chatChannelUsers.deleteMany({
         where: { channelId: channelId },
       });
-      if (!post) {
+      const deleteChatMessages = this.prisma.chatMessages.deleteMany({
+        where: { channelId: channelId },
+      });
+      const deleteChatBan = this.prisma.chatBan.deleteMany({
+        where: { channelId: channelId },
+      });
+      const deleteChatMute = this.prisma.chatMute.deleteMany({
+        where: { channelId: channelId },
+      });
+
+      // チャンネル削除
+      const deleteChatChannels = this.prisma.chatChannels.delete({
+        where: { channelId: channelId },
+      });
+
+      // 上記の各処理を1つのトランザクションにまとめる
+      const transaction = await this.prisma.$transaction([
+        deleteChatChannelUsers,
+        deleteChatMessages,
+        deleteChatBan,
+        deleteChatMute,
+        deleteChatChannels,
+      ]);
+      if (!transaction) {
         throw new NotFoundException();
       }
-      await this.prisma.chatChannelUsers.deleteMany({
-        where: { channelId: channelId },
-      });
     } catch (e) {
       throw this.prisma.handleError(e);
     }
@@ -113,6 +134,25 @@ export class ChatsService {
   async addChannelUsers(
       channelId: number, userId : number, type: UserType): Promise<ChannelInfoDto> {
     try {
+      // Banされているユーザでないかをチェック
+      const ban = await this.prisma.chatBan.findUnique({
+        where: {
+          channelId_bannedUserId: {
+            channelId: channelId,
+            bannedUserId: userId,
+          },
+        },
+      });
+      if (ban) {
+        throw new ForbiddenException('The specified user is banned.');
+      }
+      // Admin付与時、Userであること
+      if (type === UserType.ADMIN
+          && ! await this.isChannelUsers(channelId, userId, UserType.USER)) {
+        throw new ForbiddenException('The user you are trying to grant Admin privileges to is not in User.');
+      }
+
+      // 登録されていない場合のみ新規追加
       const ischannel = await this.isChannelUsers(channelId, userId, type);
       if (!ischannel) {
         const query = await this.prisma.chatChannelUsers.create({
@@ -135,11 +175,22 @@ export class ChatsService {
   async removeChannelUsers(
       channelId: number, userId: number, type: UserType): Promise<ChannelInfoDto> {
     try {
+      const isChannelOwner = await this.isChannelUsers(channelId, userId, UserType.OWNER);
+      // Ownerは退室できないのでチェック
+      if (type === UserType.USER && isChannelOwner) {
+        throw new ForbiddenException('The owner cannot leave the channel.');
+      }
+      // OwnerはAdminから外れられないのでチェック
+      if (type === UserType.ADMIN && isChannelOwner) {
+        throw new ForbiddenException('The owner cannot be removed from the admins.');
+      }
+
+      // ユーザを削除
+      // typeを指定していないので、ADMIN、USERの両方が削除される
       const query = await this.prisma.chatChannelUsers.deleteMany({
         where: {
           channelId: channelId,
           userId: userId,
-          type: type,
         },
       });
       if (!query) {
@@ -173,9 +224,10 @@ export class ChatsService {
   try {
     // OwnerはBanできないのでチェック
     if (await this.isChannelUsers(channelId, bannedUserId, UserType.OWNER)) {
-      throw new ForbiddenException('Owners cannot be banned.');
+      throw new ForbiddenException('The owner cannot be banned.');
     }
 
+    // Banに追加
     const query = await this.prisma.chatBan.create({
       data: {
         channelId: channelId,
@@ -185,6 +237,10 @@ export class ChatsService {
     if (!query) {
       throw new BadRequestException();
     }
+
+    // チャンネルから追い出し
+    await this.removeChannelUsers(channelId, bannedUserId, UserType.USER);
+
     return this.findById(channelId);
   } catch (e) {
     throw this.prisma.handleError(e);
@@ -237,7 +293,7 @@ async unbanUsers(channelId: number, bannedUserId: number): Promise<ChannelInfoDt
     try {
       // OwnerはMuteできないのでチェック
       if (await this.isChannelUsers(channelId, mutedUserId, UserType.OWNER)) {
-        throw new ForbiddenException('Owners cannot be muted.');
+        throw new ForbiddenException('The owner cannot be muted.');
       }
 
       const existingMute = await this.prisma.chatMute.findFirst({
