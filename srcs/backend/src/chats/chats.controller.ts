@@ -19,8 +19,8 @@ export class ChatsController {
     type: ChannelInfoDto,
   })
   @Post()
-  createChannel(@Body() createChannelDto: CreateChannelDto): Promise<ChannelInfoDto> {
-    return this.chatsService.createChannel(createChannelDto);
+  async createChannel(@Body() createChannelDto: CreateChannelDto): Promise<ChannelInfoDto> {
+    return await this.chatsService.createChannel(createChannelDto);
   }
 
   @ApiOperation({ summary: 'チャンネル一覧を取得する' })
@@ -30,8 +30,8 @@ export class ChatsController {
     type: [ChannelInfoDto],
   })
   @Get()
-  findAllChannel() {
-    return this.chatsService.findAllChannel();
+  async findAllChannel() {
+    return await this.chatsService.findAllChannel();
   }
 
   @ApiOperation({ summary: '指定したチャンネルの情報を取得する' })
