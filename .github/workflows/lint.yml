@@ -1,0 +1,35 @@
+name: Lint check
+
+on: [push, pull_request]
+
+jobs:
+  lint-format:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        directory: ['srcs/frontend', 'srcs/backend']
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Setup Node
+      uses: actions/setup-node@v3
+      with:
+       node-version: 18
+
+    - name: Install dependencies
+      run: |
+        cd ${{ matrix.directory }}
+        npm ci
+
+    - name: Lint
+      run: |
+        cd ${{ matrix.directory }}
+        npm run lint
+
+    - name: Format Check
+      run: |
+        cd ${{ matrix.directory }}
+        npm run format:check
