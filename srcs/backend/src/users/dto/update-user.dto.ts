@@ -1,4 +1,6 @@
 export class UpdateUserDto {
-  username?: string;
   email?: string;
+  username?: string;
+  twoFactorAuthEnabled?: boolean;
+  twoFactorAuthSecret?: string;
 }

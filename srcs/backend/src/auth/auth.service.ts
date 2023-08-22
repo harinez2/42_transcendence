@@ -2,24 +2,24 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
-import { UserService } from '../user/user.service';
+import { UsersService } from '../users/users.service';
 import * as bcrypt from 'bcrypt';
 import { Totp } from 'time2fa';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly userService: UserService,
+    private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
   ) {}
 
   async findOrCreateUser(profile: any) {
-    const user = await this.userService.findUsername(profile.username);
+    const user = await this.usersService.findUsername(profile.username);
     if (user) {
       return user;
     }
 
-    const newUser = await this.userService.create({
+    const newUser = await this.usersService.create({
       username: profile.username,
       email: profile.emails[0].value,
       profile: {
@@ -30,7 +30,7 @@ export class AuthService {
   }
 
   async validateUser(userId: number) {
-    const user = await this.userService.findOne(userId);
+    const user = await this.usersService.findOne(userId);
     if (!user) {
       throw new UnauthorizedException();
     }
@@ -42,11 +42,11 @@ export class AuthService {
   }
 
   async findUser(userId: number) {
-    return await this.userService.findOne(userId);
+    return await this.usersService.findOne(userId);
   }
 
   async validateStaff(username: string, password: string) {
-    const user = await this.userService.findStaff(username);
+    const user = await this.usersService.findStaff(username);
     if (user && bcrypt.compareSync(password, user.password)) {
       return this.jwtService.sign({ sub: user.id });
     }
@@ -63,7 +63,7 @@ export class AuthService {
       user: user.username,
     });
 
-    this.userService.update(user.id, { twoFactorAuthSecret: secret });
+    this.usersService.update(user.id, { twoFactorAuthSecret: secret });
     return url;
   }
 
@@ -77,7 +77,7 @@ export class AuthService {
       throw new HttpException("2FA code doesn't match", HttpStatus.BAD_REQUEST);
     }
 
-    this.userService.update(user.id, { twoFactorAuthEnabled: true });
+    this.usersService.update(user.id, { twoFactorAuthEnabled: true });
   }
 
   validate2FACode(user: User, code: string) {
