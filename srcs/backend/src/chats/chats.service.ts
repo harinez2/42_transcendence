@@ -1,7 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { CreateChannelDto } from './dto/create-channel.dto';
+import { UpdateChannelDto } from './dto/update-channel.dto';
 import { ChannelInfoDto } from './dto/channel-info.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { Publicity, UserType } from './chats.interface';
 import { hash } from 'bcrypt';
 
 @Injectable()
@@ -12,49 +14,186 @@ export class ChatsService {
     const hashedPassword
         = createChannelDto.password
           ? await hash(createChannelDto.password, 10) as string : null;
-  
+
     try {
-      const createdPost = await this.prisma.chatChannels.create({
+      // ChatChannelsテーブルとChatChannelUsersテーブルを同時に更新
+      const createdPost = await this.prisma.chatChannelUsers.create({
         data: {
-          channelName: createChannelDto.channelName,
-          owner: createChannelDto.owner,
-          admin: createChannelDto.owner,
-          createdAt: new Date(),
-          channelType: createChannelDto.channelType,
-          hashedPassword: hashedPassword,
+          channel: {
+            create: {
+              channelName: createChannelDto.channelName,
+              createdAt: new Date(),
+              channelType: createChannelDto.channelType,
+              hashedPassword: hashedPassword,
+            }
+          },
+          user: {
+            connect: { id: createChannelDto.ownerId },
+          },
+          type: UserType.OWNER,
         },
       });
-      return this.createChannelInfoDto(createdPost);
-    } catch (error) {
-      console.error('Failed to create channel.', error);
-      throw error;
+
+      this.addChannelUsers(createdPost.channelId, createChannelDto.ownerId, UserType.ADMIN);
+      this.addChannelUsers(createdPost.channelId, createChannelDto.ownerId, UserType.USER);
+      return this.findById(createdPost.channelId);
+    } catch (e) {
+      throw this.prisma.handleError(e);
     }
   }
 
   async findAllChannel(): Promise<ChannelInfoDto[]> {
-    const posts = await this.prisma.chatChannels.findMany();
-    return posts.map((post) => this.createChannelInfoDto(post));
+    try {
+      const posts = await this.prisma.chatChannels.findMany();
+      const channelInfoPromises = posts.map((post) => this.createChannelInfoDto(post));
+      return await Promise.all(channelInfoPromises);
+    } catch (e) {
+      throw this.prisma.handleError(e);
+    }
   }
 
   async findById(channelId: number): Promise<ChannelInfoDto> {
-    const post = await this.prisma.chatChannels.findUnique({
-      where: { channelId: channelId },
-    });
-    if (post) {
+    try {
+      const post = await this.prisma.chatChannels.findUnique({
+        where: { channelId: channelId },
+      });
+      if (!post) {
+        throw new NotFoundException();
+      }
       return this.createChannelInfoDto(post);
+    } catch (e) {
+      throw this.prisma.handleError(e);
     }
-    return undefined;
   }
 
-  private createChannelInfoDto(post: any): ChannelInfoDto {
+  async updateChannel(channelId: number, updateChannelDto: UpdateChannelDto)
+      : Promise<ChannelInfoDto> {
+    const hashedPassword
+    = updateChannelDto.password
+      ? await hash(updateChannelDto.password, 10) as string : null;
+
+    try {
+      const post = await this.prisma.chatChannels.update({
+        where: { channelId: channelId },
+        data: {
+          channelName: updateChannelDto.channelName,
+          channelType: updateChannelDto.channelType,
+          hashedPassword: hashedPassword,
+        },
+      });
+      if (!post) {
+        throw new NotFoundException();
+      }
+      return this.createChannelInfoDto(post);
+    } catch (e) {
+      throw this.prisma.handleError(e);
+    }
+  }
+
+  async addChannelUsers(
+      channelId: number, userId : number, type: UserType): Promise<ChannelInfoDto> {
+    try {
+      const ischannel = await this.isChannelUsers(channelId, userId, type);
+      if (!ischannel) {
+        const query = await this.prisma.chatChannelUsers.create({
+          data: {
+            channelId: channelId,
+            userId: userId,
+            type: type,
+          },
+        });
+        if (!query) {
+          throw new BadRequestException();
+        }
+      }
+      return this.findById(channelId);
+    } catch (e) {
+      throw this.prisma.handleError(e);
+    }
+  }
+
+  async removeChannelUsers(
+      channelId: number, userId: number, type: UserType): Promise<ChannelInfoDto> {
+    try {
+      const query = await this.prisma.chatChannelUsers.deleteMany({
+        where: {
+          channelId: channelId,
+          userId: userId,
+          type: type,
+        },
+      });
+      if (!query) {
+        throw new NotFoundException();
+      }
+      return this.findById(channelId);
+    } catch (e) {
+      throw this.prisma.handleError(e);
+    }
+  }
+
+  async deleteChannel(channelId: number) : Promise<void> {
+    try {
+      const post = await this.prisma.chatChannels.delete({
+        where: { channelId: channelId },
+      });
+      if (!post) {
+        throw new NotFoundException();
+      }
+      await this.prisma.chatChannelUsers.deleteMany({
+        where: { channelId: channelId },
+      });
+    } catch (e) {
+      throw this.prisma.handleError(e);
+    }
+  }
+
+  //------------------------------------------------------------------------------
+
+  private async isChannelUsers(
+      channelId: number, userId : number, type: UserType): Promise<boolean> {
+    const query = await this.prisma.chatChannelUsers.findFirst({
+      where: {
+        channelId: channelId,
+        userId: userId,
+        type: type,
+      },
+    });
+    if (query)
+      return true;
+    else
+      return false;
+  }
+
+  private async createChannelInfoDto(post: any): Promise<ChannelInfoDto> {
+    const owner = await this.prisma.chatChannelUsers.findFirst({
+      where: {
+        channelId: post.channelId,
+        type: UserType.OWNER,
+      },
+    });
+    const admins = await this.prisma.chatChannelUsers.findMany({
+      where: {
+        channelId: post.channelId,
+        type: UserType.ADMIN,
+      },
+    });
+    const users = await this.prisma.chatChannelUsers.findMany({
+      where: {
+        channelId: post.channelId,
+        type: UserType.USER,
+      },
+    });
     return {
       channelId: post.channelId.toString(),
-      owner: post.owner,
-      admin: post.admin,
-      users: post.users,
+      channelName: post.channelName,
       createdAt: post.createdAt.toISOString(),
       channelType: post.channelType,
       isPassword: post.hashedPassword ? true : false,
+      users: {
+        owner: owner.userId,
+        admin: admins.map(admin => admin.userId),
+        user: users.map(user => user.userId),
+      }
     };
   }
 

@@ -1,3 +1,9 @@
+-- CreateEnum
+CREATE TYPE "Publicity" AS ENUM ('PUBLIC', 'PRIVATE');
+
+-- CreateEnum
+CREATE TYPE "UserType" AS ENUM ('OWNER', 'ADMIN', 'USER');
+
 -- CreateTable
 CREATE TABLE "User" (
     "id" SERIAL NOT NULL,
@@ -24,21 +30,28 @@ CREATE TABLE "Profile" (
 CREATE TABLE "ChatChannels" (
     "channelId" SERIAL NOT NULL,
     "channelName" TEXT NOT NULL,
-    "owner" TEXT NOT NULL,
-    "admin" TEXT NOT NULL,
-    "users" TEXT[],
     "createdAt" TIMESTAMP(3) NOT NULL,
-    "channelType" TEXT NOT NULL,
+    "channelType" "Publicity" NOT NULL,
     "hashedPassword" TEXT,
 
     CONSTRAINT "ChatChannels_pkey" PRIMARY KEY ("channelId")
 );
 
 -- CreateTable
+CREATE TABLE "ChatChannelUsers" (
+    "channelUserId" SERIAL NOT NULL,
+    "channelId" INTEGER NOT NULL,
+    "userId" INTEGER NOT NULL,
+    "type" "UserType" NOT NULL,
+
+    CONSTRAINT "ChatChannelUsers_pkey" PRIMARY KEY ("channelUserId")
+);
+
+-- CreateTable
 CREATE TABLE "ChatMessages" (
     "messageId" SERIAL NOT NULL,
     "channelId" INTEGER NOT NULL,
-    "sender" TEXT NOT NULL,
+    "senderId" INTEGER NOT NULL,
     "content" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL,
 
@@ -65,5 +78,20 @@ CREATE UNIQUE INDEX "User_username_key" ON "User"("username");
 -- CreateIndex
 CREATE UNIQUE INDEX "Profile_userId_key" ON "Profile"("userId");
 
+-- CreateIndex
+CREATE UNIQUE INDEX "ChatChannels_channelName_key" ON "ChatChannels"("channelName");
+
 -- AddForeignKey
 ALTER TABLE "Profile" ADD CONSTRAINT "Profile_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "ChatChannelUsers" ADD CONSTRAINT "ChatChannelUsers_channelId_fkey" FOREIGN KEY ("channelId") REFERENCES "ChatChannels"("channelId") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "ChatChannelUsers" ADD CONSTRAINT "ChatChannelUsers_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "ChatMessages" ADD CONSTRAINT "ChatMessages_channelId_fkey" FOREIGN KEY ("channelId") REFERENCES "ChatChannels"("channelId") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "ChatMessages" ADD CONSTRAINT "ChatMessages_senderId_fkey" FOREIGN KEY ("senderId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

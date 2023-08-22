@@ -23,6 +23,8 @@ model User {
   profile              Profile?
   twoFactorAuthEnabled Boolean  @default(false)
   twoFactorAuthSecret  String?
+  channelUsers         ChatChannelUsers[]
+  chatMessages         ChatMessages[]
 }
 
 model Profile {
@@ -35,23 +37,44 @@ model Profile {
 //--------------------------------------------------------------------------
 // chat
 
+enum Publicity {
+  PUBLIC
+  PRIVATE
+}
+
+enum UserType {
+  OWNER
+  ADMIN
+  USER
+}
+
 model ChatChannels {
-  channelId      Int      @id @default(autoincrement())
-  channelName    String
-  owner          String
-  admin          String
-  users          String[]
-  createdAt      DateTime
-  channelType    String
-  hashedPassword String?
+  channelId       Int             @id @default(autoincrement())
+  channelName     String          @unique
+  createdAt       DateTime
+  channelType     Publicity
+  hashedPassword  String?
+  users           ChatChannelUsers[]
+  chatMessages    ChatMessages[]
+}
+
+model ChatChannelUsers {
+  channelUserId   Int             @id @default(autoincrement())
+  channel         ChatChannels    @relation(fields: [channelId], references: [channelId])
+  channelId       Int             // relation scalar field  (used in 'channel')
+  user            User            @relation(fields: [userId], references: [id])
+  userId          Int             // relation scalar field  (used in 'user')
+  type            UserType
 }
 
 model ChatMessages {
-  messageId Int      @id @default(autoincrement())
-  channelId Int
-  sender    String
-  content   String
-  createdAt DateTime
+  messageId       Int             @id @default(autoincrement())
+  channel         ChatChannels    @relation(fields: [channelId], references: [channelId])
+  channelId       Int             // relation scalar field  (used in 'channel')
+  sender          User            @relation(fields: [senderId], references: [id])
+  senderId        Int             // relation scalar field  (used in 'sender')
+  content         String
+  createdAt       DateTime
 }
 
 //--------------------------------------------------------------------------
