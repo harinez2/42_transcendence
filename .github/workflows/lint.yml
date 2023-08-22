@@ -20,16 +20,13 @@ jobs:
        node-version: 18
 
     - name: Install dependencies
-      run: |
-        cd ${{ matrix.directory }}
-        npm ci
+      run: npm ci
+      working-directory: ${{ matrix.directory }}
 
     - name: Lint
-      run: |
-        cd ${{ matrix.directory }}
-        npm run lint
+      run: npm run lint
+      working-directory: ${{ matrix.directory }}
 
     - name: Format Check
-      run: |
-        cd ${{ matrix.directory }}
-        npm run format:check
+      run: npm run format:check
+      working-directory: ${{ matrix.directory }}
