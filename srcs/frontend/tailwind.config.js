@@ -28,4 +28,25 @@ module.exports = {
       },
     },
   },
+  plugins: [
+    function ({ addUtilities }) {
+      const newUtilities = {
+        /* Chrome, Safari, Edge, Opera */
+        ".no-spin::-webkit-inner-spin-button": {
+          "-webkit-appearance": "none",
+          margin: "0",
+        },
+        ".no-spin::-webkit-outer-spin-button": {
+          "-webkit-appearance": "none",
+          margin: "0",
+        },
+        /* Firefox */
+        ".no-spin": {
+          "-moz-appearance": "textfield",
+        },
+      };
+
+      addUtilities(newUtilities, ["responsive", "hover"]);
+    },
+  ],
 };
