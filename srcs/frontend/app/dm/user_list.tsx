@@ -34,7 +34,7 @@ const UserComponent = ({
             height={30}
             alt=""
           />
-          <span className="ml-3 shrink-0 pr-8">{user_name}</span>
+          <span className="ml-3 shrink-0 pr-8 text-xl">{user_name}</span>
         </a>
       </li>
     </>
@@ -51,7 +51,7 @@ const UserListComponent = ({
   onSelectChannel: (c: DmChannelType) => void; // eslint-disable-line no-unused-vars
 }) => {
   return (
-    <div className="h-full overflow-y-auto bg-gray-800 px-3 py-4 ">
+    <div className="relative h-full overflow-y-auto bg-gray-800 px-3 py-4">
       <ul className="divide-y divide-gray-500/30">
         {channels?.map((c) => (
           <UserComponent
@@ -62,6 +62,13 @@ const UserListComponent = ({
           />
         ))}
       </ul>
+      <div className="fixed bottom-0 left-0 mb-4 w-full px-4">
+        <button className="h-[38px] w-[160px] items-center justify-center rounded-[5px] bg-neutral-400 px-[27px] py-[5px]">
+          <div className="text-center text-xl font-normal tracking-widest text-white">
+            Join channel
+          </div>
+        </button>
+      </div>
     </div>
   );
 };

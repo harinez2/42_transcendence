@@ -91,6 +91,15 @@ const DirectMessageUI = () => {
     socketRef.current.emit("getPastMessages", { channelId: channel.channelId });
   };
 
+  // メッセージ発言ハンドラ
+  const handleSendMessage = (channel: DmChannelType, message: string) => {
+    socketRef.current.emit("message", {
+      channelId: channel.channelId,
+      senderId: profile?.userId,
+      content: message,
+    });
+  };
+
   return (
     <div className="flex">
       <aside
@@ -106,7 +115,11 @@ const DirectMessageUI = () => {
           />
         )}
       </aside>
-      <MessageList messages={messages} />
+      <MessageList
+        channel={selectedChannel}
+        messages={messages}
+        onSendMessage={handleSendMessage}
+      />
       {error != null && <p>{error}</p>}
     </div>
   );
