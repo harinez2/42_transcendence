@@ -32,14 +32,11 @@ const MessageList = ({ messages }: { messages: DmMessageType[] }) => {
     <div className="container bg-gray-700">
       <div className="grow  flex-col-reverse divide-y divide-gray-500/30 px-4">
         {messages?.map((message) => (
-          <MessageComponent
-            key={message.channelId}
-            message={message}
-          />
+          <MessageComponent key={message.channelId} message={message} />
         ))}
       </div>
     </div>
   );
-}
+};
 
 export default MessageList;

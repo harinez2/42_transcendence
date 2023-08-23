@@ -38,13 +38,15 @@ export class DmsGateway {
 
     // clientsから削除
     const indexToRemove: number = this.clients.indexOf(client);
-    if (indexToRemove !== -1)
-      this.clients.splice(indexToRemove, 1);
+    if (indexToRemove !== -1) this.clients.splice(indexToRemove, 1);
   }
 
   // 過去のチャットログをDBから取得
   @SubscribeMessage('getPastMessages')
-  async handleGetPastMessages(@ConnectedSocket() client: Socket, @MessageBody() data: any) {
+  async handleGetPastMessages(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() data: any,
+  ) {
     try {
       const posts = await this.prisma.dmMessages.findMany({
         where: { channelId: Number(data.channelId) },
@@ -53,8 +55,7 @@ export class DmsGateway {
       for (let post of posts) {
         client.emit('message', post);
       }
-
-    } catch(e) {
+    } catch (e) {
       throw new WsException(e.message);
     }
   }
@@ -63,8 +64,10 @@ export class DmsGateway {
   @SubscribeMessage('message')
   async handleMessage(@MessageBody() data: AddMessageDto) {
     try {
-      console.log(`channelId: ${data.channelId}, senderId: ${data.senderId}, ` +
-        `content: ${data.content}`);
+      console.log(
+        `channelId: ${data.channelId}, senderId: ${data.senderId}, ` +
+          `content: ${data.content}`,
+      );
 
       // DBに保存
       const createdMessage = await this.prisma.dmMessages.create({
@@ -79,7 +82,7 @@ export class DmsGateway {
       const addedMessage = await this.findMessageById(createdMessage.messageId);
       // メッセージをブロードキャスト
       this.broadcast('message', addedMessage);
-    } catch(e) {
+    } catch (e) {
       throw new WsException(e.message);
     }
   }
@@ -106,5 +109,4 @@ export class DmsGateway {
       throw this.prisma.handleError(e);
     }
   }
-
 }

@@ -25,10 +25,7 @@ export class DmsService {
     try {
       const channel = await this.prisma.dmChannels.findMany({
         where: {
-          OR: [
-            { user1Id: userId },
-            { user2Id: userId },
-          ],
+          OR: [{ user1Id: userId }, { user2Id: userId }],
         },
         include: {
           user1: true,
