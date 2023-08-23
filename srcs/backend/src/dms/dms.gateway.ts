@@ -52,7 +52,7 @@ export class DmsGateway {
         where: { channelId: Number(data.channelId) },
         include: { sender: true },
       });
-      for (let post of posts) {
+      for (const post of posts) {
         client.emit('message', post);
       }
     } catch (e) {
@@ -90,7 +90,7 @@ export class DmsGateway {
   //-------------------------------------------------------------------------
 
   private broadcast(event: string, data: MessageDto) {
-    for (let c of this.clients) {
+    for (const c of this.clients) {
       c.emit(event, data);
     }
   }
