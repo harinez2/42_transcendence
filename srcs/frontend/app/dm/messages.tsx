@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { DmMessageType } from "./types";
+import { DmChannelType, DmMessageType } from "./types";
 
 const MessageComponent = ({ message }: { message: DmMessageType }) => {
   return (
@@ -27,13 +27,36 @@ const MessageComponent = ({ message }: { message: DmMessageType }) => {
   );
 };
 
-const MessageList = ({ messages }: { messages: DmMessageType[] }) => {
+const MessageList = ({
+  channel,
+  messages,
+  onSendMessage,
+}: {
+  channel: DmChannelType | null;
+  messages: DmMessageType[];
+  onSendMessage: (channel: DmChannelType, message: string) => void; // eslint-disable-line no-unused-vars
+}) => {
+  const handleSendMessage = (event: any) => {
+    if (event.key === "Enter" && channel != null) {
+      onSendMessage(channel, event.target.value);
+      event.target.value = "";
+    }
+  };
+
   return (
-    <div className="container bg-gray-700">
-      <div className="grow  flex-col-reverse divide-y divide-gray-500/30 px-4">
+    <div className="container relative w-full bg-gray-700">
+      <div className="grow flex-col-reverse divide-y divide-gray-500/30 px-4">
         {messages?.map((message) => (
           <MessageComponent key={message.channelId} message={message} />
         ))}
+      </div>
+      <div className="fixed bottom-0 mx-4 mb-4 w-full">
+        <input
+          type="text"
+          className="h-[51px] w-full rounded-[5px] bg-zinc-600 px-[17.75px] text-2xl font-normal tracking-widest text-zinc-500"
+          placeholder="Send a message"
+          onKeyDown={handleSendMessage}
+        />
       </div>
     </div>
   );
