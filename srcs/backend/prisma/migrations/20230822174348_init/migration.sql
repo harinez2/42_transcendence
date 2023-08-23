@@ -87,14 +87,23 @@ CREATE TABLE "ChatMute" (
 );
 
 -- CreateTable
-CREATE TABLE "Post" (
-    "id" SERIAL NOT NULL,
-    "title" TEXT NOT NULL,
-    "content" TEXT NOT NULL,
-    "author" TEXT NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+CREATE TABLE "DmChannels" (
+    "channelId" SERIAL NOT NULL,
+    "user1Id" INTEGER NOT NULL,
+    "user2Id" INTEGER NOT NULL,
 
-    CONSTRAINT "Post_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "DmChannels_pkey" PRIMARY KEY ("channelId")
+);
+
+-- CreateTable
+CREATE TABLE "DmMessages" (
+    "messageId" SERIAL NOT NULL,
+    "channelId" INTEGER NOT NULL,
+    "senderId" INTEGER NOT NULL,
+    "content" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "DmMessages_pkey" PRIMARY KEY ("messageId")
 );
 
 -- CreateIndex
@@ -153,3 +162,15 @@ ALTER TABLE "ChatMute" ADD CONSTRAINT "ChatMute_channelId_fkey" FOREIGN KEY ("ch
 
 -- AddForeignKey
 ALTER TABLE "ChatMute" ADD CONSTRAINT "ChatMute_mutedUserId_fkey" FOREIGN KEY ("mutedUserId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "DmChannels" ADD CONSTRAINT "DmChannels_user1Id_fkey" FOREIGN KEY ("user1Id") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "DmChannels" ADD CONSTRAINT "DmChannels_user2Id_fkey" FOREIGN KEY ("user2Id") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "DmMessages" ADD CONSTRAINT "DmMessages_channelId_fkey" FOREIGN KEY ("channelId") REFERENCES "DmChannels"("channelId") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "DmMessages" ADD CONSTRAINT "DmMessages_senderId_fkey" FOREIGN KEY ("senderId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
