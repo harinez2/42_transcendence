@@ -1,7 +1,6 @@
-
 export type ProfileType = {
   userId: string;
-  bio: string
+  bio: string;
 };
 
 export type DmChannelType = {
@@ -31,4 +30,4 @@ export type DmMessageType = {
   senderId: number;
   content: string;
   createdAt: Date;
-}
+};

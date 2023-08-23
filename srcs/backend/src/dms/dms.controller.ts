@@ -1,8 +1,21 @@
-import { Controller, Get, Post, Body, Param, ParseIntPipe } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { DmsService } from './dms.service';
 import { CreateDmChannelDto } from './dto/create-dm-channel.dto';
 import { DmChannelInfoDto } from './dto/dm-channel-info.dto';
-import { ApiOperation, ApiBody, ApiResponse, ApiTags, ApiParam } from '@nestjs/swagger';
+import {
+  ApiOperation,
+  ApiBody,
+  ApiResponse,
+  ApiTags,
+  ApiParam,
+} from '@nestjs/swagger';
 
 @Controller('dms')
 @ApiTags('dms')
@@ -17,11 +30,15 @@ export class DmsController {
     type: Number,
   })
   @Post()
-  async createChannel(@Body() createChannelDto: CreateDmChannelDto): Promise<number> {
+  async createChannel(
+    @Body() createChannelDto: CreateDmChannelDto,
+  ): Promise<number> {
     return await this.dmsService.createChannel(createChannelDto);
   }
 
-  @ApiOperation({ summary: '指定したユーザIDが含まれるチャンネル情報を取得する' })
+  @ApiOperation({
+    summary: '指定したユーザIDが含まれるチャンネル情報を取得する',
+  })
   @ApiParam({
     name: 'userid',
     type: 'string',
@@ -33,7 +50,9 @@ export class DmsController {
     type: Array<DmChannelInfoDto>,
   })
   @Get(':userid')
-  async findById(@Param('userid', ParseIntPipe) userid: number): Promise<DmChannelInfoDto[]> {
+  async findById(
+    @Param('userid', ParseIntPipe) userid: number,
+  ): Promise<DmChannelInfoDto[]> {
     return await this.dmsService.findByUserId(userid);
   }
 }

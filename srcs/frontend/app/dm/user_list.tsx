@@ -1,20 +1,23 @@
 import Image from "next/image";
 import { ProfileType, DmChannelType } from "./types";
 
-const UserComponent = ({ profile, channel, onSelectChannel }
-  :{
-    profile: ProfileType,
-    channel: DmChannelType,
-    onSelectChannel: (c: DmChannelType) => void  // eslint-disable-line no-unused-vars
-  }) => {
-
+const UserComponent = ({
+  profile,
+  channel,
+  onSelectChannel,
+}: {
+  profile: ProfileType;
+  channel: DmChannelType;
+  onSelectChannel: (c: DmChannelType) => void; // eslint-disable-line no-unused-vars
+}) => {
   const handleClick = () => {
     onSelectChannel(channel);
   };
 
-  const user_name = channel.user1.id === Number(profile.userId)
-    ? channel.user2.username
-    : channel.user1.username;
+  const user_name =
+    channel.user1.id === Number(profile.userId)
+      ? channel.user2.username
+      : channel.user1.username;
 
   return (
     <>
@@ -38,30 +41,29 @@ const UserComponent = ({ profile, channel, onSelectChannel }
   );
 };
 
-const UserListComponent = ({ profile, channels, onSelectChannel }
-  : {
-    profile: ProfileType,
-    channels: DmChannelType[],
-    onSelectChannel: (c: DmChannelType) => void  // eslint-disable-line no-unused-vars
-  }) => {
-    
-  console.log("Profile:", profile);
-  console.log("Channels:", channels);
-  console.log("onSelectChannel Function:", onSelectChannel);
-
-
-  return (<div className="h-full overflow-y-auto bg-gray-800 px-3 py-4 ">
-    <ul className="divide-y divide-gray-500/30">
-      {channels?.map((c) => (
-        <UserComponent
-          key={c.channelId} 
-          profile={profile}
-          channel={c}
-          onSelectChannel={onSelectChannel}
-        />
-      ))}
-    </ul>
-  </div>);
-}
+const UserListComponent = ({
+  profile,
+  channels,
+  onSelectChannel,
+}: {
+  profile: ProfileType;
+  channels: DmChannelType[];
+  onSelectChannel: (c: DmChannelType) => void; // eslint-disable-line no-unused-vars
+}) => {
+  return (
+    <div className="h-full overflow-y-auto bg-gray-800 px-3 py-4 ">
+      <ul className="divide-y divide-gray-500/30">
+        {channels?.map((c) => (
+          <UserComponent
+            key={c.channelId}
+            profile={profile}
+            channel={c}
+            onSelectChannel={onSelectChannel}
+          />
+        ))}
+      </ul>
+    </div>
+  );
+};
 
 export default UserListComponent;
