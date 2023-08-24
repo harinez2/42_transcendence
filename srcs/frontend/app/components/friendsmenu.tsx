@@ -8,7 +8,7 @@ import ModalPopup from "./modal-popup";
 import { useState, useCallback } from "react";
 import Image from "next/image";
 
-interface FriendsMenuType {
+type FriendsMenuType = {
   /** Style props */
   allPosition?: Property.Position;
   allTop?: Property.Top;
@@ -24,7 +24,7 @@ interface FriendsMenuType {
 
   /** Action props */
   onBlockedClick?: () => void;
-}
+};
 
 const FriendsMenu: NextPage<FriendsMenuType> = ({
   allPosition,
@@ -83,35 +83,34 @@ const FriendsMenu: NextPage<FriendsMenuType> = ({
 
   return (
     <>
-      <div className="text-gray-300 absolute left-[0px] top-[0px] h-[47px] w-[500px]">
-        <Image
-          className="absolute left-[0px] top-[44.5px] h-[5px] w-[500px]"
+      <div className="absolute top-[0px] left-[0px] w-[500px] h-[47px] text-darkgray-300">
+        <img
+          className="absolute top-[44.5px] left-[0px] w-[500px] h-[5px]"
           alt=""
           src="/line-1.svg"
         />
-        <div className="absolute left-[67px] top-[0px] h-[23px] w-[27px] text-white">
-          <div className="bg-gray-100 absolute bottom-[-17.39%] left-[-166.67%] right-[-174.07%] top-[-21.74%] h-[139.13%] w-[440.74%]" />
-          <div className="absolute left-[0%] top-[0%] tracking-[0.1em]"
-          style={friendsStyle}>
+        <div className="absolute top-[0px] left-[67px] w-[27px] h-[23px] text-white">
+          <div className="absolute h-[139.13%] w-[440.74%] top-[-21.74%] right-[-174.07%] bottom-[-17.39%] left-[-166.67%] bg-dimgray-100" />
+          <div className="absolute top-[0%] left-[0%] tracking-[0.1em]">
             All
           </div>
         </div>
         <div
-          className="absolute left-[202px] top-[0px] tracking-[0.1em]"
+          className="absolute top-[0px] left-[202px] tracking-[0.1em]"
           style={blockedStyle}
           onClick={onBlockedClick}
         >
           Blocked
         </div>
         <div
-          className="absolute left-[351px] top-[0px] tracking-[0.1em]"
+          className="absolute top-[0px] left-[351px] tracking-[0.1em]"
           style={addFriendStyle}
           onClick={openMAddFriend}
         >
           add friend
         </div>
       </div>
-      {isMAddFriendOpen && (
+        {isMAddFriendOpen && (
         <ModalPopup
           overlayColor="rgba(113, 113, 113, 0.3)"
           placement="Centered"
@@ -120,7 +119,7 @@ const FriendsMenu: NextPage<FriendsMenuType> = ({
           <MAddFriend onClose={closeMAddFriend} />
         </ModalPopup>
       )}
-    </>
+      </>
   );
 };
 
