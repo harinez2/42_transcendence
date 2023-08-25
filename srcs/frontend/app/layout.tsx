@@ -9,13 +9,11 @@ import { ProfileType } from "./types";
 export let ProfileContext: any = createContext(undefined);
 export let SocketContext: any = createContext(undefined);
 export let ErrorContext: any = createContext(undefined);
-// export let SessionContext: SessionContextType = createContext(undefined);
 
 const RootLayout = ({ children }: { children: React.ReactNode }) => {
   const [profile, setProfile] = useState<ProfileType>({ userId: "", bio: "" });
   const [socket, setSocket] = useState<any>(undefined);
   const [error, setError] = useState<any>(undefined);
-  // const [session, setSession] = useState<any>(undefined);
 
   // 自身のプロファイルを取得
   useEffect(() => {

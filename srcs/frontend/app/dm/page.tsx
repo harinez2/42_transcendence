@@ -6,6 +6,7 @@ import MessageList from "./messages";
 import UserListComponent from "./user_list";
 import makeAPIRequest from "@/app/api/api";
 import { ProfileContext, SocketContext, ErrorContext } from "../layout";
+import { ProfileType } from "../types";
 
 const DirectMessageUI = () => {
   const [channels, setChannels] = useState<DmChannelType[]>([]);
@@ -14,7 +15,7 @@ const DirectMessageUI = () => {
   );
   const [messages, setMessages] = useState<DmMessageType[]>([]);
 
-  const profile: any = useContext(ProfileContext);
+  const profile: ProfileType = useContext(ProfileContext);
   const socket: any = useContext(SocketContext);
   const error: any = useContext(ErrorContext);
 
