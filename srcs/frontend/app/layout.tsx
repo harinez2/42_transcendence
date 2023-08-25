@@ -34,14 +34,14 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
 
   // ソケット接続
   useEffect(() => {
-    const socket = io('http://localhost:5000');
+    const socket = io("http://localhost:5000");
 
-    socket.on('connect', () => {
-      console.log('connected: ', socket.id);
+    socket.on("connect", () => {
+      console.log("connected: ", socket.id);
     });
 
-    socket.on('exception', (data: any) => {
-      console.error('exception', data);
+    socket.on("exception", (data: any) => {
+      console.error("exception", data);
     });
     setSocket(socket);
   }, []);

@@ -21,37 +21,37 @@ export class ChatsGateway {
 
   // 入室
   @SubscribeMessage('chat-join')
-  joinRoom(
-    @ConnectedSocket() socket: Socket,
-    @MessageBody() data: any,
-  ) {
+  joinRoom(@ConnectedSocket() socket: Socket, @MessageBody() data: any) {
     socket.join('chat_' + data.channelId);
-    console.log(`joined: channelId: ${data.channelId}, socket id: ${socket.id}`);
+    console.log(
+      `joined: channelId: ${data.channelId}, socket id: ${socket.id}`,
+    );
   }
 
   // 退室(socket切断時はleaveログが出ないがleaveしたことになっている)
   @SubscribeMessage('chat-leave')
-  leaveRoom(
-    @ConnectedSocket() socket: Socket,
-    @MessageBody() data: any,
-  ) {
+  leaveRoom(@ConnectedSocket() socket: Socket, @MessageBody() data: any) {
     socket.leave('chat_' + data.channelId);
-    console.log(`leaved: channelId: ${data.channelId}, socket id: ${socket.id}`);
+    console.log(
+      `leaved: channelId: ${data.channelId}, socket id: ${socket.id}`,
+    );
   }
 
   // 過去のチャットログをDBから取得
   @SubscribeMessage('chat-getPastMessages')
-  async handleGetPastMessages(@ConnectedSocket() client: Socket, @MessageBody() data: any) {
+  async handleGetPastMessages(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() data: any,
+  ) {
     try {
       const posts = await this.prisma.chatMessages.findMany({
         where: { channelId: Number(data.channelId) },
         include: { sender: true },
       });
-      for (let post of posts) {
+      for (const post of posts) {
         client.emit('chat-message', post);
       }
-
-    } catch(e) {
+    } catch (e) {
       throw new WsException(e.message);
     }
   }
@@ -60,7 +60,7 @@ export class ChatsGateway {
   @SubscribeMessage('chat-message')
   async handleMessage(
     @ConnectedSocket() socket: Socket,
-    @MessageBody() data: AddMessageDto
+    @MessageBody() data: AddMessageDto,
   ) {
     try {
       // ミュートされたユーザの発言の場合は例外を投げる
@@ -73,11 +73,15 @@ export class ChatsGateway {
         },
       });
       if (muteInfo && muteInfo.muteUntil > new Date()) {
-        throw new WsException('Cannot send the message because the user is muted.');
+        throw new WsException(
+          'Cannot send the message because the user is muted.',
+        );
       }
 
-      console.log(`channelId: ${data.channelId}, senderId: ${data.senderId}, ` +
-        `content: ${data.content}`);
+      console.log(
+        `channelId: ${data.channelId}, senderId: ${data.senderId}, ` +
+          `content: ${data.content}`,
+      );
 
       // DBに保存
       const createdMessage = await this.prisma.chatMessages.create({
@@ -94,7 +98,7 @@ export class ChatsGateway {
       socket.to('chat_' + data.channelId).emit('chat-message', addedMessage);
       // メッセージを自分にも送信
       socket.emit('chat-message', addedMessage);
-    } catch(e) {
+    } catch (e) {
       throw new WsException(e.message);
     }
   }
@@ -115,5 +119,4 @@ export class ChatsGateway {
       throw this.prisma.handleError(e);
     }
   }
-
 }

@@ -59,7 +59,7 @@ const DirectMessageUI = () => {
       // イベントハンドラの解除
       socket?.off("dm-message");
     };
-  }, []);  // eslint-disable-line react-hooks/exhaustive-deps
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // チャンネル選択時のハンドラ
   const handleChannelSelect = (channel: DmChannelType) => {

@@ -11,7 +11,6 @@ import { Server, Socket } from 'socket.io';
   },
 })
 export class AppGateway {
-
   @WebSocketServer()
   server: Server;
   clients: Socket[] = [];
@@ -30,7 +29,6 @@ export class AppGateway {
 
     // clientsから削除
     const indexToRemove: number = this.clients.indexOf(client);
-    if (indexToRemove !== -1)
-      this.clients.splice(indexToRemove, 1);
+    if (indexToRemove !== -1) this.clients.splice(indexToRemove, 1);
   }
 }
