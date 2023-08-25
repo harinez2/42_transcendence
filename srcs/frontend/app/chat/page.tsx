@@ -9,6 +9,7 @@ import UserComponent from "./user";
 import makeAPIRequest from "@/app/api/api";
 import type { ChannelType, MessageType } from "./types";
 import { ProfileContext, SocketContext, ErrorContext } from "../layout";
+import { ProfileType } from "../types";
 
 const ChatUI = () => {
   const Users: Array<User> = [
@@ -35,7 +36,7 @@ const ChatUI = () => {
   );
   const [messages, setMessages] = useState<MessageType[]>([]);
 
-  const profile: any = useContext(ProfileContext);
+  const profile: ProfileType = useContext(ProfileContext);
   const socket: any = useContext(SocketContext);
   const error: any = useContext(ErrorContext);
 
