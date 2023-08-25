@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 
 const Header = () => {
   const router = useRouter();
+
   return (
     <nav className="bg-gray-900">
       <div className="flex shrink-0 items-end justify-between">

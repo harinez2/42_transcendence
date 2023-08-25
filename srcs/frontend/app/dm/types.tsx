@@ -1,7 +1,3 @@
-export type ProfileType = {
-  userId: string;
-  bio: string;
-};
 
 export type DmChannelType = {
   channelId: number;

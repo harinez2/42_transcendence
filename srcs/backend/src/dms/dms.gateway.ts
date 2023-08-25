@@ -2,7 +2,6 @@ import {
   MessageBody,
   SubscribeMessage,
   WebSocketGateway,
-  WebSocketServer,
   ConnectedSocket,
   WsException,
 } from '@nestjs/websockets';
@@ -20,29 +19,28 @@ import { NotFoundException } from '@nestjs/common';
 export class DmsGateway {
   constructor(private prisma: PrismaService) {}
 
-  @WebSocketServer()
-  server: Server;
-  clients: Socket[] = [];
-
-  // 接続時
-  async handleConnection(@ConnectedSocket() client: Socket) {
-    console.log(`connected: ${client.id}`);
-
-    // clientsに追加
-    this.clients.push(client);
+  // 入室
+  @SubscribeMessage('dm-join')
+  joinRoom(
+    @ConnectedSocket() socket: Socket,
+    @MessageBody() data: any,
+  ) {
+    socket.join('dm_' + data.channelId);
+    console.log(`joined: channelId: ${data.channelId}, socket id: ${socket.id}`);
   }
 
-  // 切断時
-  handleDisconnect(@ConnectedSocket() client: Socket) {
-    console.log(`disconnected: ${client.id}`);
-
-    // clientsから削除
-    const indexToRemove: number = this.clients.indexOf(client);
-    if (indexToRemove !== -1) this.clients.splice(indexToRemove, 1);
+  // 退室(socket切断時はleaveログが出ないがleaveしたことになっている)
+  @SubscribeMessage('dm-leave')
+  leaveRoom(
+    @ConnectedSocket() socket: Socket,
+    @MessageBody() data: any,
+  ) {
+    socket.leave('dm_' + data.channelId);
+    console.log(`leaved: channelId: ${data.channelId}, socket id: ${socket.id}`);
   }
 
   // 過去のチャットログをDBから取得
-  @SubscribeMessage('getPastMessages')
+  @SubscribeMessage('dm-getPastMessages')
   async handleGetPastMessages(
     @ConnectedSocket() client: Socket,
     @MessageBody() data: any,
@@ -53,7 +51,7 @@ export class DmsGateway {
         include: { sender: true },
       });
       for (const post of posts) {
-        client.emit('message', post);
+        client.emit('dm-message', post);
       }
     } catch (e) {
       throw new WsException(e.message);
@@ -61,8 +59,11 @@ export class DmsGateway {
   }
 
   // messageイベント受信
-  @SubscribeMessage('message')
-  async handleMessage(@MessageBody() data: AddMessageDto) {
+  @SubscribeMessage('dm-message')
+  async handleMessage(
+    @ConnectedSocket() socket: Socket,
+    @MessageBody() data: AddMessageDto
+  ) {
     try {
       console.log(
         `channelId: ${data.channelId}, senderId: ${data.senderId}, ` +
@@ -80,20 +81,16 @@ export class DmsGateway {
       });
       // MessageDtoを作成
       const addedMessage = await this.findMessageById(createdMessage.messageId);
-      // メッセージをブロードキャスト
-      this.broadcast('message', addedMessage);
+      // メッセージをブロードキャスト(自分以外)
+      socket.to('dm_' + data.channelId).emit('dm-message', addedMessage);
+      // メッセージを自分にも送信
+      socket.emit('dm-message', addedMessage);
     } catch (e) {
       throw new WsException(e.message);
     }
   }
 
   //-------------------------------------------------------------------------
-
-  private broadcast(event: string, data: MessageDto) {
-    for (const c of this.clients) {
-      c.emit(event, data);
-    }
-  }
 
   private async findMessageById(messageId: number): Promise<MessageDto> {
     try {

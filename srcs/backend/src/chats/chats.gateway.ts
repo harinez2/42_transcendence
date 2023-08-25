@@ -2,11 +2,10 @@ import {
   MessageBody,
   SubscribeMessage,
   WebSocketGateway,
-  WebSocketServer,
   ConnectedSocket,
   WsException,
 } from '@nestjs/websockets';
-import { Server, Socket } from 'socket.io';
+import { Socket } from 'socket.io';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { AddMessageDto } from './dto/add-message.dto';
 import { MessageDto } from './dto/message.dto';
@@ -20,30 +19,28 @@ import { NotFoundException } from '@nestjs/common';
 export class ChatsGateway {
   constructor(private prisma: PrismaService) {}
 
-  @WebSocketServer()
-  server: Server;
-  clients: Socket[] = [];
-
-  // 接続時
-  async handleConnection(@ConnectedSocket() client: Socket) {
-    console.log(`connected: ${client.id}`);
-
-    // clientsに追加
-    this.clients.push(client);
+  // 入室
+  @SubscribeMessage('chat-join')
+  joinRoom(
+    @ConnectedSocket() socket: Socket,
+    @MessageBody() data: any,
+  ) {
+    socket.join('chat_' + data.channelId);
+    console.log(`joined: channelId: ${data.channelId}, socket id: ${socket.id}`);
   }
 
-  // 切断時
-  handleDisconnect(@ConnectedSocket() client: Socket) {
-    console.log(`disconnected: ${client.id}`);
-
-    // clientsから削除
-    const indexToRemove: number = this.clients.indexOf(client);
-    if (indexToRemove !== -1)
-      this.clients.splice(indexToRemove, 1);
+  // 退室(socket切断時はleaveログが出ないがleaveしたことになっている)
+  @SubscribeMessage('chat-leave')
+  leaveRoom(
+    @ConnectedSocket() socket: Socket,
+    @MessageBody() data: any,
+  ) {
+    socket.leave('chat_' + data.channelId);
+    console.log(`leaved: channelId: ${data.channelId}, socket id: ${socket.id}`);
   }
 
   // 過去のチャットログをDBから取得
-  @SubscribeMessage('getPastMessages')
+  @SubscribeMessage('chat-getPastMessages')
   async handleGetPastMessages(@ConnectedSocket() client: Socket, @MessageBody() data: any) {
     try {
       const posts = await this.prisma.chatMessages.findMany({
@@ -51,7 +48,7 @@ export class ChatsGateway {
         include: { sender: true },
       });
       for (let post of posts) {
-        client.emit('message', post);
+        client.emit('chat-message', post);
       }
 
     } catch(e) {
@@ -60,8 +57,11 @@ export class ChatsGateway {
   }
 
   // messageイベント受信
-  @SubscribeMessage('message')
-  async handleMessage(@MessageBody() data: AddMessageDto) {
+  @SubscribeMessage('chat-message')
+  async handleMessage(
+    @ConnectedSocket() socket: Socket,
+    @MessageBody() data: AddMessageDto
+  ) {
     try {
       // ミュートされたユーザの発言の場合は例外を投げる
       const muteInfo = await this.prisma.chatMute.findUnique({
@@ -90,20 +90,16 @@ export class ChatsGateway {
       });
       // MessageDtoを作成
       const addedMessage = await this.findMessageById(createdMessage.messageId);
-      // メッセージをブロードキャスト
-      this.broadcast('message', addedMessage);
+      // メッセージをブロードキャスト(自分以外)
+      socket.to('chat_' + data.channelId).emit('chat-message', addedMessage);
+      // メッセージを自分にも送信
+      socket.emit('chat-message', addedMessage);
     } catch(e) {
       throw new WsException(e.message);
     }
   }
 
   //-------------------------------------------------------------------------
-
-  private broadcast(event: string, data: MessageDto) {
-    for (let c of this.clients) {
-      c.emit(event, data);
-    }
-  }
 
   private async findMessageById(messageId: number): Promise<MessageDto> {
     try {
