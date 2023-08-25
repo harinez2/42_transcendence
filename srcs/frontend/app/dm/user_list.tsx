@@ -1,5 +1,6 @@
 import Image from "next/image";
-import { ProfileType, DmChannelType } from "./types";
+import { DmChannelType } from "./types";
+import { ProfileType } from "../types";
 
 const UserComponent = ({
   profile,

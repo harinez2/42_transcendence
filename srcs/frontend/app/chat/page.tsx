@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import ChannelName from "./channel_name";
 import SidebarCategory from "./sidebar_category";
 import MessageComponent from "./message";
@@ -8,8 +8,7 @@ import { User } from "./user";
 import UserComponent from "./user";
 import makeAPIRequest from "@/app/api/api";
 import type { ChannelType, MessageType } from "./types";
-// import { API_PATH } from '@/config';
-import io from 'socket.io-client';
+import { ProfileContext, SocketContext, ErrorContext } from "../layout";
 
 const ChatUI = () => {
 
@@ -34,55 +33,62 @@ const ChatUI = () => {
   const [channels, setChannels] = useState<ChannelType[]>([]);
   const [selectedChannel, setSelectedChannel] = useState<ChannelType | null>(null);
   const [messages, setMessages] = useState<MessageType[]>([]);
-  const socketRef = useRef<any>();
 
-  // 初回レンダリング直後に一度だけ実行される
+  const profile: any = useContext(ProfileContext);
+  const socket: any = useContext(SocketContext);
+  const error: any = useContext(ErrorContext);
+
   useEffect(() => {
-    // 画面ロード時にチャンネル一覧を取得
-    makeAPIRequest<ChannelType[]>("get", "/chats")
-    .then((result) => {
-      if (result.success) {
-        setChannels(result.data);
-      } else {
-        console.error(result.error);
-      }
-    })
-    .catch((error) => {
-      console.error("Error:", error.message);
-    });
-
-    // ソケットの作成
-    // socketRef.current = io(API_PATH);
-    socketRef.current = io('http://localhost:5000');
-    // ソケットの接続時ハンドラ設定
-    socketRef.current.on('connect', () => {
-      console.log('connected: ', socketRef.current.id);
-    });
-    // messageハンドラの設定
-    socketRef.current.on('message', (message: MessageType) => {
-      setMessages(prevMessages => [...prevMessages, message]);
-    });
-    // 例外ハンドラの設定
-    socketRef.current.on('exception', (data: any) => {
-      console.error('exception', data);
-    });
-
-    return () => {
-      if (socketRef.current != null) {
-        socketRef.current.disconnect()
-        console.log('disconnected.');
-      }
+    if (profile.userId != "") {
+      // チャンネル一覧を取得
+      makeAPIRequest<ChannelType[]>("get", "/chats")
+      .then((result) => {
+        if (result.success) {
+          setChannels(result.data);
+        } else {
+          console.error(result.error);
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error.message);
+      });
     }
-  }, []);
+  }, [profile]);
+
+  useEffect(() => {
+    // socketのイベントハンドラを登録
+    socket?.on("chat-message", (message: MessageType) => {
+      setMessages((prevMessages) => [...prevMessages, message]);
+    });
+  }, [socket]);
+
+  useEffect(() => {
+    if (error) {
+      console.error("Error:", error);
+    }
+  }, [error]);
+
+  useEffect(() => {
+    // このコンポーネントがアンマウントされた時にクリーンアップ
+    return () => {
+      // 他の画面へ遷移したときは退室する
+      if (selectedChannel) {
+        console.log("退室:", selectedChannel);
+        socket?.emit("chat-leave", selectedChannel);
+      }
+      // イベントハンドラの解除
+      socket?.off("chat-message");
+    }
+  }, []);  // eslint-disable-line react-hooks/exhaustive-deps
 
   // チャンネル選択時のハンドラ
   const handleChannelSelect = (channel: ChannelType) => {
     if (selectedChannel) {
       // 同じチャンネル名をクリックした場合は何もしない
-      if (selectedChannel.channelId === channel.channelId)
-        return;
+      if (selectedChannel.channelId === channel.channelId) return;
       // すでに別のチャンネルに入室済みであれば退室する
       console.log("退室:", selectedChannel);
+      socket?.emit("chat-leave", selectedChannel);
       // 表示しているログをクリア
       setMessages([]);
     }
@@ -90,8 +96,9 @@ const ChatUI = () => {
     // 選択したチャンネルに入室
     setSelectedChannel(channel);
     console.log("入室:", channel);
+    socket?.emit("chat-join", channel);
     // 過去のメッセージを要求
-    socketRef.current.emit('getPastMessages', { channelId: channel.channelId });
+    socket?.emit('chat-getPastMessages', { channelId: channel.channelId });
   };
 
   return (
