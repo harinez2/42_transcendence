@@ -5,7 +5,7 @@ import {
   ConnectedSocket,
   WsException,
 } from '@nestjs/websockets';
-import { Server, Socket } from 'socket.io';
+import { Socket } from 'socket.io';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { AddMessageDto } from '../chats/dto/add-message.dto';
 import { MessageDto } from '../chats/dto/message.dto';
@@ -21,22 +21,20 @@ export class DmsGateway {
 
   // 入室
   @SubscribeMessage('dm-join')
-  joinRoom(
-    @ConnectedSocket() socket: Socket,
-    @MessageBody() data: any,
-  ) {
+  joinRoom(@ConnectedSocket() socket: Socket, @MessageBody() data: any) {
     socket.join('dm_' + data.channelId);
-    console.log(`joined: channelId: ${data.channelId}, socket id: ${socket.id}`);
+    console.log(
+      `joined: channelId: ${data.channelId}, socket id: ${socket.id}`,
+    );
   }
 
   // 退室(socket切断時はleaveログが出ないがleaveしたことになっている)
   @SubscribeMessage('dm-leave')
-  leaveRoom(
-    @ConnectedSocket() socket: Socket,
-    @MessageBody() data: any,
-  ) {
+  leaveRoom(@ConnectedSocket() socket: Socket, @MessageBody() data: any) {
     socket.leave('dm_' + data.channelId);
-    console.log(`leaved: channelId: ${data.channelId}, socket id: ${socket.id}`);
+    console.log(
+      `leaved: channelId: ${data.channelId}, socket id: ${socket.id}`,
+    );
   }
 
   // 過去のチャットログをDBから取得
@@ -62,7 +60,7 @@ export class DmsGateway {
   @SubscribeMessage('dm-message')
   async handleMessage(
     @ConnectedSocket() socket: Socket,
-    @MessageBody() data: AddMessageDto
+    @MessageBody() data: AddMessageDto,
   ) {
     try {
       console.log(

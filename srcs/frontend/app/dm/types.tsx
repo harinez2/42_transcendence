@@ -1,4 +1,3 @@
-
 export type DmChannelType = {
   channelId: number;
   user1: {

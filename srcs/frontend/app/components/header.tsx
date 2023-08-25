@@ -1,7 +1,7 @@
 // https://tailwindui.com/components/application-ui/navigation/navbars
 "use client";
 
-import { useRouter } from 'next/navigation'
+import { useRouter } from "next/navigation";
 
 const Header = () => {
   const router = useRouter();
@@ -14,28 +14,28 @@ const Header = () => {
           <a
             href="#"
             className="rounded-lg text-2xl font-medium text-gray-500 hover:bg-gray-700"
-            onClick={() => router.push('/friend')}
+            onClick={() => router.push("/friend")}
           >
             friends
           </a>
           <a
             href="#"
             className="rounded-lg text-2xl font-medium text-gray-500 hover:bg-gray-700"
-            onClick={() => router.push('/chat')}
+            onClick={() => router.push("/chat")}
           >
             chat
           </a>
           <a
             href="#"
             className="rounded-lg text-2xl font-medium text-gray-500 hover:bg-gray-700"
-            onClick={() => router.push('/dm')}
+            onClick={() => router.push("/dm")}
           >
             DM
           </a>
           <a
             href="#"
             className="rounded-lg text-2xl font-medium text-gray-500 hover:bg-gray-700"
-            onClick={() => router.push('/game')}
+            onClick={() => router.push("/game")}
           >
             game
           </a>

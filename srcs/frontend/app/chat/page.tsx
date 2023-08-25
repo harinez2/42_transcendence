@@ -1,6 +1,6 @@
-'use client'
+"use client";
 
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from "react";
 import ChannelName from "./channel_name";
 import SidebarCategory from "./sidebar_category";
 import MessageComponent from "./message";
@@ -11,7 +11,6 @@ import type { ChannelType, MessageType } from "./types";
 import { ProfileContext, SocketContext, ErrorContext } from "../layout";
 
 const ChatUI = () => {
-
   const Users: Array<User> = [
     {
       id: 1,
@@ -31,7 +30,9 @@ const ChatUI = () => {
   ];
 
   const [channels, setChannels] = useState<ChannelType[]>([]);
-  const [selectedChannel, setSelectedChannel] = useState<ChannelType | null>(null);
+  const [selectedChannel, setSelectedChannel] = useState<ChannelType | null>(
+    null,
+  );
   const [messages, setMessages] = useState<MessageType[]>([]);
 
   const profile: any = useContext(ProfileContext);
@@ -42,16 +43,16 @@ const ChatUI = () => {
     if (profile.userId != "") {
       // チャンネル一覧を取得
       makeAPIRequest<ChannelType[]>("get", "/chats")
-      .then((result) => {
-        if (result.success) {
-          setChannels(result.data);
-        } else {
-          console.error(result.error);
-        }
-      })
-      .catch((error) => {
-        console.error("Error:", error.message);
-      });
+        .then((result) => {
+          if (result.success) {
+            setChannels(result.data);
+          } else {
+            console.error(result.error);
+          }
+        })
+        .catch((error) => {
+          console.error("Error:", error.message);
+        });
     }
   }, [profile]);
 
@@ -78,8 +79,8 @@ const ChatUI = () => {
       }
       // イベントハンドラの解除
       socket?.off("chat-message");
-    }
-  }, []);  // eslint-disable-line react-hooks/exhaustive-deps
+    };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // チャンネル選択時のハンドラ
   const handleChannelSelect = (channel: ChannelType) => {
@@ -98,7 +99,7 @@ const ChatUI = () => {
     console.log("入室:", channel);
     socket?.emit("chat-join", channel);
     // 過去のメッセージを要求
-    socket?.emit('chat-getPastMessages', { channelId: channel.channelId });
+    socket?.emit("chat-getPastMessages", { channelId: channel.channelId });
   };
 
   return (
@@ -129,10 +130,7 @@ const ChatUI = () => {
         <div className="container bg-gray-700">
           <div className="grow  flex-col-reverse divide-y divide-gray-500/30 px-4">
             {messages?.map((message: MessageType) => (
-              <MessageComponent
-                key={message.channelId}
-                message={message}
-              />
+              <MessageComponent key={message.channelId} message={message} />
             ))}
           </div>
         </div>
