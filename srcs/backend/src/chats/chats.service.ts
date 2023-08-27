@@ -1,19 +1,26 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { CreateChannelDto } from './dto/create-channel.dto';
 import { UpdateChannelDto } from './dto/update-channel.dto';
 import { ChannelInfoDto } from './dto/channel-info.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { Publicity, UserType } from './chats.interface';
+import { UserType } from './chats.interface';
+// import { Publicity, UserType } from './chats.interface';
 import { hash } from 'bcrypt';
 
 @Injectable()
 export class ChatsService {
   constructor(private prisma: PrismaService) {}
 
-  async createChannel(createChannelDto: CreateChannelDto): Promise<ChannelInfoDto> {
-    const hashedPassword
-        = createChannelDto.password
-          ? await hash(createChannelDto.password, 10) as string : null;
+  async createChannel(
+    createChannelDto: CreateChannelDto,
+  ): Promise<ChannelInfoDto> {
+    const hashedPassword = createChannelDto.password
+      ? ((await hash(createChannelDto.password, 10)) as string)
+      : null;
 
     try {
       // ChatChannelsテーブルとChatChannelUsersテーブルを同時に更新
@@ -25,7 +32,7 @@ export class ChatsService {
               createdAt: new Date(),
               channelType: createChannelDto.channelType,
               hashedPassword: hashedPassword,
-            }
+            },
           },
           user: {
             connect: { id: createChannelDto.ownerId },
@@ -34,8 +41,16 @@ export class ChatsService {
         },
       });
 
-      this.addChannelUsers(createdPost.channelId, createChannelDto.ownerId, UserType.ADMIN);
-      this.addChannelUsers(createdPost.channelId, createChannelDto.ownerId, UserType.USER);
+      this.addChannelUsers(
+        createdPost.channelId,
+        createChannelDto.ownerId,
+        UserType.ADMIN,
+      );
+      this.addChannelUsers(
+        createdPost.channelId,
+        createChannelDto.ownerId,
+        UserType.USER,
+      );
       return this.findById(createdPost.channelId);
     } catch (e) {
       throw this.prisma.handleError(e);
@@ -45,7 +60,9 @@ export class ChatsService {
   async findAllChannel(): Promise<ChannelInfoDto[]> {
     try {
       const posts = await this.prisma.chatChannels.findMany();
-      const channelInfoPromises = posts.map((post) => this.createChannelInfoDto(post));
+      const channelInfoPromises = posts.map((post) =>
+        this.createChannelInfoDto(post),
+      );
       return await Promise.all(channelInfoPromises);
     } catch (e) {
       throw this.prisma.handleError(e);
@@ -66,11 +83,13 @@ export class ChatsService {
     }
   }
 
-  async updateChannel(channelId: number, updateChannelDto: UpdateChannelDto)
-      : Promise<ChannelInfoDto> {
-    const hashedPassword
-    = updateChannelDto.password
-      ? await hash(updateChannelDto.password, 10) as string : null;
+  async updateChannel(
+    channelId: number,
+    updateChannelDto: UpdateChannelDto,
+  ): Promise<ChannelInfoDto> {
+    const hashedPassword = updateChannelDto.password
+      ? ((await hash(updateChannelDto.password, 10)) as string)
+      : null;
 
     try {
       const post = await this.prisma.chatChannels.update({
@@ -91,7 +110,10 @@ export class ChatsService {
   }
 
   async addChannelUsers(
-      channelId: number, userId : number, type: UserType): Promise<ChannelInfoDto> {
+    channelId: number,
+    userId: number,
+    type: UserType,
+  ): Promise<ChannelInfoDto> {
     try {
       const ischannel = await this.isChannelUsers(channelId, userId, type);
       if (!ischannel) {
@@ -113,7 +135,10 @@ export class ChatsService {
   }
 
   async removeChannelUsers(
-      channelId: number, userId: number, type: UserType): Promise<ChannelInfoDto> {
+    channelId: number,
+    userId: number,
+    type: UserType,
+  ): Promise<ChannelInfoDto> {
     try {
       const query = await this.prisma.chatChannelUsers.deleteMany({
         where: {
@@ -131,7 +156,7 @@ export class ChatsService {
     }
   }
 
-  async deleteChannel(channelId: number) : Promise<void> {
+  async deleteChannel(channelId: number): Promise<void> {
     try {
       const post = await this.prisma.chatChannels.delete({
         where: { channelId: channelId },
@@ -150,7 +175,10 @@ export class ChatsService {
   //------------------------------------------------------------------------------
 
   private async isChannelUsers(
-      channelId: number, userId : number, type: UserType): Promise<boolean> {
+    channelId: number,
+    userId: number,
+    type: UserType,
+  ): Promise<boolean> {
     const query = await this.prisma.chatChannelUsers.findFirst({
       where: {
         channelId: channelId,
@@ -158,10 +186,8 @@ export class ChatsService {
         type: type,
       },
     });
-    if (query)
-      return true;
-    else
-      return false;
+    if (query) return true;
+    else return false;
   }
 
   private async createChannelInfoDto(post: any): Promise<ChannelInfoDto> {
@@ -191,10 +217,9 @@ export class ChatsService {
       isPassword: post.hashedPassword ? true : false,
       users: {
         owner: owner.userId,
-        admin: admins.map(admin => admin.userId),
-        user: users.map(user => user.userId),
-      }
+        admin: admins.map((admin) => admin.userId),
+        user: users.map((user) => user.userId),
+      },
     };
   }
-
 }

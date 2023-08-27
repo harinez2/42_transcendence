@@ -27,5 +27,5 @@ export class ChannelInfoDto {
 
     // @ApiProperty()
     user: number[];
-  }
+  };
 }

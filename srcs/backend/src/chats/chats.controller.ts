@@ -1,9 +1,23 @@
-import { Controller, Get, Post, Put, Delete, Param, Body } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Delete,
+  Param,
+  Body,
+} from '@nestjs/common';
 import { ChatsService } from './chats.service';
 import { CreateChannelDto } from './dto/create-channel.dto';
 import { UpdateChannelDto } from './dto/update-channel.dto';
 import { ChannelInfoDto } from './dto/channel-info.dto';
-import { ApiOperation, ApiBody, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiOperation,
+  ApiBody,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { UserType } from './chats.interface';
 
 @Controller('chats')
@@ -19,7 +33,9 @@ export class ChatsController {
     type: ChannelInfoDto,
   })
   @Post()
-  createChannel(@Body() createChannelDto: CreateChannelDto): Promise<ChannelInfoDto> {
+  createChannel(
+    @Body() createChannelDto: CreateChannelDto,
+  ): Promise<ChannelInfoDto> {
     return this.chatsService.createChannel(createChannelDto);
   }
 
@@ -63,8 +79,10 @@ export class ChatsController {
     type: ChannelInfoDto,
   })
   @Put(':id')
-  async updateChannel(@Param('id') id: string, @Body() updateChannelDto: UpdateChannelDto)
-      : Promise<ChannelInfoDto> {
+  async updateChannel(
+    @Param('id') id: string,
+    @Body() updateChannelDto: UpdateChannelDto,
+  ): Promise<ChannelInfoDto> {
     return await this.chatsService.updateChannel(Number(id), updateChannelDto);
   }
 
@@ -80,7 +98,7 @@ export class ChatsController {
     type: null,
   })
   @Delete(':id')
-  async deleteChannel(@Param('id') id: string) : Promise<void> {
+  async deleteChannel(@Param('id') id: string): Promise<void> {
     return await this.chatsService.deleteChannel(Number(id));
   }
 
@@ -96,9 +114,9 @@ export class ChatsController {
         userId: {
           type: 'string',
           example: '1',
-        }
-      }
-    }
+        },
+      },
+    },
   })
   @ApiResponse({
     status: 200,
@@ -107,11 +125,14 @@ export class ChatsController {
   })
   @Put(':channelid/admin')
   async addAdminRights(
-      @Param('channelid') channelId: string,
-      @Body() addAdminRequest: { userId: string })
-      : Promise<ChannelInfoDto> {
+    @Param('channelid') channelId: string,
+    @Body() addAdminRequest: { userId: string },
+  ): Promise<ChannelInfoDto> {
     return await this.chatsService.addChannelUsers(
-        Number(channelId), Number(addAdminRequest.userId), UserType.ADMIN);
+      Number(channelId),
+      Number(addAdminRequest.userId),
+      UserType.ADMIN,
+    );
   }
 
   @ApiOperation({ summary: '指定したチャンネルのadmin権限をはく奪する' })
@@ -126,9 +147,9 @@ export class ChatsController {
         userId: {
           type: 'string',
           example: '1',
-        }
-      }
-    }
+        },
+      },
+    },
   })
   @ApiResponse({
     status: 200,
@@ -137,11 +158,14 @@ export class ChatsController {
   })
   @Delete(':channelid/admin')
   async removeAdminRights(
-      @Param('channelid') channelId: string,
-      @Body() removeAdminRequest: { userId: string })
-      : Promise<ChannelInfoDto> {
+    @Param('channelid') channelId: string,
+    @Body() removeAdminRequest: { userId: string },
+  ): Promise<ChannelInfoDto> {
     return await this.chatsService.removeChannelUsers(
-        Number(channelId), Number(removeAdminRequest.userId), UserType.ADMIN);
+      Number(channelId),
+      Number(removeAdminRequest.userId),
+      UserType.ADMIN,
+    );
   }
 
   @ApiOperation({ summary: '指定したチャンネルに入室する' })
@@ -156,9 +180,9 @@ export class ChatsController {
         userId: {
           type: 'string',
           example: '1',
-        }
-      }
-    }
+        },
+      },
+    },
   })
   @ApiResponse({
     status: 200,
@@ -167,11 +191,14 @@ export class ChatsController {
   })
   @Put(':channelid/join')
   async joinChannel(
-      @Param('channelid') channelId: string,
-      @Body() joinRequest: { userId: string })
-      : Promise<ChannelInfoDto> {
+    @Param('channelid') channelId: string,
+    @Body() joinRequest: { userId: string },
+  ): Promise<ChannelInfoDto> {
     return await this.chatsService.addChannelUsers(
-        Number(channelId), Number(joinRequest.userId), UserType.USER);
+      Number(channelId),
+      Number(joinRequest.userId),
+      UserType.USER,
+    );
   }
 
   @ApiOperation({ summary: '指定したチャンネルから退室する' })
@@ -186,9 +213,9 @@ export class ChatsController {
         userId: {
           type: 'string',
           example: '1',
-        }
-      }
-    }
+        },
+      },
+    },
   })
   @ApiResponse({
     status: 200,
@@ -197,11 +224,13 @@ export class ChatsController {
   })
   @Delete(':channelid/leave')
   async leaveChannel(
-      @Param('channelid') channelId: string,
-      @Body() leaveRequest: { userId: string })
-      : Promise<ChannelInfoDto> {
+    @Param('channelid') channelId: string,
+    @Body() leaveRequest: { userId: string },
+  ): Promise<ChannelInfoDto> {
     return await this.chatsService.removeChannelUsers(
-        Number(channelId), Number(leaveRequest.userId), UserType.USER);
+      Number(channelId),
+      Number(leaveRequest.userId),
+      UserType.USER,
+    );
   }
-
 }
