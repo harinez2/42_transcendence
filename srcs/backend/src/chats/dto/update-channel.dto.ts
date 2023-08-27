@@ -9,5 +9,5 @@ export class UpdateChannelDto {
   channelType: Publicity;
 
   @ApiProperty({ required: false })
-  password: string = '';
+  password = '';
 }
