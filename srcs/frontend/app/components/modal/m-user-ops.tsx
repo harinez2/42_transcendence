@@ -32,10 +32,10 @@ const MUserOps: NextPage<MUserOpsType> = ({ onClose }) => {
 
   return (
     <div className="bg-darkslategray-100 font-body relative box-border flex h-[482px] max-h-full w-[390px] max-w-full flex-col items-start justify-start overflow-hidden px-10 py-[34px] text-left text-5xl text-white">
-      <div className="relative inline-block h-80 w-30 tracking-[0.1em]">
+      <div className="relative inline-block h-80 w-32 tracking-[0.1em]">
         User ops
       </div>
-      <div className="relative inline-block h-20 w-30 tracking-[0.1em]">
+      <div className="relative inline-block h-20 w-32 tracking-[0.1em]">
       </div>
       <div className="mt-[-338px] box-border flex h-[432px] flex-col items-start justify-center gap-[28px] self-stretch px-0 py-2.5">
         <div className="relative h-[43px] w-[174px]">
