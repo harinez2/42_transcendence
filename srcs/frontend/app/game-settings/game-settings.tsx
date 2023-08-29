@@ -1,4 +1,5 @@
 import type { NextPage } from "next";
+import React from 'react';
 import GameSettingsContainer from "../components/game-settings-container";
 
 const GameSettingsPage: NextPage = () => {

@@ -1,10 +1,11 @@
 "use client";
 
+import React from 'react';
 import type { NextPage } from "next";
 import { useMemo } from "react";
 import CSS, { Property } from "csstype";
 import MUserOps from "../components/modal/m-user-ops";
-import ModalPopup from "../components/modal-popup";
+import ModalPopup from "../components/modal/modal-popup";
 import { useState, useCallback } from "react";
 import FriendsMenu from "../components/friendsmenu";
 

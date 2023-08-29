@@ -1,3 +1,4 @@
+import React from 'react';
 import type { NextPage } from "next";
 import { useMemo } from "react";
 import CSS, { Property } from "csstype";

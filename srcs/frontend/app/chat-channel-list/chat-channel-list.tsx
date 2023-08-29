@@ -1,5 +1,6 @@
 "use client";
 
+import React from 'react';
 import type { NextPage } from "next";
 import { useState, useCallback } from "react";
 import MJoinPrivateChannel from "../components/modal/m-join-private-channel";

@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import HeaderMenu from "../components/headermenu";
 import RankingContainer from "../components/raking-container";
 import MatchHistoryContainer from "../components/match-history-container";
+import React from 'react';
 
 const ProfileOtherPage: NextPage = () => {
   const router = useRouter();

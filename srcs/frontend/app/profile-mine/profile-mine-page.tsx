@@ -7,6 +7,7 @@ import MSettingsMine from "../components/modal/m-settings-mine";
 import HeaderMenu from "../components/headermenu";
 import RankingContainer from "../components/raking-container";
 import MatchHistoryContainer from "../components/match-history-container";
+import React from 'react';
 
 const ProfileMinePage: NextPage = () => {
 

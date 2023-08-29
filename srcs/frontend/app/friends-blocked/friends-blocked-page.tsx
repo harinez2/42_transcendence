@@ -1,12 +1,13 @@
 "use client";
 
+import React from 'react';
 import type { NextPage } from "next";
 import { useState, useCallback } from "react";
 import MAddFriend from "../components/modal/m-add-friend";
-import PortalPopup from "../components/modal/portal-popup";
 import { useRouter } from "next/navigation";
 import HeaderMenu from "../components/headermenu";
 import FriendsBlockedList from "./friends-blocked-list";
+import ModalPopup from '../components/modal/modal-popup';
 
 const FriendsBlockedPage: NextPage = () => {
   const [isMAddFriendPopupOpen, setMAddFriendPopupOpen] = useState(false);
@@ -56,13 +57,13 @@ const FriendsBlockedPage: NextPage = () => {
         </div>
         </div>
       {isMAddFriendPopupOpen && (
-        <PortalPopup
+        <ModalPopup
           overlayColor="rgba(113, 113, 113, 0.3)"
           placement="Centered"
           onOutsideClick={closeMAddFriendPopup}
         >
           <MAddFriend onClose={closeMAddFriendPopup} />
-        </PortalPopup>
+        </ModalPopup>
       )}
     </>
   );
