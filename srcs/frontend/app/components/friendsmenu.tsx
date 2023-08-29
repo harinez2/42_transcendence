@@ -3,10 +3,9 @@
 import type { NextPage } from "next";
 import { useMemo } from "react";
 import CSS, { Property } from "csstype";
-import MAddFriend from "./m-add-friend";
-import ModalPopup from "./modal-popup";
+import MAddFriend from "./modal/m-add-friend";
+import ModalPopup from "./modal/modal-popup";
 import { useState, useCallback } from "react";
-import Image from "next/image";
 
 type FriendsMenuType = {
   /** Style props */

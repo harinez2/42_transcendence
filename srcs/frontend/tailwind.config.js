@@ -37,11 +37,20 @@ module.exports = {
         silver: {
           "100": "#bdbdbd",
           "200": "#bbb",
+          "300": "#bcb9b9",
         },
         black: "#000",
+        "gray-200": "#c1c9d2",
+        "blue-500": "#5469d4",
+        "base-white": "#fff",
+        "gray-700": "#3c4257",
+        "gray-100": "#e3e8ee",
+        "gray-gray-700": "#383c42",
+        "light-gray-gray-100": "#f4f5f7",
       },
       fontFamily: {
         body: "Roboto",
+        "small-600": "Inter",
         geo: "Geo",
       },
       borderRadius: {
@@ -51,7 +60,8 @@ module.exports = {
       },
     },
     fontSize: {
-      sm: "0.8rem",
+      sm :"14px",
+      // sm: "0.8rem",
       xs: "12px",
       base: "16px",
       xl: "20px",
@@ -63,6 +73,9 @@ module.exports = {
       "17xl": "36px",
       "181xl": "200px",
       "29xl": "48px",
+      "77xl": "96px",
+      "181xl": "200px",
+      inherit: "inherit",
     },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
@@ -74,6 +87,9 @@ module.exports = {
         "2xl": "100%",
       },
     },
+  },
+  corePlugins: {
+    preflight: false,
   },
   plugins: [
     function ({ addUtilities }) {
@@ -92,7 +108,6 @@ module.exports = {
           "-moz-appearance": "textfield",
         },
       };
-
       addUtilities(newUtilities, ["responsive", "hover"]);
     },
   ],

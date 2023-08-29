@@ -12,9 +12,10 @@ const MAddFriend: NextPage<MAddFriendType> = ({ onClose }) => {
         Add friend
       </div>
       <TextField
+        id="filled-basic"
         className="absolute left-[75px] top-[116px] bg-[transparent] [border:none]"
         sx={{ width: 241 }}
-        color="primary"
+        color="info"
         variant="filled"
         type="text"
         label="friend name"
@@ -22,7 +23,6 @@ const MAddFriend: NextPage<MAddFriendType> = ({ onClose }) => {
         margin="none"
         required
       />
-
       <button className="absolute left-[75px] top-[181px] h-[42px] w-[253px] cursor-pointer bg-[transparent] p-0 [border:none]">
         <img
           className="absolute left-[0px] top-[0px] h-[41px] w-[240.84px]"
