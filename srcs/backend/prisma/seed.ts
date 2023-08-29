@@ -21,7 +21,7 @@ async function main() {
   });
 
   // generalチャンネル作成
-  await prisma.chatChannels.create({
+  const channel = await prisma.chatChannels.create({
     data: {
       channelName: 'general',
       createdAt: new Date(),
@@ -29,31 +29,34 @@ async function main() {
       hashedPassword: '',
     },
   });
+  if (!user1 || !channel)
+    return;
 
   // generalチャンネルのユーザ権限設定
   await prisma.chatChannelUsers.create({
     data: {
-      channelId: 1,
-      userId: 1,
+      channelId: channel.channelId,
+      userId: user1.id,
       type: UserType.OWNER,
     },
   });
   await prisma.chatChannelUsers.create({
     data: {
-      channelId: 1,
-      userId: 1,
+      channelId: channel.channelId,
+      userId: user1.id,
       type: UserType.ADMIN,
     },
   });
   await prisma.chatChannelUsers.create({
     data: {
-      channelId: 1,
-      userId: 1,
+      channelId: channel.channelId,
+      userId: user1.id,
       type: UserType.USER,
     },
   });
   
   console.log({ user1 });
+  console.log({ channel });
 }
 
 main()
