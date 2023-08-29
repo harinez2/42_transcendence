@@ -23,7 +23,7 @@ const GameLostPage: NextPage = () => {
   return (
     <div className="relative bg-darkslategray-100 w-full h-screen overflow-hidden text-left text-77xl text-base-white font-body">
       <i className="absolute top-[392px] left-[491px] tracking-[0.1em]">
-        You lose...
+        You lost...
       </i>
       <button
         className="cursor-pointer [border:none] p-0 bg-[transparent] absolute top-[583px] left-[590px] w-[257px] h-[41px]"
