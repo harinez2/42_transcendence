@@ -186,11 +186,11 @@ export class ChatsService {
       }
 
       // ユーザを削除
-      // typeを指定していないので、ADMIN、USERの両方が削除される
       const query = await this.prisma.chatChannelUsers.deleteMany({
         where: {
           channelId: channelId,
           userId: userId,
+          ...(type === UserType.ADMIN ? { type: UserType.ADMIN } : {}),
         },
       });
       if (!query) {
