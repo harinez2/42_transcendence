@@ -33,15 +33,10 @@ export class ChatsController {
     type: ChannelInfoDto,
   })
   @Post()
-<<<<<<< HEAD
-  async createChannel(@Body() createChannelDto: CreateChannelDto): Promise<ChannelInfoDto> {
-    return await this.chatsService.createChannel(createChannelDto);
-=======
-  createChannel(
+  async createChannel(
     @Body() createChannelDto: CreateChannelDto,
   ): Promise<ChannelInfoDto> {
-    return this.chatsService.createChannel(createChannelDto);
->>>>>>> ddd59dd05eeb3061330d23792ebd4a94a3e67e86
+    return await this.chatsService.createChannel(createChannelDto);
   }
 
   @ApiOperation({ summary: 'チャンネル一覧を取得する' })
@@ -83,21 +78,12 @@ export class ChatsController {
     description: '指定したチャンネルIDの情報を返却',
     type: ChannelInfoDto,
   })
-<<<<<<< HEAD
   @Put(':channelid')
   async updateChannel(
       @Param('channelid') channelId: string,
       @Body() updateChannelDto: UpdateChannelDto
   ) : Promise<ChannelInfoDto> {
     return await this.chatsService.updateChannel(Number(channelId), updateChannelDto);
-=======
-  @Put(':id')
-  async updateChannel(
-    @Param('id') id: string,
-    @Body() updateChannelDto: UpdateChannelDto,
-  ): Promise<ChannelInfoDto> {
-    return await this.chatsService.updateChannel(Number(id), updateChannelDto);
->>>>>>> ddd59dd05eeb3061330d23792ebd4a94a3e67e86
   }
 
   @ApiOperation({ summary: 'チャンネルを削除する' })
@@ -111,15 +97,9 @@ export class ChatsController {
     description: '戻り値なし',
     type: null,
   })
-<<<<<<< HEAD
   @Delete(':channelid')
   async deleteChannel(@Param('channelid') channelId: string) : Promise<void> {
     return await this.chatsService.deleteChannel(Number(channelId));
-=======
-  @Delete(':id')
-  async deleteChannel(@Param('id') id: string): Promise<void> {
-    return await this.chatsService.deleteChannel(Number(id));
->>>>>>> ddd59dd05eeb3061330d23792ebd4a94a3e67e86
   }
 
   @ApiOperation({ summary: 'Admin権限を付与する' })
@@ -253,7 +233,6 @@ export class ChatsController {
       UserType.USER,
     );
   }
-<<<<<<< HEAD
 
   @ApiOperation({ summary: '現在Banしているユーザ一覧を取得する' })
   @ApiParam({
@@ -409,6 +388,4 @@ export class ChatsController {
     return await this.chatsService.unmuteUsers(Number(channelId), Number(unmuteRequest.mutedUserId));
   }
 
-=======
->>>>>>> ddd59dd05eeb3061330d23792ebd4a94a3e67e86
 }
