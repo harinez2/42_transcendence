@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React from "react";
 import type { NextPage } from "next";
 import { useCallback } from "react";
 import { TextField } from "@mui/material";
@@ -20,12 +20,12 @@ const MJoinChannelPassword: NextPage<MJoinChannelPasswordType> = ({
   }, [router]);
 
   return (
-    <div className="relative bg-darkslategray-100 w-[390px] h-[280px] overflow-hidden max-w-full max-h-full text-left text-5xl text-base-white font-body">
-      <div className="absolute top-[50px] left-[32px] tracking-[0.1em]">
+    <div className="relative h-[280px] max-h-full w-[390px] max-w-full overflow-hidden bg-darkslategray-100 text-left font-body text-5xl text-base-white">
+      <div className="absolute left-[32px] top-[50px] tracking-[0.1em]">
         channel name
       </div>
       <TextField
-        className="[border:none] bg-[transparent] absolute top-[116px] left-[75px]"
+        className="absolute left-[75px] top-[116px] bg-[transparent] [border:none]"
         sx={{ width: 241 }}
         color="info"
         variant="filled"
@@ -36,15 +36,15 @@ const MJoinChannelPassword: NextPage<MJoinChannelPasswordType> = ({
         margin="none"
       />
       <button
-        className="cursor-pointer [border:none] p-0 bg-[transparent] absolute top-[181px] left-[75px] w-[222px] h-[42px]"
+        className="absolute left-[75px] top-[181px] h-[42px] w-[222px] cursor-pointer bg-[transparent] p-0 [border:none]"
         onClick={onJoinChannelClick}
       >
         <img
-          className="absolute top-[0px] left-[0px] w-[240.84px] h-[41px]"
+          className="absolute left-[0px] top-[0px] h-[41px] w-[240.84px]"
           alt=""
           src="/rectangle-12121.svg"
         />
-        <div className="absolute top-[8px] left-[43px] text-5xl tracking-[0.1em] font-body text-base-white text-left inline-block w-[171px] h-[34px]">{`Join channel `}</div>
+        <div className="absolute left-[43px] top-[8px] inline-block h-[34px] w-[171px] text-left font-body text-5xl tracking-[0.1em] text-base-white">{`Join channel `}</div>
       </button>
     </div>
   );

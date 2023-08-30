@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import type { NextPage } from "next";
 import { TextField, FormControlLabel, Switch } from "@mui/material";
 
@@ -8,12 +8,12 @@ type MCreateChannelType = {
 
 const MCreateChannel: NextPage<MCreateChannelType> = ({ onClose }) => {
   return (
-    <div className="relative bg-darkslategray-100 w-[390px] h-[410px] overflow-hidden max-w-full max-h-full text-left text-xl text-base-white font-body">
-      <div className="absolute top-[36px] left-[29px] text-5xl tracking-[0.1em]">
+    <div className="relative h-[410px] max-h-full w-[390px] max-w-full overflow-hidden bg-darkslategray-100 text-left font-body text-xl text-base-white">
+      <div className="absolute left-[29px] top-[36px] text-5xl tracking-[0.1em]">
         Create Channel
       </div>
       <TextField
-        className="[border:none] bg-[transparent] absolute top-[85px] left-[63px]"
+        className="absolute left-[63px] top-[85px] bg-[transparent] [border:none]"
         sx={{ width: 241 }}
         color="info"
         variant="filled"
@@ -23,24 +23,24 @@ const MCreateChannel: NextPage<MCreateChannelType> = ({ onClose }) => {
         size="medium"
         margin="none"
       />
-      <div className="absolute top-[156px] left-[63px] tracking-[0.1em]">
+      <div className="absolute left-[63px] top-[156px] tracking-[0.1em]">
         Private
       </div>
-      <div className="absolute top-[203px] left-[62px] tracking-[0.1em]">
+      <div className="absolute left-[62px] top-[203px] tracking-[0.1em]">
         Password
       </div>
       <FormControlLabel
-        className="absolute top-[156px] left-[248px]"
+        className="absolute left-[248px] top-[156px]"
         label=""
         control={<Switch color="info" size="medium" />}
       />
       <FormControlLabel
-        className="absolute top-[199px] left-[247px]"
+        className="absolute left-[247px] top-[199px]"
         label=""
         control={<Switch color="info" size="medium" />}
       />
       <TextField
-        className="[border:none] bg-[transparent] absolute top-[250px] left-[62px]"
+        className="absolute left-[62px] top-[250px] bg-[transparent] [border:none]"
         sx={{ width: 241 }}
         color="info"
         variant="filled"
@@ -50,13 +50,13 @@ const MCreateChannel: NextPage<MCreateChannelType> = ({ onClose }) => {
         size="medium"
         margin="none"
       />
-      <button className="cursor-pointer [border:none] p-0 bg-[transparent] absolute top-[322px] left-[62px] w-[242px] h-[41px]">
+      <button className="absolute left-[62px] top-[322px] h-[41px] w-[242px] cursor-pointer bg-[transparent] p-0 [border:none]">
         <img
-          className="absolute top-[0px] left-[0px] w-[242px] h-[41px]"
+          className="absolute left-[0px] top-[0px] h-[41px] w-[242px]"
           alt=""
           src="/rectangle-126.svg"
         />
-        <div className="absolute top-[7px] left-[26.7px] text-5xl tracking-[0.1em] font-body text-base-white text-left inline-block w-[203.07px] h-[34px]">
+        <div className="absolute left-[26.7px] top-[7px] inline-block h-[34px] w-[203.07px] text-left font-body text-5xl tracking-[0.1em] text-base-white">
           Create channel
         </div>
       </button>

@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React from "react";
 import type { NextPage } from "next";
 import { useCallback } from "react";
 import { useRouter } from "next/navigation";
@@ -17,44 +17,42 @@ const GameWonPage: NextPage = () => {
   }, [router]);
 
   return (
-    <div className="relative bg-darkslategray-100 w-full h-screen overflow-hidden text-left text-77xl text-base-white font-body">
-      <i className="absolute top-[392px] left-[493px] tracking-[0.1em]">
+    <div className="relative h-screen w-full overflow-hidden bg-darkslategray-100 text-left font-body text-77xl text-base-white">
+      <i className="absolute left-[493px] top-[392px] tracking-[0.1em]">
         You won!!
       </i>
-      <button
-        className="cursor-pointer [border:none] p-0 bg-[transparent] absolute top-[596px] left-[593px] w-[254px] h-[41px]"
-        >
+      <button className="absolute left-[593px] top-[596px] h-[41px] w-[254px] cursor-pointer bg-[transparent] p-0 [border:none]">
         <img
-          className="absolute top-[0px] left-[0px] w-[254px] h-[41px] cursor-pointer"
+          className="absolute left-[0px] top-[0px] h-[41px] w-[254px] cursor-pointer"
           alt=""
           src="/rectangle-122.svg"
           onClick={onPlayWithOtherClick}
         />
-        <div className="absolute top-[7px] left-[34px] text-5xl tracking-[0.1em] font-body text-base-white text-left inline-block w-[200px] h-[34px]">
+        <div className="absolute left-[34px] top-[7px] inline-block h-[34px] w-[200px] text-left font-body text-5xl tracking-[0.1em] text-base-white">
           Play with other
         </div>
       </button>
       <button
-        className="cursor-pointer [border:none] p-0 bg-[transparent] absolute top-[674px] left-[593px] w-[253.83px] h-[41px]"
+        className="absolute left-[593px] top-[674px] h-[41px] w-[253.83px] cursor-pointer bg-[transparent] p-0 [border:none]"
         onClick={onBackToChatClick}
       >
         <img
-          className="absolute top-[0px] left-[0px] w-[253.83px] h-[41px]"
+          className="absolute left-[0px] top-[0px] h-[41px] w-[253.83px]"
           alt=""
           src="/rectangle-12111.svg"
         />
-        <div className="absolute top-[7px] left-[46px] text-5xl tracking-[0.1em] font-body text-base-white text-left inline-block w-[188px] h-[34px]">
+        <div className="absolute left-[46px] top-[7px] inline-block h-[34px] w-[188px] text-left font-body text-5xl tracking-[0.1em] text-base-white">
           Back to chat
         </div>
       </button>
-      <div className="absolute top-[652px] left-[1051px] w-[449px] h-[464px]">
+      <div className="absolute left-[1051px] top-[652px] h-[464px] w-[449px]">
         <img
-          className="absolute top-[173px] left-[0px] w-[352px] h-44 object-cover"
+          className="absolute left-[0px] top-[173px] h-44 w-[352px] object-cover"
           alt=""
           src="/brazuca-medal@2x.png"
         />
         <img
-          className="absolute top-[0px] left-[113px] w-[336px] h-[464px] object-cover"
+          className="absolute left-[113px] top-[0px] h-[464px] w-[336px] object-cover"
           alt=""
           src="/brazuca-dog@2x.png"
         />

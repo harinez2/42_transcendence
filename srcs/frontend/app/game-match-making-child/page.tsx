@@ -1,7 +1,7 @@
 import GameMatchMakingChildPage from "./game-match-making-child-page";
-import React from 'react';
+import React from "react";
 
-const GameMatchMakingChild= () => {
+const GameMatchMakingChild = () => {
   return <GameMatchMakingChildPage />;
 };
 

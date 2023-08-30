@@ -14,8 +14,8 @@ const FriendsPage: NextPage = () => {
   }, [router]);
 
   return (
-    <div className="bg-darkslategray-100 relative h-screen w-full overflow-hidden">
-      <HeaderMenu/>
+    <div className="relative h-screen w-full overflow-hidden bg-darkslategray-100">
+      <HeaderMenu />
       <FriendsList
         icon2="/icon2.svg"
         icon3="/icon3.svg"

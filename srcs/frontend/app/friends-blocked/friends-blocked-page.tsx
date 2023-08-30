@@ -1,13 +1,13 @@
 "use client";
 
-import React from 'react';
+import React from "react";
 import type { NextPage } from "next";
 import { useState, useCallback } from "react";
 import MAddFriend from "../components/modal/m-add-friend";
 import { useRouter } from "next/navigation";
 import HeaderMenu from "../components/headermenu";
 import FriendsBlockedList from "./friends-blocked-list";
-import ModalPopup from '../components/modal/modal-popup';
+import ModalPopup from "../components/modal/modal-popup";
 
 const FriendsBlockedPage: NextPage = () => {
   const [isMAddFriendPopupOpen, setMAddFriendPopupOpen] = useState(false);
@@ -27,35 +27,35 @@ const FriendsBlockedPage: NextPage = () => {
 
   return (
     <>
-      <div className="relative bg-darkslategray-100 w-full h-screen overflow-hidden text-left text-5xl text-base-white font-body">
-       <HeaderMenu />
-        <div className="absolute top-[327px] left-[470px] w-[500px] h-screen text-xl">
-          <div className="absolute top-[-5px] left-[calc(50%_-_250px)] w-[500px] h-[52px]">
+      <div className="relative h-screen w-full overflow-hidden bg-darkslategray-100 text-left font-body text-5xl text-base-white">
+        <HeaderMenu />
+        <div className="absolute left-[470px] top-[327px] h-screen w-[500px] text-xl">
+          <div className="absolute left-[calc(50%_-_250px)] top-[-5px] h-[52px] w-[500px]">
             <img
-              className="absolute top-[49.5px] left-[calc(50%_-_250px)] w-[500px] h-[5px]"
+              className="absolute left-[calc(50%_-_250px)] top-[49.5px] h-[5px] w-[500px]"
               alt=""
               src="/line-1.svg"
             />
             <button
-              className="cursor-pointer [border:none] p-0 bg-[transparent] absolute top-[5px] left-[calc(50%_-_183px)] text-xl tracking-[0.1em] font-body text-darkgray-300 text-left inline-block"
+              className="absolute left-[calc(50%_-_183px)] top-[5px] inline-block cursor-pointer bg-[transparent] p-0 text-left font-body text-xl tracking-[0.1em] text-darkgray-300 [border:none]"
               onClick={onAllClick}
             >
               All
             </button>
-            <div className="absolute top-[0px] left-[calc(50%_-_68px)] bg-dimgray-100 w-[119px] h-8" />
-            <div className="absolute top-[5px] left-[calc(50%_-_48px)] tracking-[0.1em]">
+            <div className="absolute left-[calc(50%_-_68px)] top-[0px] h-8 w-[119px] bg-dimgray-100" />
+            <div className="absolute left-[calc(50%_-_48px)] top-[5px] tracking-[0.1em]">
               Blocked
             </div>
             <button
-              className="cursor-pointer [border:none] p-0 bg-[transparent] absolute top-[5px] left-[calc(50%_+_101px)] text-xl tracking-[0.1em] font-body text-darkgray-300 text-left inline-block"
+              className="absolute left-[calc(50%_+_101px)] top-[5px] inline-block cursor-pointer bg-[transparent] p-0 text-left font-body text-xl tracking-[0.1em] text-darkgray-300 [border:none]"
               onClick={openMAddFriendPopup}
             >
               add friend
             </button>
           </div>
-          <FriendsBlockedList/>
+          <FriendsBlockedList />
         </div>
-        </div>
+      </div>
       {isMAddFriendPopupOpen && (
         <ModalPopup
           overlayColor="rgba(113, 113, 113, 0.3)"

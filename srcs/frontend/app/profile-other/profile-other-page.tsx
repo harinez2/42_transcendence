@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import HeaderMenu from "../components/headermenu";
 import RankingContainer from "../components/raking-container";
 import MatchHistoryContainer from "../components/match-history-container";
-import React from 'react';
+import React from "react";
 
 const ProfileOtherPage: NextPage = () => {
   const router = useRouter();
@@ -20,71 +20,64 @@ const ProfileOtherPage: NextPage = () => {
   }, [router]);
 
   return (
-    <div className="relative bg-darkslategray-100 w-full h-screen overflow-hidden text-left text-xl text-base-white font-body">
-     <HeaderMenu/>
-      <div className="absolute top-[200px] left-[481px] tracking-[0.1em]">
+    <div className="relative h-screen w-full overflow-hidden bg-darkslategray-100 text-left font-body text-xl text-base-white">
+      <HeaderMenu />
+      <div className="absolute left-[481px] top-[200px] tracking-[0.1em]">
         Profile
       </div>
       <img
-        className="absolute top-[242.5px] left-[470px] w-[500px] h-[5px]"
+        className="absolute left-[470px] top-[242.5px] h-[5px] w-[500px]"
         alt=""
         src="/line-1.svg"
       />
-            <div className="absolute top-[283px] left-[492px] w-[439px] h-[45px] overflow-hidden flex flex-row items-center justify-start gap-[227px] text-17xl">
-        <div className="w-[177px] h-[45px] overflow-hidden shrink-0 flex flex-row items-center justify-start gap-[27px]">
-          <img
-          className="relative w-[45px] h-[45px]"
-          alt=""
-          src="/icon5.svg"
-          />
-          <div className="relative tracking-[0.1em]">
-          user2
-          </div>
-          <div className="absolute top-[294px] left-[868px] text-5xl tracking-[0.1em] text-silver-300">
-          online
+      <div className="absolute left-[492px] top-[283px] flex h-[45px] w-[439px] flex-row items-center justify-start gap-[227px] overflow-hidden text-17xl">
+        <div className="flex h-[45px] w-[177px] shrink-0 flex-row items-center justify-start gap-[27px] overflow-hidden">
+          <img className="relative h-[45px] w-[45px]" alt="" src="/icon5.svg" />
+          <div className="relative tracking-[0.1em]">user2</div>
+          <div className="absolute left-[868px] top-[294px] text-5xl tracking-[0.1em] text-silver-300">
+            online
           </div>
         </div>
       </div>
 
- 
-      <button className="cursor-pointer [border:none] p-0 bg-[transparent] absolute top-[383px] left-[473px] w-[75px] h-[39.29px]"
+      <button
+        className="absolute left-[473px] top-[383px] h-[39.29px] w-[75px] cursor-pointer bg-[transparent] p-0 [border:none]"
         onClick={onDMClick}
       >
-        <div className="absolute top-[0px] left-[0px] bg-gray-400 w-[75px] h-[39.29px]" />
-        <div className="absolute top-[8px] left-[16px] text-5xl tracking-[0.1em] font-body text-base-white text-left inline-block w-[51px] h-[31px]">
+        <div className="absolute left-[0px] top-[0px] h-[39.29px] w-[75px] bg-gray-400" />
+        <div className="absolute left-[16px] top-[8px] inline-block h-[31px] w-[51px] text-left font-body text-5xl tracking-[0.1em] text-base-white">
           DM
         </div>
       </button>
-      
-      <button className="cursor-pointer [border:none] p-0 bg-[transparent] absolute top-[383px] left-[568px] w-[159px] h-[42px]">
-        <div className="absolute top-[0px] left-[0px] bg-gray-400 w-[159px] h-[39.29px]" />
-        <div className="absolute top-[8px] left-[12.59px] text-5xl tracking-[0.1em] font-body text-base-white text-left inline-block w-[150px] h-[34px]">
+
+      <button className="absolute left-[568px] top-[383px] h-[42px] w-[159px] cursor-pointer bg-[transparent] p-0 [border:none]">
+        <div className="absolute left-[0px] top-[0px] h-[39.29px] w-[159px] bg-gray-400" />
+        <div className="absolute left-[12.59px] top-[8px] inline-block h-[34px] w-[150px] text-left font-body text-5xl tracking-[0.1em] text-base-white">
           Add friend
         </div>
       </button>
 
       <button
-        className="cursor-pointer [border:none] p-0 bg-[transparent] absolute top-[383px] left-[749px] w-[221px] h-[42px]"
+        className="absolute left-[749px] top-[383px] h-[42px] w-[221px] cursor-pointer bg-[transparent] p-0 [border:none]"
         onClick={onInviteToGameClick}
       >
-        <div className="absolute top-[0px] left-[0px] bg-gray-400 w-[221px] h-[39.29px]" />
-        <div className="absolute top-[8px] left-[19.5px] text-5xl tracking-[0.1em] font-body text-base-white text-left inline-block w-[201.5px] h-[34px]">
+        <div className="absolute left-[0px] top-[0px] h-[39.29px] w-[221px] bg-gray-400" />
+        <div className="absolute left-[19.5px] top-[8px] inline-block h-[34px] w-[201.5px] text-left font-body text-5xl tracking-[0.1em] text-base-white">
           Invite to Game
         </div>
       </button>
-        <img
-          className="absolute top-[473px] left-[470px] w-[500px] h-0.5"
-          alt=""
-          src="/line-2.svg"
-        />
-        <RankingContainer/>
-        <img
-          className="absolute top-[768px] left-[470px] w-[500px] h-0.5"
-          alt=""
-          src="/line-2.svg"
-        />
-      <MatchHistoryContainer/>
-
+      <img
+        className="absolute left-[470px] top-[473px] h-0.5 w-[500px]"
+        alt=""
+        src="/line-2.svg"
+      />
+      <RankingContainer />
+      <img
+        className="absolute left-[470px] top-[768px] h-0.5 w-[500px]"
+        alt=""
+        src="/line-2.svg"
+      />
+      <MatchHistoryContainer />
     </div>
   );
 };

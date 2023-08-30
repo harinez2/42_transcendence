@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React from "react";
 import type { NextPage } from "next";
 import { useCallback } from "react";
 import { useRouter } from "next/navigation";
@@ -13,23 +13,23 @@ const MatchMakingContainer: NextPage = () => {
   }, [router]);
 
   return (
-    <div className="absolute top-[343px] left-[527px] bg-darkslategray-100 w-[390px] h-[338px] overflow-hidden text-left text-5xl text-base-white font-body">
-      <div className="absolute top-[30px] left-[27px] tracking-[0.1em]">
+    <div className="absolute left-[527px] top-[343px] h-[338px] w-[390px] overflow-hidden bg-darkslategray-100 text-left font-body text-5xl text-base-white">
+      <div className="absolute left-[27px] top-[30px] tracking-[0.1em]">
         Match making
       </div>
-      <div className="absolute top-[104px] left-[57px] tracking-[0.1em] inline-block w-[314px]">
+      <div className="absolute left-[57px] top-[104px] inline-block w-[314px] tracking-[0.1em]">
         waiting for opponent...
       </div>
       <button
-        className="cursor-pointer [border:none] p-0 bg-[transparent] absolute top-[252px] left-[68px] w-[253.83px] h-[41px]"
-        onClick={onLeaveTheQueueClick }
+        className="absolute left-[68px] top-[252px] h-[41px] w-[253.83px] cursor-pointer bg-[transparent] p-0 [border:none]"
+        onClick={onLeaveTheQueueClick}
       >
         <img
-          className="absolute top-[0px] left-[0px] w-[253.83px] h-[41px]"
+          className="absolute left-[0px] top-[0px] h-[41px] w-[253.83px]"
           alt=""
           src="/rectangle-12111.svg"
         />
-        <div className="absolute top-[7px] left-[25px] text-5xl tracking-[0.1em] font-body text-base-white text-left inline-block w-[213px] h-[34px]">
+        <div className="absolute left-[25px] top-[7px] inline-block h-[34px] w-[213px] text-left font-body text-5xl tracking-[0.1em] text-base-white">
           leave the queue
         </div>
       </button>

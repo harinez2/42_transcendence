@@ -1,5 +1,5 @@
 import FriendsBlockedPage from "./friends-blocked-page";
-import React from 'react';
+import React from "react";
 
 const FriendsBlocked = () => {
   return <FriendsBlockedPage />;

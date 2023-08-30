@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import type { NextPage } from "next";
 import { useMemo, type CSSProperties } from "react";
 
@@ -58,24 +58,24 @@ const MsgContainer: NextPage<MsgContainerType> = ({
 
   return (
     <div
-      className="absolute top-[405px] left-[310px] bg-darkslategray-100 w-[843px] h-[153px] flex flex-col py-6 pr-[41px] pl-[43px] box-border items-start justify-start gap-[41px] text-left text-xl text-base-white font-body"
+      className="absolute left-[310px] top-[405px] box-border flex h-[153px] w-[843px] flex-col items-start justify-start gap-[41px] bg-darkslategray-100 py-6 pl-[43px] pr-[41px] text-left font-body text-xl text-base-white"
       style={post3Style}
     >
       <div
-        className="w-[321px] h-[58px] overflow-hidden shrink-0 flex flex-row items-start justify-start gap-[16px]"
+        className="flex h-[58px] w-[321px] shrink-0 flex-row items-start justify-start gap-[16px] overflow-hidden"
         style={frameStyle}
       >
         <img
-          className="relative w-[45px] h-[45px]"
+          className="relative h-[45px] w-[45px]"
           alt=""
           src={dimensionCode}
         />
         <div
-          className="w-[260px] h-[58px] overflow-hidden shrink-0 flex flex-col items-start justify-start gap-[12px]"
+          className="flex h-[58px] w-[260px] shrink-0 flex-col items-start justify-start gap-[12px] overflow-hidden"
           style={frame1Style}
         >
           <div
-            className="w-[260px] h-[23px] overflow-hidden shrink-0 flex flex-row items-center justify-start gap-[16px]"
+            className="flex h-[23px] w-[260px] shrink-0 flex-row items-center justify-start gap-[16px] overflow-hidden"
             style={frame2Style}
           >
             <div className="relative tracking-[0.1em]">user1</div>
@@ -87,7 +87,7 @@ const MsgContainer: NextPage<MsgContainerType> = ({
         </div>
       </div>
       <div
-        className="relative box-border w-[761px] h-px border-t-[1px] border-solid border-gray-100"
+        className="relative box-border h-px w-[761px] border-t-[1px] border-solid border-gray-100"
         style={lineDivStyle}
       />
     </div>

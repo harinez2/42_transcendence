@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import type { NextPage } from "next";
 import { useMemo, type CSSProperties } from "react";
 
@@ -26,17 +26,13 @@ const DMMsgContainer: NextPage<DMMsgContainerType> = ({
 
   return (
     <div
-      className="absolute top-[99px] left-[310px] bg-darkslategray-100 w-[1130px] h-[153px] flex flex-col pt-6 pb-[17px] pr-[42px] pl-[43px] box-border items-start justify-start gap-[54px] text-left text-xl text-base-white font-body"
+      className="absolute left-[310px] top-[99px] box-border flex h-[153px] w-[1130px] flex-col items-start justify-start gap-[54px] bg-darkslategray-100 pb-[17px] pl-[43px] pr-[42px] pt-6 text-left font-body text-xl text-base-white"
       style={post1Style}
     >
-      <div className="w-[329px] h-[58px] overflow-hidden shrink-0 flex flex-row items-start justify-start gap-[16px]">
-        <img
-          className="relative w-[45px] h-[45px]"
-          alt=""
-          src="/icon1.svg"
-        />
-        <div className="w-[300px] h-[58px] overflow-hidden shrink-0 flex flex-col items-start justify-start gap-[12px]">
-          <div className="w-[300px] h-[23px] overflow-hidden shrink-0 flex flex-row items-center justify-start gap-[24px]">
+      <div className="flex h-[58px] w-[329px] shrink-0 flex-row items-start justify-start gap-[16px] overflow-hidden">
+        <img className="relative h-[45px] w-[45px]" alt="" src="/icon1.svg" />
+        <div className="flex h-[58px] w-[300px] shrink-0 flex-col items-start justify-start gap-[12px] overflow-hidden">
+          <div className="flex h-[23px] w-[300px] shrink-0 flex-row items-center justify-start gap-[24px] overflow-hidden">
             <div className="relative tracking-[0.1em]">user1</div>
             <div className="relative text-base tracking-[0.1em] text-darkgray-100">
               {dateTime}
@@ -45,7 +41,7 @@ const DMMsgContainer: NextPage<DMMsgContainerType> = ({
           <div className="relative tracking-[0.1em]">{dmScreenText}</div>
         </div>
       </div>
-      <div className="relative box-border w-[1045px] h-px border-t-[1px] border-solid border-gray-100" />
+      <div className="relative box-border h-px w-[1045px] border-t-[1px] border-solid border-gray-100" />
     </div>
   );
 };

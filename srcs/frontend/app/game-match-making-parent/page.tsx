@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import GameMatchMakingParentPage from "./game-match-making-parent-page";
 
 const GameMatchMakingParent = () => {

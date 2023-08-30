@@ -7,22 +7,22 @@ module.exports = {
   ],
   theme: {
     extend: {
-       colors: {
+      colors: {
         darkslategray: {
-          "100": "#464646",
-          "200": "#3b3a3a",
-          "300": "#323232",
+          100: "#464646",
+          200: "#3b3a3a",
+          300: "#323232",
         },
         darkgray: {
-          "100": "#aaa9a9",
-          "200": "#a4a4a4",
-          "300": "#9c9c9c",
+          100: "#aaa9a9",
+          200: "#a4a4a4",
+          300: "#9c9c9c",
         },
         white: "#fff",
         dimgray: {
-          "100": "#6c6a6a",
-          "200": "#605f5f",
-          "300": "#5d5d5d",
+          100: "#6c6a6a",
+          200: "#605f5f",
+          300: "#5d5d5d",
         },
         // gray: {
         //   "100": "#8a8a8a",
@@ -35,9 +35,9 @@ module.exports = {
         gainsboro: "#d9d9d9",
         whitesmoke: "#f2f2f2",
         silver: {
-          "100": "#bdbdbd",
-          "200": "#bbb",
-          "300": "#bcb9b9",
+          100: "#bdbdbd",
+          200: "#bbb",
+          300: "#bcb9b9",
         },
         black: "#000",
         "gray-200": "#c1c9d2",
@@ -60,7 +60,7 @@ module.exports = {
       },
     },
     fontSize: {
-      sm :"14px",
+      sm: "14px",
       // sm: "0.8rem",
       xs: "12px",
       base: "16px",
@@ -77,11 +77,11 @@ module.exports = {
       "181xl": "200px",
       inherit: "inherit",
     },
-      backgroundImage: {
-        "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
-        "gradient-conic":
-          "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
-      },
+    backgroundImage: {
+      "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
+      "gradient-conic":
+        "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
+    },
     container: {
       screens: {
         "2xl": "100%",

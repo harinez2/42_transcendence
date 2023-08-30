@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import GamePage from "./game-page";
 
 const Game = () => {

@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React from "react";
 import type { NextPage } from "next";
 import { useCallback } from "react";
 import { FormControlLabel, Switch, Box, Slider } from "@mui/material";
@@ -9,45 +9,40 @@ import { useRouter } from "next/navigation";
 const GameSettingsContainer: NextPage = () => {
   const router = useRouter();
 
-  const onSignInClick = useCallback(() => {
-    router.push("/../pages/game-match-making-child");
-  }, [router]);
-
-  const onRectangleClick = useCallback(() => {
-    router.push("/../pages/game-match-making-child");
+  const onPlayClick = useCallback(() => {
+    router.push("/../game-match-making-parent");
   }, [router]);
 
   return (
-    <div className="absolute top-[280px] left-[525px] bg-darkslategray-100 w-[390px] h-[391px] overflow-hidden text-left text-5xl text-base-white font-body">
-      <div className="absolute top-[30px] left-[27px] tracking-[0.1em]">
+    <div className="absolute left-[525px] top-[280px] h-[391px] w-[390px] overflow-hidden bg-darkslategray-100 text-left font-body text-5xl text-base-white">
+      <div className="absolute left-[27px] top-[30px] tracking-[0.1em]">
         Game settings
       </div>
       <button
-        className="cursor-pointer [border:none] p-0 bg-[transparent] absolute top-[313px] left-[79px] w-[223.67px] h-[41px]"
-        onClick={onSignInClick}
+        className="absolute left-[79px] top-[313px] h-[41px] w-[223.67px] cursor-pointer bg-[transparent] p-0 [border:none]"
+        onClick={onPlayClick}
       >
         <img
-          className="absolute top-[0px] left-[0px] w-[223.67px] h-[41px] cursor-pointer"
+          className="absolute left-[0px] top-[0px] h-[41px] w-[223.67px] cursor-pointer"
           alt=""
           src="/rectangle-1251.svg"
-          onClick={onRectangleClick}
         />
-        <div className="absolute top-[7px] left-[84px] text-5xl tracking-[0.1em] font-body text-base-white text-left inline-block w-[114px] h-[34px]">
+        <div className="absolute left-[84px] top-[7px] inline-block h-[34px] w-[114px] text-left font-body text-5xl tracking-[0.1em] text-base-white">
           Play
         </div>
       </button>
       <FormControlLabel
-        className="absolute top-[239px] left-[251px]"
+        className="absolute left-[251px] top-[239px]"
         label=""
         control={<Switch color="info" size="medium" />}
       />
-      <div className="absolute top-[238px] left-[81px] tracking-[0.1em]">
+      <div className="absolute left-[81px] top-[238px] tracking-[0.1em]">
         Speed up
       </div>
-      <div className="absolute top-[89px] left-[79px] tracking-[0.1em]">
+      <div className="absolute left-[79px] top-[89px] tracking-[0.1em]">
         Points
       </div>
-      <Box className="absolute top-[169px] left-[71px]" sx={{ width: 237 }}>
+      <Box className="absolute left-[71px] top-[169px]" sx={{ width: 237 }}>
         <Slider
           color="primary"
           min={3}
@@ -57,14 +52,14 @@ const GameSettingsContainer: NextPage = () => {
           marks
         />
       </Box>
-      <div className="absolute top-[139px] left-[66px] w-[242px] h-4 text-xl">
-        <div className="absolute top-[0px] left-[0px] tracking-[0.1em] inline-block w-[8.26px]">
+      <div className="absolute left-[66px] top-[139px] h-4 w-[242px] text-xl">
+        <div className="absolute left-[0px] top-[0px] inline-block w-[8.26px] tracking-[0.1em]">
           3
         </div>
-        <div className="absolute top-[0px] left-[112.15px] tracking-[0.1em] inline-block w-[8.26px]">
+        <div className="absolute left-[112.15px] top-[0px] inline-block w-[8.26px] tracking-[0.1em]">
           5
         </div>
-        <div className="absolute top-[0px] left-[233.74px] tracking-[0.1em] inline-block w-[8.26px]">
+        <div className="absolute left-[233.74px] top-[0px] inline-block w-[8.26px] tracking-[0.1em]">
           7
         </div>
       </div>

@@ -1,34 +1,25 @@
 "use client";
 
-import React from 'react';
+import React from "react";
 import type { NextPage } from "next";
 
 const RankingContainer: NextPage = () => {
-
   return (
-    <div className="absolute top-[506px] left-[590px] w-[229px] h-[227px]">
-     <div className="absolute top-[0px] left-[1px] w-[228px] h-14 overflow-hidden flex flex-row items-center justify-start gap-[66px]">
-      <div className="relative tracking-[0.1em]">
-      ranking
+    <div className="absolute left-[590px] top-[506px] h-[227px] w-[229px]">
+      <div className="absolute left-[1px] top-[0px] flex h-14 w-[228px] flex-row items-center justify-start gap-[66px] overflow-hidden">
+        <div className="relative tracking-[0.1em]">ranking</div>
+        <div className="relative text-29xl tracking-[0.1em]">1/5</div>
       </div>
-        <div className="relative text-29xl tracking-[0.1em]">
-        1/5
+      <div className="absolute left-[5px] top-[83px] flex h-14 w-[212px] flex-row items-center justify-start gap-[118px] overflow-hidden">
+        <div className="relative tracking-[0.1em]">win</div>
+        <div className="relative text-29xl tracking-[0.1em]">12</div>
+      </div>
+      <div className="absolute left-[0px] top-[171px] flex h-14 w-[201px] flex-row items-center justify-start gap-[130px] overflow-hidden">
+        <div className="mb-[11px] inline-block w-[34px] tracking-[0.1em]">
+          lose
         </div>
-     </div>
-     <div className="absolute top-[83px] left-[5px] w-[212px] h-14 overflow-hidden flex flex-row items-center justify-start gap-[118px]">
-      <div className="relative tracking-[0.1em]">win</div>
-      <div className="relative text-29xl tracking-[0.1em]">
-      12
+        <div className="relative text-29xl tracking-[0.1em]">3</div>
       </div>
-     </div>
-     <div className="absolute top-[171px] left-[0px] w-[201px] h-14 overflow-hidden flex flex-row items-center justify-start gap-[130px]">
-      <div className="tracking-[0.1em] inline-block w-[34px] mb-[11px]">
-      lose
-      </div>
-      <div className="relative text-29xl tracking-[0.1em]">
-      3
-      </div>
-     </div>
     </div>
   );
 };
