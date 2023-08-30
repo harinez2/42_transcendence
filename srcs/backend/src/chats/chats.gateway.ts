@@ -71,7 +71,9 @@ export class ChatsGateway {
         },
       });
       if (muteInfo && muteInfo.muteUntil > new Date()) {
-        throw new WsException('Cannot send the message because the user is muted.');
+        throw new WsException(
+          'Cannot send the message because the user is muted.',
+        );
       }
 
       console.log(
