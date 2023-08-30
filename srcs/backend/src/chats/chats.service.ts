@@ -435,7 +435,6 @@ async unbanUsers(channelId: number, bannedUserId: number): Promise<ChannelInfoDt
       isPassword: post.hashedPassword ? true : false,
       users: {
         owner: owner.userId,
-<<<<<<< HEAD
         admin: admins.map((admin) => admin.userId),
         user: users.map((user) => user.userId),
       },
@@ -444,11 +443,6 @@ async unbanUsers(channelId: number, bannedUserId: number): Promise<ChannelInfoDt
         mutedUserId: user.mutedUserId,
         muteUntil: user.muteUntil,
       })),
-=======
-        admin: admins.map((admin) => admin.userId),
-        user: users.map((user) => user.userId),
-      },
->>>>>>> ddd59dd05eeb3061330d23792ebd4a94a3e67e86
     };
   }
 }
