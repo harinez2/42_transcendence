@@ -1,9 +1,15 @@
-import { Injectable, NotFoundException, BadRequestException, ForbiddenException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { CreateChannelDto } from './dto/create-channel.dto';
 import { UpdateChannelDto } from './dto/update-channel.dto';
 import { ChannelInfoDto } from './dto/channel-info.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { Publicity, UserType } from './chats.interface';
+import { UserType } from './chats.interface';
+// import { Publicity, UserType } from './chats.interface';
 import { hash } from 'bcrypt';
 
 @Injectable()
@@ -12,10 +18,12 @@ export class ChatsService {
 
   // channel operations
 
-  async createChannel(createChannelDto: CreateChannelDto): Promise<ChannelInfoDto> {
-    const hashedPassword
-        = createChannelDto.password
-          ? await hash(createChannelDto.password, 10) as string : null;
+  async createChannel(
+    createChannelDto: CreateChannelDto,
+  ): Promise<ChannelInfoDto> {
+    const hashedPassword = createChannelDto.password
+      ? ((await hash(createChannelDto.password, 10)) as string)
+      : null;
 
     try {
       // ChatChannelsテーブルとChatChannelUsersテーブルを同時に更新
@@ -27,7 +35,7 @@ export class ChatsService {
               createdAt: new Date(),
               channelType: createChannelDto.channelType,
               hashedPassword: hashedPassword,
-            }
+            },
           },
           user: {
             connect: { id: createChannelDto.ownerId },
@@ -36,8 +44,16 @@ export class ChatsService {
         },
       });
 
-      this.addChannelUsers(createdPost.channelId, createChannelDto.ownerId, UserType.ADMIN);
-      this.addChannelUsers(createdPost.channelId, createChannelDto.ownerId, UserType.USER);
+      this.addChannelUsers(
+        createdPost.channelId,
+        createChannelDto.ownerId,
+        UserType.ADMIN,
+      );
+      this.addChannelUsers(
+        createdPost.channelId,
+        createChannelDto.ownerId,
+        UserType.USER,
+      );
       return this.findById(createdPost.channelId);
     } catch (e) {
       throw this.prisma.handleError(e);
@@ -47,7 +63,9 @@ export class ChatsService {
   async findAllChannel(): Promise<ChannelInfoDto[]> {
     try {
       const posts = await this.prisma.chatChannels.findMany();
-      const channelInfoPromises = posts.map(async (post) => await this.createChannelInfoDto(post));
+      const channelInfoPromises = posts.map(async (post) =>
+        await this.createChannelInfoDto(post)
+      );
       return await Promise.all(channelInfoPromises);
     } catch (e) {
       throw this.prisma.handleError(e);
@@ -68,11 +86,13 @@ export class ChatsService {
     }
   }
 
-  async updateChannel(channelId: number, updateChannelDto: UpdateChannelDto)
-      : Promise<ChannelInfoDto> {
-    const hashedPassword
-    = updateChannelDto.password
-      ? await hash(updateChannelDto.password, 10) as string : null;
+  async updateChannel(
+    channelId: number,
+    updateChannelDto: UpdateChannelDto,
+  ): Promise<ChannelInfoDto> {
+    const hashedPassword = updateChannelDto.password
+      ? ((await hash(updateChannelDto.password, 10)) as string)
+      : null;
 
     try {
       const post = await this.prisma.chatChannels.update({
@@ -132,7 +152,10 @@ export class ChatsService {
   // add/remove users
 
   async addChannelUsers(
-      channelId: number, userId : number, type: UserType): Promise<ChannelInfoDto> {
+    channelId: number,
+    userId: number,
+    type: UserType,
+  ): Promise<ChannelInfoDto> {
     try {
       // Banされているユーザでないかをチェック
       const ban = await this.prisma.chatBan.findUnique({
@@ -173,7 +196,10 @@ export class ChatsService {
   }
 
   async removeChannelUsers(
-      channelId: number, userId: number, type: UserType): Promise<ChannelInfoDto> {
+    channelId: number,
+    userId: number,
+    type: UserType,
+  ): Promise<ChannelInfoDto> {
     try {
       const isChannelOwner = await this.isChannelUsers(channelId, userId, UserType.OWNER);
       // Ownerは退室できないのでチェック
@@ -357,7 +383,10 @@ async unbanUsers(channelId: number, bannedUserId: number): Promise<ChannelInfoDt
   // private functions
 
   private async isChannelUsers(
-      channelId: number, userId : number, type: UserType): Promise<boolean> {
+    channelId: number,
+    userId: number,
+    type: UserType,
+  ): Promise<boolean> {
     const query = await this.prisma.chatChannelUsers.findFirst({
       where: {
         channelId: channelId,
@@ -365,10 +394,8 @@ async unbanUsers(channelId: number, bannedUserId: number): Promise<ChannelInfoDt
         type: type,
       },
     });
-    if (query)
-      return true;
-    else
-      return false;
+    if (query) return true;
+    else return false;
   }
 
   private async createChannelInfoDto(post: any): Promise<ChannelInfoDto> {
@@ -408,15 +435,20 @@ async unbanUsers(channelId: number, bannedUserId: number): Promise<ChannelInfoDt
       isPassword: post.hashedPassword ? true : false,
       users: {
         owner: owner.userId,
-        admin: admins.map(admin => admin.userId),
-        user: users.map(user => user.userId),
+<<<<<<< HEAD
+        admin: admins.map((admin) => admin.userId),
+        user: users.map((user) => user.userId),
       },
       bannedUsers: bans.map(user => user.bannedUserId),
       mutedUsers: mutes.map(user => ({
         mutedUserId: user.mutedUserId,
         muteUntil: user.muteUntil,
       })),
+=======
+        admin: admins.map((admin) => admin.userId),
+        user: users.map((user) => user.userId),
+      },
+>>>>>>> ddd59dd05eeb3061330d23792ebd4a94a3e67e86
     };
   }
-
 }

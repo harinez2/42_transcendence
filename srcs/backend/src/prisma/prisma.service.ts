@@ -1,8 +1,14 @@
-import { INestApplication, Injectable, OnModuleInit,
-  NotFoundException, BadRequestException,
-  RequestTimeoutException, NotImplementedException,
+import {
+  INestApplication,
+  Injectable,
+  OnModuleInit,
+  NotFoundException,
+  BadRequestException,
+  RequestTimeoutException,
+  NotImplementedException,
   InternalServerErrorException,
-  HttpException } from '@nestjs/common';
+  HttpException,
+} from '@nestjs/common';
 import { PrismaClient, Prisma } from '@prisma/client';
 import { DATABASE_URL } from 'config';
 
@@ -44,25 +50,23 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
     let exception;
     if (e instanceof Prisma.PrismaClientKnownRequestError) {
       console.error(`${c_red}Prisma error: ${e.code}${c_default}`, e.message);
-      console.error("meta:", e.meta);
+      console.error('meta:', e.meta);
       exception = this.handleKnownRequestError(e);
-
     } else if (e instanceof Prisma.PrismaClientUnknownRequestError) {
       console.error(`${c_red}Prisma unknown error${c_default}`, e.message);
       exception = new BadRequestException();
-
     } else if (e instanceof Prisma.PrismaClientRustPanicError) {
       console.error(`${c_red}Prisma FATAL error${c_default}`, e.message);
       exception = new BadRequestException();
-
     } else if (e instanceof Prisma.PrismaClientInitializationError) {
-      console.error(`${c_red}Prisma init error: ${e.errorCode}${c_default}`, e.message);
+      console.error(
+        `${c_red}Prisma init error: ${e.errorCode}${c_default}`,
+        e.message,
+      );
       exception = new BadRequestException();
-
     } else if (e instanceof Prisma.PrismaClientValidationError) {
       console.error(`${c_red}Prisma validation error${c_default}`, e.message);
       exception = new BadRequestException();
-
     } else {
       console.error(`${c_red}Unhandled error${c_default}\n`, e);
       exception = new InternalServerErrorException();
@@ -74,7 +78,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   private handleKnownRequestError(e: any): any {
     switch (e.code) {
       case 'P2002': // unique制約違反
-        return new BadRequestException("Unique constraint failed.");
+        return new BadRequestException('Unique constraint failed.');
         break;
 
       case 'P2015': // 関連レコードが見つからない

@@ -36,22 +36,23 @@ export class ChatsGateway {
 
     // clientsから削除
     const indexToRemove: number = this.clients.indexOf(client);
-    if (indexToRemove !== -1)
-      this.clients.splice(indexToRemove, 1);
+    if (indexToRemove !== -1) this.clients.splice(indexToRemove, 1);
   }
 
   // 過去のチャットログをDBから取得
   @SubscribeMessage('getPastMessages')
-  async handleGetPastMessages(@ConnectedSocket() client: Socket, @MessageBody() data: any) {
+  async handleGetPastMessages(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() data: any,
+  ) {
     try {
       const posts = await this.prisma.chatMessages.findMany({
         where: { channelId: data.channelId },
       });
-      for (let post of posts) {
+      for (const post of posts) {
         client.emit('message', post);
       }
-
-    } catch(e) {
+    } catch (e) {
       throw new WsException(e.message);
     }
   }
@@ -73,8 +74,10 @@ export class ChatsGateway {
         throw new WsException('Cannot send the message because the user is muted.');
       }
 
-      console.log(`channelId: ${data.channelId}, senderId: ${data.senderId}, ` +
-        `content: ${data.content}`);
+      console.log(
+        `channelId: ${data.channelId}, senderId: ${data.senderId}, ` +
+          `content: ${data.content}`,
+      );
 
       // メッセージをブロードキャスト
       this.broadcast('message', data);
@@ -87,7 +90,7 @@ export class ChatsGateway {
           createdAt: new Date(),
         },
       });
-    } catch(e) {
+    } catch (e) {
       throw new WsException(e.message);
     }
   }
@@ -95,9 +98,8 @@ export class ChatsGateway {
   //-------------------------------------------------------------------------
 
   private broadcast(event: string, data: MessageDto) {
-    for (let c of this.clients) {
+    for (const c of this.clients) {
       c.emit(event, data);
     }
   }
-
 }
