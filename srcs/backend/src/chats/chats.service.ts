@@ -149,7 +149,7 @@ export class ChatsService {
       // Admin付与時、Userであること
       if (type === UserType.ADMIN
           && ! await this.isChannelUsers(channelId, userId, UserType.USER)) {
-        throw new ForbiddenException('The user you are trying to grant Admin privileges to is not in User.');
+        throw new ForbiddenException('The user you are trying to grant Admin privileges to is not in this Channel.');
       }
 
       // 登録されていない場合のみ新規追加
