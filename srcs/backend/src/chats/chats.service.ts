@@ -255,7 +255,7 @@ async unbanUsers(channelId: number, bannedUserId: number): Promise<ChannelInfoDt
         bannedUserId: bannedUserId,
       },
     });
-    if (!query) {
+    if (query.count === 0) {
       throw new NotFoundException();
     }
     return this.findById(channelId);
@@ -344,7 +344,7 @@ async unbanUsers(channelId: number, bannedUserId: number): Promise<ChannelInfoDt
           mutedUserId: mutedUserId,
         },
       });
-      if (!query) {
+      if (query.count === 0) {
         throw new NotFoundException();
       }
       return this.findById(channelId);
