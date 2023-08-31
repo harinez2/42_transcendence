@@ -34,7 +34,7 @@ const Friends: NextPage = () => {
   }, [router]);
 
   return (
-    <div className="bg-darkslategray-100 relative h-screen w-full overflow-hidden">
+    <div className="relative h-screen w-full overflow-hidden bg-darkslategray-100">
       <HeaderMenu
         icon1="/icon1.svg"
         headerMenuPosition="absolute"

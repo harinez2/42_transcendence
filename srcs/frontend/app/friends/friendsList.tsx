@@ -58,7 +58,7 @@ const FriendsList: NextPage<FriendsListType> = ({
   return (
     <>
       <div
-        className="font-body relative h-[370px] w-[500px] text-left text-xl text-white"
+        className="relative h-[370px] w-[500px] text-left font-body text-xl text-white"
         style={friendsStyle}
       >
         <FriendsMenu
@@ -80,7 +80,7 @@ const FriendsList: NextPage<FriendsListType> = ({
           <div className="absolute left-[80px] top-[0px] tracking-[0.1em]">
             user2
           </div>
-          <div className="text-darkgray-200 absolute left-[80px] top-[23px] tracking-[0.1em]">
+          <div className="absolute left-[80px] top-[23px] tracking-[0.1em] text-darkgray-200">
             Online
           </div>
           <img
@@ -117,7 +117,7 @@ const FriendsList: NextPage<FriendsListType> = ({
           <div className="absolute left-[80px] top-[0px] tracking-[0.1em]">
             user4
           </div>
-          <div className="text-darkgray-200 absolute left-[80px] top-[23px] tracking-[0.1em]">
+          <div className="absolute left-[80px] top-[23px] tracking-[0.1em] text-darkgray-200">
             Online
           </div>
           <img

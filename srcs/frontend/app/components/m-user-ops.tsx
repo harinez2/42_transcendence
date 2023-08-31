@@ -6,7 +6,7 @@ type MUserOpsType = {
 
 const MUserOps: NextPage<MUserOpsType> = ({ onClose }) => {
   return (
-    <div className="bg-darkslategray-100 font-body relative box-border flex h-[482px] max-h-full w-[390px] max-w-full flex-col items-start justify-start overflow-hidden px-10 py-[34px] text-left text-5xl text-white">
+    <div className="relative box-border flex h-[482px] max-h-full w-[390px] max-w-full flex-col items-start justify-start overflow-hidden bg-darkslategray-100 px-10 py-[34px] text-left font-body text-5xl text-white">
       <div className="relative inline-block h-80 w-28 shrink-0 tracking-[0.1em]">
         User ops
       </div>
@@ -57,7 +57,7 @@ const MUserOps: NextPage<MUserOpsType> = ({ onClose }) => {
             alt=""
             src="/rectangle-124.svg"
           />
-          <div className="font-body absolute left-[24px] top-[8px] inline-block h-[34px] w-[248px] text-left text-5xl tracking-[0.1em] text-white">
+          <div className="absolute left-[24px] top-[8px] inline-block h-[34px] w-[248px] text-left font-body text-5xl tracking-[0.1em] text-white">
             Block this user
           </div>
         </button>

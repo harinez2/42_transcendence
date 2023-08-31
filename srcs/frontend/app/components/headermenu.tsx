@@ -132,10 +132,10 @@ const HeaderMenu: NextPage<HeaderMenuType> = ({
 
   return (
     <div
-      className="font-body relative h-[100px] w-[1440px] text-left text-5xl text-white"
+      className="relative h-[100px] w-[1440px] text-left font-body text-5xl text-white"
       style={headerMenuStyle}
     >
-      <div className="bg-darkslategray-300 absolute inset-x-0 top-[calc(50%_-_50px)] h-[100px] w-full" />
+      <div className="absolute inset-x-0 top-[calc(50%_-_50px)] h-[100px] w-full bg-darkslategray-300" />
       <img
         className="absolute right-[30px] top-[calc(50%_-_22px)] h-[45px] w-[45px]"
         alt=""
@@ -167,7 +167,7 @@ const HeaderMenu: NextPage<HeaderMenuType> = ({
         </div>
       </div>
       <div
-        className="text-29xl absolute left-[37px] top-[calc(50%_-_26px)] tracking-[0.1em]"
+        className="absolute left-[37px] top-[calc(50%_-_26px)] text-29xl tracking-[0.1em]"
         style={ftTranscendenceStyle}
         onClick={onFtTranscendenceClick}
       >
