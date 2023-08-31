@@ -114,7 +114,8 @@ const ChatUI = () => {
           aria-label="Sidebar"
         >
           <div className="h-full overflow-y-auto bg-gray-800 px-3 py-4 ">
-            <ChannelCategory categoryName="Channels"
+            <ChannelCategory
+              categoryName="Channels"
               channels={channels}
               setChannels={setChannels}
             />
