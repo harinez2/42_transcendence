@@ -44,12 +44,12 @@ export class ChatsService {
         },
       });
 
-      this.addChannelUsers(
+      await this.addChannelUsers(
         createdPost.channelId,
         createChannelDto.ownerId,
         UserType.USER,
       );
-      this.addChannelUsers(
+      await this.addChannelUsers(
         createdPost.channelId,
         createChannelDto.ownerId,
         UserType.ADMIN,
