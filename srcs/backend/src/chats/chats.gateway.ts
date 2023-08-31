@@ -38,23 +38,24 @@ export class ChatsGateway {
 
     // clientsから削除
     const indexToRemove: number = this.clients.indexOf(client);
-    if (indexToRemove !== -1)
-      this.clients.splice(indexToRemove, 1);
+    if (indexToRemove !== -1) this.clients.splice(indexToRemove, 1);
   }
 
   // 過去のチャットログをDBから取得
   @SubscribeMessage('getPastMessages')
-  async handleGetPastMessages(@ConnectedSocket() client: Socket, @MessageBody() data: any) {
+  async handleGetPastMessages(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() data: any,
+  ) {
     try {
       const posts = await this.prisma.chatMessages.findMany({
         where: { channelId: Number(data.channelId) },
         include: { sender: true },
       });
-      for (let post of posts) {
+      for (const post of posts) {
         client.emit('message', post);
       }
-
-    } catch(e) {
+    } catch (e) {
       throw new WsException(e.message);
     }
   }
@@ -73,11 +74,15 @@ export class ChatsGateway {
         },
       });
       if (muteInfo && muteInfo.muteUntil > new Date()) {
-        throw new WsException('Cannot send the message because the user is muted.');
+        throw new WsException(
+          'Cannot send the message because the user is muted.',
+        );
       }
 
-      console.log(`channelId: ${data.channelId}, senderId: ${data.senderId}, ` +
-        `content: ${data.content}`);
+      console.log(
+        `channelId: ${data.channelId}, senderId: ${data.senderId}, ` +
+          `content: ${data.content}`,
+      );
 
       // DBに保存
       const createdMessage = await this.prisma.chatMessages.create({
@@ -92,7 +97,7 @@ export class ChatsGateway {
       const addedMessage = await this.findMessageById(createdMessage.messageId);
       // メッセージをブロードキャスト
       this.broadcast('message', addedMessage);
-    } catch(e) {
+    } catch (e) {
       throw new WsException(e.message);
     }
   }
@@ -100,7 +105,7 @@ export class ChatsGateway {
   //-------------------------------------------------------------------------
 
   private broadcast(event: string, data: MessageDto) {
-    for (let c of this.clients) {
+    for (const c of this.clients) {
       c.emit(event, data);
     }
   }

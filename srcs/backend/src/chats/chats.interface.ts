@@ -1,11 +1,10 @@
-
 export enum Publicity {
-  PUBLIC  = 'PUBLIC',
+  PUBLIC = 'PUBLIC',
   PRIVATE = 'PRIVATE',
 }
 
 export enum UserType {
-  OWNER  = 'OWNER',
-  ADMIN  = 'ADMIN',
-  USER   = 'USER',
+  OWNER = 'OWNER',
+  ADMIN = 'ADMIN',
+  USER = 'USER',
 }

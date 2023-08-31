@@ -22,7 +22,7 @@ export class ChannelInfoDto {
     owner: number;
     admin: number[];
     user: number[];
-  }
+  };
 
   @ApiProperty()
   bannedUsers: number[];
