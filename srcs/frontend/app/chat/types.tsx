@@ -1,4 +1,3 @@
-
 export type ChannelType = {
   channelId: number;
   channelName: string;
@@ -6,12 +5,12 @@ export type ChannelType = {
   channelType: string;
   isPassword: boolean;
   users: {
-    owner: number,
-    admin: number[],
-    user: number[],
+    owner: number;
+    admin: number[];
+    user: number[];
   };
-  bannedUsers: number[],
-  mutedUsers: number[],
+  bannedUsers: number[];
+  mutedUsers: number[];
 };
 
 export type MessageType = {
@@ -25,4 +24,4 @@ export type MessageType = {
   senderId: number;
   content: string;
   createdAt: Date;
-}
+};
