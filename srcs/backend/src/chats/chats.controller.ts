@@ -331,7 +331,7 @@ export class ChatsController {
   @ApiResponse({
     status: 200,
     description: '指定したチャンネルIDの情報を返却',
-    type: Array<{ mutedUserId: Number; muteUntil: Date }>,
+    type: Array<{ mutedUserId: number; muteUntil: Date }>,
   })
   @Get(':channelid/mute')
   async getActiveMutes(
