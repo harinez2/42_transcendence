@@ -47,12 +47,12 @@ export class ChatsService {
       this.addChannelUsers(
         createdPost.channelId,
         createChannelDto.ownerId,
-        UserType.ADMIN,
+        UserType.USER,
       );
       this.addChannelUsers(
         createdPost.channelId,
         createChannelDto.ownerId,
-        UserType.USER,
+        UserType.ADMIN,
       );
       return this.findById(createdPost.channelId);
     } catch (e) {
@@ -169,7 +169,6 @@ export class ChatsService {
       if (ban) {
         throw new ForbiddenException('The specified user is banned.');
       }
-      // Admin付与時、Userであること
       if (
         type === UserType.ADMIN &&
         !(await this.isChannelUsers(channelId, userId, UserType.USER))
