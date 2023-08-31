@@ -124,5 +124,4 @@ export class ChatsGateway {
       throw this.prisma.handleError(e);
     }
   }
-
 }
