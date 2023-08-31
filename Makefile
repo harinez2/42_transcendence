@@ -111,6 +111,13 @@ front-dev-local:
 backend-dev-local:
 	npm --prefix ./srcs/backend run start:dev
 
+
+frontend:
+	cd srcs/frontend && docker-compose exec -it frontend sh
+
+backend:
+	cd srcs/backend && docker-compose exec -it backend sh
+
 setup:
 	@printf "$(GR)Setting up git hooks...$(RC)\n"
 	git config --local commit.template .commit_template

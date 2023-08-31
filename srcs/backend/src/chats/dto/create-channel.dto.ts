@@ -12,5 +12,5 @@ export class CreateChannelDto {
   channelType: Publicity;
 
   @ApiProperty({ required: false })
-  password: string = '';
+  password = '';
 }
