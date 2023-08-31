@@ -13,19 +13,8 @@ const ChannelCategory = ({ categoryName }: { categoryName: string }) => {
   return (
     <span className="flex flex-row items-center justify-between p-2 font-bold uppercase text-gray-500">
       <div>{categoryName}</div>
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        className="h-5 w-5 text-gray-500"
-        viewBox="0 0 20 20"
-        fill="currentColor"
-        onClick={showModal}
-      >
-        <path
-          fillRule="evenodd"
-          d="M10 18a8 8 0 100-16 8 8 0 000 16zM9 9V5a1 1 0 112 0v4h4a1 1 0 110 2h-4v4a1 1 0 11-2 0v-4H5a1 1 0 110-2h4z"
-          clipRule="evenodd"
-        />
-      </svg>
+      <ShowDialogButton showModal={showModal} />
+
       <dialog
         onClick={closeModal}
         ref={ref}
@@ -37,6 +26,24 @@ const ChannelCategory = ({ categoryName }: { categoryName: string }) => {
     </span>
   );
 };
+
+const ShowDialogButton = ({ showModal }: { showModal: () => void }) => {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="h-5 w-5 text-gray-500"
+      viewBox="0 0 20 20"
+      fill="currentColor"
+      onClick={showModal}
+    >
+      <path
+        fillRule="evenodd"
+        d="M10 18a8 8 0 100-16 8 8 0 000 16zM9 9V5a1 1 0 112 0v4h4a1 1 0 110 2h-4v4a1 1 0 11-2 0v-4H5a1 1 0 110-2h4z"
+        clipRule="evenodd"
+      />
+    </svg>);
+}
+
 
 const ChannelCreateModal = ({ closeModal }: any) => {
   // dialog の外側をクリックしたときに閉じるために使用する
