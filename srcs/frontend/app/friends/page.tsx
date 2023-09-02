@@ -1,7 +1,7 @@
-import Friends from "./friends";
+import FriendsPage from "./friends-page";
 
 const FriendsAll = () => {
-  return <Friends />;
+  return <FriendsPage />;
 };
 
 export default FriendsAll;

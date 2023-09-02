@@ -1,147 +1,97 @@
+import React from "react";
 import type { NextPage } from "next";
 import { useMemo } from "react";
 import CSS, { Property } from "csstype";
+import { useCallback } from "react";
+import { useRouter } from "next/navigation";
 
-interface HeaderMenuType {
-  icon1?: string;
+const HeaderMenu: NextPage = () => {
+  const router = useRouter();
 
-  /** Style props */
-  headerMenuPosition?: Property.Position;
-  headerMenuTop?: Property.Top;
-  headerMenuLeft?: Property.Left;
-  iconCursor?: Property.Cursor;
-  friendsCursor?: Property.Cursor;
-  friendsBorder?: Property.Border;
-  friendsPadding?: Property.Padding;
-  friendsBackgroundColor?: Property.BackgroundColor;
-  dMCursor?: Property.Cursor;
-  dMBorder?: Property.Border;
-  dMPadding?: Property.Padding;
-  dMBackgroundColor?: Property.BackgroundColor;
-  gameCursor?: Property.Cursor;
-  gameBorder?: Property.Border;
-  gamePadding?: Property.Padding;
-  gameBackgroundColor?: Property.BackgroundColor;
-  ftTranscendenceCursor?: Property.Cursor;
-  ftTranscendenceBorder?: Property.Border;
-  ftTranscendencePadding?: Property.Padding;
-  ftTranscendenceBackgroundColor?: Property.BackgroundColor;
-  headerMenuWidth?: Property.Width;
-  headerMenuRight?: Property.Right;
+  const onMyIconClick = useCallback(() => {
+    router.push("/profile-mine");
+  }, [router]);
 
-  /** Action props */
-  onIconClick?: () => void;
-  onFriendsClick?: () => void;
-  onDMClick?: () => void;
-  onGameClick?: () => void;
-  onFtTranscendenceClick?: () => void;
-}
+  const onFriendsClick = useCallback(() => {
+    router.push("/friends");
+  }, [router]);
 
-const HeaderMenu: NextPage<HeaderMenuType> = ({
-  icon1,
-  headerMenuPosition,
-  headerMenuTop,
-  headerMenuLeft,
-  iconCursor,
-  friendsCursor,
-  friendsBorder,
-  friendsPadding,
-  friendsBackgroundColor,
-  dMCursor,
-  dMBorder,
-  dMPadding,
-  dMBackgroundColor,
-  gameCursor,
-  gameBorder,
-  gamePadding,
-  gameBackgroundColor,
-  ftTranscendenceCursor,
-  ftTranscendenceBorder,
-  ftTranscendencePadding,
-  ftTranscendenceBackgroundColor,
-  headerMenuWidth,
-  headerMenuRight,
-  onIconClick,
-  onFriendsClick,
-  onDMClick,
-  onGameClick,
-  onFtTranscendenceClick,
-}) => {
+  const onDMClick = useCallback(() => {
+    router.push("/dm");
+  }, [router]);
+
+  const onGameClick = useCallback(() => {
+    router.push("/game-match-making-parent");
+  }, [router]);
+
+  const onFtTranscendenceClick = useCallback(() => {
+    router.push("/chat");
+  }, [router]);
+
   const headerMenuStyle: CSS.Properties = useMemo(() => {
     return {
-      position: headerMenuPosition,
-      top: headerMenuTop,
-      left: headerMenuLeft,
-      width: headerMenuWidth,
-      right: headerMenuRight,
+      position: "absolute",
+      top: "0px",
+      left: "0px",
+      width: "100%",
+      right: "0px",
     };
-  }, [
-    headerMenuPosition,
-    headerMenuTop,
-    headerMenuLeft,
-    headerMenuWidth,
-    headerMenuRight,
-  ]);
+  }, ["absolute", "0px", "0px", "100%", "0px"]);
 
   const iconStyle: CSS.Properties = useMemo(() => {
     return {
-      cursor: iconCursor,
+      cursor: "pointer",
     };
-  }, [iconCursor]);
+  }, ["pointer"]);
 
   const friendsStyle: CSS.Properties = useMemo(() => {
     return {
-      cursor: friendsCursor,
-      border: friendsBorder,
-      padding: friendsPadding,
-      backgroundColor: friendsBackgroundColor,
+      cursor: "pointer",
+      border: "none",
+      padding: "0",
+      backgroundColor: "transparent",
     };
-  }, [dMCursor, dMBorder, dMPadding, dMBackgroundColor]);
+  }, ["pointer", "none", "0", "transparent"]);
 
   const dMStyle: CSS.Properties = useMemo(() => {
     return {
-      cursor: dMCursor,
-      border: dMBorder,
-      padding: dMPadding,
-      backgroundColor: dMBackgroundColor,
+      cursor: "pointer",
+      border: "none",
+      padding: "0",
+      backgroundColor: "transparent",
     };
-  }, [dMCursor, dMBorder, dMPadding, dMBackgroundColor]);
+  }, ["pointer", "none", "0", "transparent"]);
 
   const gameStyle: CSS.Properties = useMemo(() => {
     return {
-      cursor: gameCursor,
-      border: gameBorder,
-      padding: gamePadding,
-      backgroundColor: gameBackgroundColor,
+      cursor: "pointer",
+      border: "none",
+      padding: "0",
+      backgroundColor: "transparent",
     };
-  }, [gameCursor, gameBorder, gamePadding, gameBackgroundColor]);
+  }, ["pointer", "none", "0", "transparent"]);
 
   const ftTranscendenceStyle: CSS.Properties = useMemo(() => {
     return {
-      cursor: ftTranscendenceCursor,
-      border: ftTranscendenceBorder,
-      padding: ftTranscendencePadding,
-      backgroundColor: ftTranscendenceBackgroundColor,
+      cursor: "pointer",
+      border: "none",
+      padding: "0",
+      backgroundColor: "transparent",
     };
-  }, [
-    ftTranscendenceCursor,
-    ftTranscendenceBorder,
-    ftTranscendencePadding,
-    ftTranscendenceBackgroundColor,
-  ]);
+  }, ["pointer", "none", "0", "transparent"]);
 
   return (
     <div
-      className="font-body relative h-[100px] w-[1440px] text-left text-5xl text-white"
+      className="relative h-[100px] w-[1440px] text-left font-body text-5xl text-white"
       style={headerMenuStyle}
     >
-      <div className="bg-darkslategray-300 absolute inset-x-0 top-[calc(50%_-_50px)] h-[100px] w-full" />
+      <div className="absolute inset-x-0 top-[calc(50%_-_50px)] h-[100px] w-full bg-darkslategray-300" />
       <img
         className="absolute right-[30px] top-[calc(50%_-_22px)] h-[45px] w-[45px]"
         alt=""
-        src={icon1}
+        src={"/icon1.svg"}
         style={iconStyle}
-        onClick={onIconClick}
+        onClick={onMyIconClick}
       />
       <div className="absolute right-[138px] top-[calc(50%_-_5px)] h-[29px] w-[279px]">
         <div
@@ -167,7 +117,7 @@ const HeaderMenu: NextPage<HeaderMenuType> = ({
         </div>
       </div>
       <div
-        className="text-29xl absolute left-[37px] top-[calc(50%_-_26px)] tracking-[0.1em]"
+        className="absolute left-[37px] top-[calc(50%_-_26px)] text-29xl tracking-[0.1em]"
         style={ftTranscendenceStyle}
         onClick={onFtTranscendenceClick}
       >

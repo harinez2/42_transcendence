@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import React from "react";
 
-import "../../styles/globals.css";
+import "../../styles/global.css";
 
 export const metadata: Metadata = {
   title: "ft_transcendence",

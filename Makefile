@@ -113,13 +113,13 @@ backend-dev-local:
 
 
 frontend:
-	cd srcs/frontend && docker-compose exec -it frontend sh
+	docker exec -it frontend sh
 
 backend:
-	cd srcs/backend && docker-compose exec -it backend sh
+	docker exec -it backend sh
 
 setup:
 	@printf "$(GR)Setting up git hooks...$(RC)\n"
 	git config --local commit.template .commit_template
 
-.PHONY: logs down clean cleanimage fclean re setup db-up front-dev-local backend-dev-local
+.PHONY: logs down clean cleanimage fclean re setup db-up front-dev-local backend-dev-local frontend backend
