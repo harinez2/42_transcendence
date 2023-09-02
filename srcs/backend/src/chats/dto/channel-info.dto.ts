@@ -19,13 +19,17 @@ export class ChannelInfoDto {
 
   @ApiProperty()
   users: {
-    // @ApiProperty()
     owner: number;
-
-    // @ApiProperty()
     admin: number[];
-
-    // @ApiProperty()
     user: number[];
   };
+
+  @ApiProperty()
+  bannedUsers: number[];
+
+  @ApiProperty()
+  mutedUsers: {
+    mutedUserId: number;
+    muteUntil: Date;
+  }[];
 }
