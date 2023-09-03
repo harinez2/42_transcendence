@@ -5,6 +5,7 @@ import ChannelName from "./channel_name";
 import SidebarCategory from "./sidebar_category";
 import MessageComponent from "./message";
 import { User } from "./user";
+
 import UserComponent from "./user";
 import makeAPIRequest from "@/app/api/api";
 import type { ChannelType, MessageType } from "./types";

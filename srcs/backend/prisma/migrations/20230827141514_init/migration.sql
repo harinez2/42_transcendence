@@ -106,6 +106,19 @@ CREATE TABLE "DmMessages" (
     CONSTRAINT "DmMessages_pkey" PRIMARY KEY ("messageId")
 );
 
+-- CreateTable
+CREATE TABLE "GameInfo" (
+    "gameId" SERIAL NOT NULL,
+    "user1Id" INTEGER NOT NULL,
+    "user2Id" INTEGER NOT NULL,
+    "user1Score" INTEGER,
+    "user2Score" INTEGER,
+    "startedAt" TIMESTAMP(3) NOT NULL,
+    "endedAt" TIMESTAMP(3),
+
+    CONSTRAINT "GameInfo_pkey" PRIMARY KEY ("gameId")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
@@ -174,3 +187,9 @@ ALTER TABLE "DmMessages" ADD CONSTRAINT "DmMessages_channelId_fkey" FOREIGN KEY 
 
 -- AddForeignKey
 ALTER TABLE "DmMessages" ADD CONSTRAINT "DmMessages_senderId_fkey" FOREIGN KEY ("senderId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "GameInfo" ADD CONSTRAINT "GameInfo_user1Id_fkey" FOREIGN KEY ("user1Id") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "GameInfo" ADD CONSTRAINT "GameInfo_user2Id_fkey" FOREIGN KEY ("user2Id") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
