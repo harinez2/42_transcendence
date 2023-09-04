@@ -6,6 +6,7 @@ const prisma = new PrismaClient();
 
 async function main() {
   const hashedPassword1 = await hash('password1', 10);
+  console.log(hashedPassword1);
 
   // ダミーユーザー作成
   const user1 = await prisma.user.create({
