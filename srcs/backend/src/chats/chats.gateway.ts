@@ -8,7 +8,9 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { AddMessageDto } from './dto/add-message.dto';
 import { MessageDto } from './dto/message.dto';
+import { NotFoundException } from '@nestjs/common';
 
 @WebSocketGateway({
   cors: {
@@ -47,7 +49,8 @@ export class ChatsGateway {
   ) {
     try {
       const posts = await this.prisma.chatMessages.findMany({
-        where: { channelId: data.channelId },
+        where: { channelId: Number(data.channelId) },
+        include: { sender: true },
       });
       for (const post of posts) {
         client.emit('message', post);
@@ -59,7 +62,7 @@ export class ChatsGateway {
 
   // messageイベント受信
   @SubscribeMessage('message')
-  async handleMessage(@MessageBody() data: MessageDto) {
+  async handleMessage(@MessageBody() data: AddMessageDto) {
     try {
       // ミュートされたユーザの発言の場合は例外を投げる
       const muteInfo = await this.prisma.chatMute.findUnique({
@@ -81,10 +84,8 @@ export class ChatsGateway {
           `content: ${data.content}`,
       );
 
-      // メッセージをブロードキャスト
-      this.broadcast('message', data);
       // DBに保存
-      await this.prisma.chatMessages.create({
+      const createdMessage = await this.prisma.chatMessages.create({
         data: {
           channelId: data.channelId,
           senderId: data.senderId,
@@ -92,6 +93,10 @@ export class ChatsGateway {
           createdAt: new Date(),
         },
       });
+      // MessageDtoを作成
+      const addedMessage = await this.findMessageById(createdMessage.messageId);
+      // メッセージをブロードキャスト
+      this.broadcast('message', addedMessage);
     } catch (e) {
       throw new WsException(e.message);
     }
@@ -102,6 +107,21 @@ export class ChatsGateway {
   private broadcast(event: string, data: MessageDto) {
     for (const c of this.clients) {
       c.emit(event, data);
+    }
+  }
+
+  private async findMessageById(messageId: number): Promise<MessageDto> {
+    try {
+      const message: MessageDto = await this.prisma.chatMessages.findUnique({
+        where: { messageId: messageId },
+        include: { sender: true },
+      });
+      if (!message) {
+        throw new NotFoundException();
+      }
+      return message;
+    } catch (e) {
+      throw this.prisma.handleError(e);
     }
   }
 }

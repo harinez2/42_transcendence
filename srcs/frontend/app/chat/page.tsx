@@ -1,27 +1,18 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
 import ChannelName from "./channel_name";
 import SidebarCategory from "./sidebar_category";
 import MessageComponent from "./message";
-import { Message } from "./message";
 import { User } from "./user";
 
 import UserComponent from "./user";
+import makeAPIRequest from "@/app/api/api";
+import type { ChannelType, MessageType } from "./types";
+// import { API_PATH } from '@/config';
+import io from "socket.io-client";
 
 const ChatUI = () => {
-  const username = "user 1";
-
-  const Messages: Array<Message> = [
-    {
-      id: 1,
-      comment: "hoge",
-      createdAt: "2021-10-10",
-    },
-    {
-      id: 2,
-      comment: "fuga",
-      createdAt: "2022-12-12",
-    },
-  ];
-
   const Users: Array<User> = [
     {
       id: 1,
@@ -40,6 +31,70 @@ const ChatUI = () => {
     },
   ];
 
+  const [channels, setChannels] = useState<ChannelType[]>([]);
+  const [selectedChannel, setSelectedChannel] = useState<ChannelType | null>(
+    null,
+  );
+  const [messages, setMessages] = useState<MessageType[]>([]);
+  const socketRef = useRef<any>();
+
+  // 初回レンダリング直後に一度だけ実行される
+  useEffect(() => {
+    // 画面ロード時にチャンネル一覧を取得
+    makeAPIRequest<ChannelType[]>("get", "/chats")
+      .then((result) => {
+        if (result.success) {
+          setChannels(result.data);
+        } else {
+          console.error(result.error);
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error.message);
+      });
+
+    // ソケットの作成
+    // socketRef.current = io(API_PATH);
+    socketRef.current = io("http://localhost:5000");
+    // ソケットの接続時ハンドラ設定
+    socketRef.current.on("connect", () => {
+      console.log("connected: ", socketRef.current.id);
+    });
+    // messageハンドラの設定
+    socketRef.current.on("message", (message: MessageType) => {
+      setMessages((prevMessages) => [...prevMessages, message]);
+    });
+    // 例外ハンドラの設定
+    socketRef.current.on("exception", (data: any) => {
+      console.error("exception", data);
+    });
+
+    return () => {
+      if (socketRef.current != null) {
+        socketRef.current.disconnect();
+        console.log("disconnected.");
+      }
+    };
+  }, []);
+
+  // チャンネル選択時のハンドラ
+  const handleChannelSelect = (channel: ChannelType) => {
+    if (selectedChannel) {
+      // 同じチャンネル名をクリックした場合は何もしない
+      if (selectedChannel.channelId === channel.channelId) return;
+      // すでに別のチャンネルに入室済みであれば退室する
+      console.log("退室:", selectedChannel);
+      // 表示しているログをクリア
+      setMessages([]);
+    }
+
+    // 選択したチャンネルに入室
+    setSelectedChannel(channel);
+    console.log("入室:", channel);
+    // 過去のメッセージを要求
+    socketRef.current.emit("getPastMessages", { channelId: channel.channelId });
+  };
+
   return (
     <>
       <div className="flex">
@@ -51,23 +106,24 @@ const ChatUI = () => {
           <div className="h-full overflow-y-auto bg-gray-800 px-3 py-4 ">
             <SidebarCategory categoryName="Channels" />
             <ul className="space-y-2 font-medium">
-              <ChannelName channel={{ id: 1, name: "general" }} />
-              <ChannelName channel={{ id: 2, name: "random" }} />
+              {channels?.map((channel: ChannelType) => (
+                <ChannelName
+                  key={channel.channelId}
+                  channel={channel}
+                  onSelectChannel={handleChannelSelect}
+                />
+              ))}
             </ul>
             <ul className="mt-4 space-y-2 border-t border-gray-700 pt-4 font-medium">
-              <ChannelName channel={{ id: 1, name: "general" }} />
-              <ChannelName channel={{ id: 2, name: "random" }} />
+              {/* <ChannelName channel={{ id: 1, name: "general" }} />
+              <ChannelName channel={{ id: 2, name: "random" }} /> */}
             </ul>
           </div>
         </aside>
         <div className="container bg-gray-700">
           <div className="grow  flex-col-reverse divide-y divide-gray-500/30 px-4">
-            {Messages.map((message) => (
-              <MessageComponent
-                key={message.id}
-                message={message}
-                username={username}
-              />
+            {messages?.map((message: MessageType) => (
+              <MessageComponent key={message.channelId} message={message} />
             ))}
           </div>
         </div>
