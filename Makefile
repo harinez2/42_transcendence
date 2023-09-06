@@ -111,8 +111,15 @@ front-dev-local:
 backend-dev-local:
 	npm --prefix ./srcs/backend run start:dev
 
+
+frontend:
+	docker exec -it frontend sh
+
+backend:
+	docker exec -it backend sh
+
 setup:
 	@printf "$(GR)Setting up git hooks...$(RC)\n"
 	git config --local commit.template .commit_template
 
-.PHONY: logs down clean cleanimage fclean re setup db-up front-dev-local backend-dev-local
+.PHONY: logs down clean cleanimage fclean re setup db-up front-dev-local backend-dev-local frontend backend

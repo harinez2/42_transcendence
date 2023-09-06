@@ -1,9 +1,15 @@
-import { Injectable, NotFoundException, BadRequestException, ForbiddenException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { CreateChannelDto } from './dto/create-channel.dto';
 import { UpdateChannelDto } from './dto/update-channel.dto';
 import { ChannelInfoDto } from './dto/channel-info.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { Publicity, UserType } from './chats.interface';
+import { UserType } from './chats.interface';
+// import { Publicity, UserType } from './chats.interface';
 import { hash } from 'bcrypt';
 
 @Injectable()
@@ -12,10 +18,12 @@ export class ChatsService {
 
   // channel operations
 
-  async createChannel(createChannelDto: CreateChannelDto): Promise<ChannelInfoDto> {
-    const hashedPassword
-        = createChannelDto.password
-          ? await hash(createChannelDto.password, 10) as string : null;
+  async createChannel(
+    createChannelDto: CreateChannelDto,
+  ): Promise<ChannelInfoDto> {
+    const hashedPassword = createChannelDto.password
+      ? ((await hash(createChannelDto.password, 10)) as string)
+      : null;
 
     try {
       // ChatChannelsテーブルとChatChannelUsersテーブルを同時に更新
@@ -27,7 +35,7 @@ export class ChatsService {
               createdAt: new Date(),
               channelType: createChannelDto.channelType,
               hashedPassword: hashedPassword,
-            }
+            },
           },
           user: {
             connect: { id: createChannelDto.ownerId },
@@ -36,8 +44,16 @@ export class ChatsService {
         },
       });
 
-      this.addChannelUsers(createdPost.channelId, createChannelDto.ownerId, UserType.ADMIN);
-      this.addChannelUsers(createdPost.channelId, createChannelDto.ownerId, UserType.USER);
+      this.addChannelUsers(
+        createdPost.channelId,
+        createChannelDto.ownerId,
+        UserType.ADMIN,
+      );
+      this.addChannelUsers(
+        createdPost.channelId,
+        createChannelDto.ownerId,
+        UserType.USER,
+      );
       return this.findById(createdPost.channelId);
     } catch (e) {
       throw this.prisma.handleError(e);
@@ -47,7 +63,9 @@ export class ChatsService {
   async findAllChannel(): Promise<ChannelInfoDto[]> {
     try {
       const posts = await this.prisma.chatChannels.findMany();
-      const channelInfoPromises = posts.map(async (post) => await this.createChannelInfoDto(post));
+      const channelInfoPromises = posts.map(
+        async (post) => await this.createChannelInfoDto(post),
+      );
       return await Promise.all(channelInfoPromises);
     } catch (e) {
       throw this.prisma.handleError(e);
@@ -68,11 +86,13 @@ export class ChatsService {
     }
   }
 
-  async updateChannel(channelId: number, updateChannelDto: UpdateChannelDto)
-      : Promise<ChannelInfoDto> {
-    const hashedPassword
-    = updateChannelDto.password
-      ? await hash(updateChannelDto.password, 10) as string : null;
+  async updateChannel(
+    channelId: number,
+    updateChannelDto: UpdateChannelDto,
+  ): Promise<ChannelInfoDto> {
+    const hashedPassword = updateChannelDto.password
+      ? ((await hash(updateChannelDto.password, 10)) as string)
+      : null;
 
     try {
       const post = await this.prisma.chatChannels.update({
@@ -92,7 +112,7 @@ export class ChatsService {
     }
   }
 
-  async deleteChannel(channelId: number) : Promise<void> {
+  async deleteChannel(channelId: number): Promise<void> {
     try {
       // ユーザ権限、メッセージ、Ban、Muteの各テーブルを削除
       const deleteChatChannelUsers = this.prisma.chatChannelUsers.deleteMany({
@@ -132,7 +152,10 @@ export class ChatsService {
   // add/remove users
 
   async addChannelUsers(
-      channelId: number, userId : number, type: UserType): Promise<ChannelInfoDto> {
+    channelId: number,
+    userId: number,
+    type: UserType,
+  ): Promise<ChannelInfoDto> {
     try {
       // Banされているユーザでないかをチェック
       const ban = await this.prisma.chatBan.findUnique({
@@ -147,9 +170,13 @@ export class ChatsService {
         throw new ForbiddenException('The specified user is banned.');
       }
       // Admin付与時、Userであること
-      if (type === UserType.ADMIN
-          && ! await this.isChannelUsers(channelId, userId, UserType.USER)) {
-        throw new ForbiddenException('The user you are trying to grant Admin privileges to is not in User.');
+      if (
+        type === UserType.ADMIN &&
+        !(await this.isChannelUsers(channelId, userId, UserType.USER))
+      ) {
+        throw new ForbiddenException(
+          'The user you are trying to grant Admin privileges to is not in this Channel.',
+        );
       }
 
       // 登録されていない場合のみ新規追加
@@ -173,24 +200,33 @@ export class ChatsService {
   }
 
   async removeChannelUsers(
-      channelId: number, userId: number, type: UserType): Promise<ChannelInfoDto> {
+    channelId: number,
+    userId: number,
+    type: UserType,
+  ): Promise<ChannelInfoDto> {
     try {
-      const isChannelOwner = await this.isChannelUsers(channelId, userId, UserType.OWNER);
+      const isChannelOwner = await this.isChannelUsers(
+        channelId,
+        userId,
+        UserType.OWNER,
+      );
       // Ownerは退室できないのでチェック
       if (type === UserType.USER && isChannelOwner) {
         throw new ForbiddenException('The owner cannot leave the channel.');
       }
       // OwnerはAdminから外れられないのでチェック
       if (type === UserType.ADMIN && isChannelOwner) {
-        throw new ForbiddenException('The owner cannot be removed from the admins.');
+        throw new ForbiddenException(
+          'The owner cannot be removed from the admins.',
+        );
       }
 
       // ユーザを削除
-      // typeを指定していないので、ADMIN、USERの両方が削除される
       const query = await this.prisma.chatChannelUsers.deleteMany({
         where: {
           channelId: channelId,
           userId: userId,
+          ...(type === UserType.ADMIN ? { type: UserType.ADMIN } : {}),
         },
       });
       if (!query) {
@@ -204,7 +240,7 @@ export class ChatsService {
 
   // ban operations
 
-  async getBans(channelId: number) : Promise<{ bannedUsers: number[] }> {
+  async getBans(channelId: number): Promise<{ bannedUsers: number[] }> {
     try {
       const bans = await this.prisma.chatBan.findMany({
         where: {
@@ -213,61 +249,68 @@ export class ChatsService {
       });
 
       return {
-        bannedUsers: bans.map(ban => ban.bannedUserId),
+        bannedUsers: bans.map((ban) => ban.bannedUserId),
       };
     } catch (e) {
       throw this.prisma.handleError(e);
     }
   }
 
-  async banUser(channelId: number, bannedUserId : number): Promise<ChannelInfoDto> {
-  try {
-    // OwnerはBanできないのでチェック
-    if (await this.isChannelUsers(channelId, bannedUserId, UserType.OWNER)) {
-      throw new ForbiddenException('The owner cannot be banned.');
+  async banUser(
+    channelId: number,
+    bannedUserId: number,
+  ): Promise<ChannelInfoDto> {
+    try {
+      // OwnerはBanできないのでチェック
+      if (await this.isChannelUsers(channelId, bannedUserId, UserType.OWNER)) {
+        throw new ForbiddenException('The owner cannot be banned.');
+      }
+
+      // Banに追加
+      const query = await this.prisma.chatBan.create({
+        data: {
+          channelId: channelId,
+          bannedUserId: bannedUserId,
+        },
+      });
+      if (!query) {
+        throw new BadRequestException();
+      }
+
+      // チャンネルから追い出し
+      await this.removeChannelUsers(channelId, bannedUserId, UserType.USER);
+
+      return this.findById(channelId);
+    } catch (e) {
+      throw this.prisma.handleError(e);
     }
-
-    // Banに追加
-    const query = await this.prisma.chatBan.create({
-      data: {
-        channelId: channelId,
-        bannedUserId: bannedUserId,
-      },
-    });
-    if (!query) {
-      throw new BadRequestException();
-    }
-
-    // チャンネルから追い出し
-    await this.removeChannelUsers(channelId, bannedUserId, UserType.USER);
-
-    return this.findById(channelId);
-  } catch (e) {
-    throw this.prisma.handleError(e);
   }
-}
 
-async unbanUsers(channelId: number, bannedUserId: number): Promise<ChannelInfoDto> {
-  try {
-    const query = await this.prisma.chatBan.deleteMany({
-      where: {
-        channelId: channelId,
-        bannedUserId: bannedUserId,
-      },
-    });
-    if (!query) {
-      throw new NotFoundException();
+  async unbanUsers(
+    channelId: number,
+    bannedUserId: number,
+  ): Promise<ChannelInfoDto> {
+    try {
+      const query = await this.prisma.chatBan.deleteMany({
+        where: {
+          channelId: channelId,
+          bannedUserId: bannedUserId,
+        },
+      });
+      if (query.count === 0) {
+        throw new NotFoundException();
+      }
+      return this.findById(channelId);
+    } catch (e) {
+      throw this.prisma.handleError(e);
     }
-    return this.findById(channelId);
-  } catch (e) {
-    throw this.prisma.handleError(e);
   }
-}
 
   // mute operations
 
-  async getActiveMutes(channelId: number)
-      : Promise<Array<{ mutedUserId: number; muteUntil: Date }>> {
+  async getActiveMutes(
+    channelId: number,
+  ): Promise<Array<{ mutedUserId: number; muteUntil: Date }>> {
     try {
       const activeMutes = await this.prisma.chatMute.findMany({
         where: {
@@ -279,7 +322,7 @@ async unbanUsers(channelId: number, bannedUserId: number): Promise<ChannelInfoDt
         },
       });
 
-      return activeMutes.map(mute => ({
+      return activeMutes.map((mute) => ({
         mutedUserId: mute.mutedUserId,
         muteUntil: mute.muteUntil,
       }));
@@ -288,8 +331,11 @@ async unbanUsers(channelId: number, bannedUserId: number): Promise<ChannelInfoDt
     }
   }
 
-  async muteUser(channelId: number, mutedUserId : number, muteUntil: Date)
-      : Promise<ChannelInfoDto> {
+  async muteUser(
+    channelId: number,
+    mutedUserId: number,
+    muteUntil: Date,
+  ): Promise<ChannelInfoDto> {
     try {
       // OwnerはMuteできないのでチェック
       if (await this.isChannelUsers(channelId, mutedUserId, UserType.OWNER)) {
@@ -336,7 +382,10 @@ async unbanUsers(channelId: number, bannedUserId: number): Promise<ChannelInfoDt
     }
   }
 
-  async unmuteUsers(channelId: number, mutedUserId: number): Promise<ChannelInfoDto> {
+  async unmuteUsers(
+    channelId: number,
+    mutedUserId: number,
+  ): Promise<ChannelInfoDto> {
     try {
       const query = await this.prisma.chatMute.deleteMany({
         where: {
@@ -344,7 +393,7 @@ async unbanUsers(channelId: number, bannedUserId: number): Promise<ChannelInfoDt
           mutedUserId: mutedUserId,
         },
       });
-      if (!query) {
+      if (query.count === 0) {
         throw new NotFoundException();
       }
       return this.findById(channelId);
@@ -357,7 +406,10 @@ async unbanUsers(channelId: number, bannedUserId: number): Promise<ChannelInfoDt
   // private functions
 
   private async isChannelUsers(
-      channelId: number, userId : number, type: UserType): Promise<boolean> {
+    channelId: number,
+    userId: number,
+    type: UserType,
+  ): Promise<boolean> {
     const query = await this.prisma.chatChannelUsers.findFirst({
       where: {
         channelId: channelId,
@@ -365,10 +417,8 @@ async unbanUsers(channelId: number, bannedUserId: number): Promise<ChannelInfoDt
         type: type,
       },
     });
-    if (query)
-      return true;
-    else
-      return false;
+    if (query) return true;
+    else return false;
   }
 
   private async createChannelInfoDto(post: any): Promise<ChannelInfoDto> {
@@ -408,15 +458,14 @@ async unbanUsers(channelId: number, bannedUserId: number): Promise<ChannelInfoDt
       isPassword: post.hashedPassword ? true : false,
       users: {
         owner: owner.userId,
-        admin: admins.map(admin => admin.userId),
-        user: users.map(user => user.userId),
+        admin: admins.map((admin) => admin.userId),
+        user: users.map((user) => user.userId),
       },
-      bannedUsers: bans.map(user => user.bannedUserId),
-      mutedUsers: mutes.map(user => ({
+      bannedUsers: bans.map((user) => user.bannedUserId),
+      mutedUsers: mutes.map((user) => ({
         mutedUserId: user.mutedUserId,
         muteUntil: user.muteUntil,
       })),
     };
   }
-
 }
