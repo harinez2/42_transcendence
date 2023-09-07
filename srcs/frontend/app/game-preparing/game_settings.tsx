@@ -10,7 +10,9 @@ const GameSettingsDialog = ({ closeModal, stopPropagation, gameId }: any) => {
     setPoints(newPoints as number);
   };
 
-  const onChangeSpeedUpSwitch = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const onChangeSpeedUpSwitch = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     setIsSpeedUp(event.target.checked);
   };
 
@@ -46,7 +48,14 @@ const GameSettingsDialog = ({ closeModal, stopPropagation, gameId }: any) => {
       <FormControlLabel
         className="absolute left-[251px] top-[239px]"
         label=""
-        control={<Switch color="info" size="medium" checked={isSpeedUp} onChange={onChangeSpeedUpSwitch} />}
+        control={
+          <Switch
+            color="info"
+            size="medium"
+            checked={isSpeedUp}
+            onChange={onChangeSpeedUpSwitch}
+          />
+        }
       />
       <div className="absolute left-[81px] top-[238px] tracking-[0.1em]">
         Speed up

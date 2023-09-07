@@ -6,9 +6,9 @@ export type ProfileType = {
 };
 
 export type GameUserType = {
-  gameId: number,
-  user1Id: number,
-  user2Id: number,
+  gameId: number;
+  user1Id: number;
+  user2Id: number;
 };
 
 export type GameSettingsType = {
@@ -20,4 +20,4 @@ export type ModalWindowType = {
   ref: React.MutableRefObject<HTMLDialogElement | null>;
   showModal: () => void;
   closeModal: () => void;
-}
+};

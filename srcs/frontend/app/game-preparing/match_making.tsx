@@ -1,16 +1,17 @@
-
-const LeaveTheQueueButton = ({ closeModal, isDisabled }: { closeModal: () => void; isDisabled: boolean }) => {
+const LeaveTheQueueButton = ({
+  closeModal,
+  isDisabled,
+}: {
+  closeModal: () => void;
+  isDisabled: boolean;
+}) => {
   const buttonClass = `absolute left-[118px] top-[252px] h-[41px] w-[253.83px] bg-[transparent] p-0 [border:none] ${
     isDisabled ? "cursor-not-allowed" : "cursor-pointer"
   }`;
   const imgSrc = isDisabled ? "/rectangle-127.svg" : "/rectangle-12111.svg";
 
   return (
-    <button
-      className={buttonClass}
-      onClick={closeModal}
-      disabled={isDisabled}
-    >
+    <button className={buttonClass} onClick={closeModal} disabled={isDisabled}>
       <img
         className="absolute left-[0px] top-[0px] h-[41px] w-[253.83px]"
         alt=""
@@ -21,9 +22,13 @@ const LeaveTheQueueButton = ({ closeModal, isDisabled }: { closeModal: () => voi
       </div>
     </button>
   );
-}
+};
 
-const MatchMakingDialog = ({ closeModal, stopPropagation, settingStatus }: any) => {
+const MatchMakingDialog = ({
+  closeModal,
+  stopPropagation,
+  settingStatus,
+}: any) => {
   return (
     <div
       onClick={stopPropagation}
@@ -35,24 +40,18 @@ const MatchMakingDialog = ({ closeModal, stopPropagation, settingStatus }: any) 
       <div className="absolute left-[57px] top-[104px] inline-block w-[390px] tracking-[0.1em]">
         looking for a opponent...
       </div>
-      { settingStatus === 2 &&
+      {settingStatus === 2 && (
         <>
           <div className="absolute left-[57px] top-[154px] inline-block w-[390px] tracking-[0.1em]">
             waiting for the opponent setting up the game...
             <br />
           </div>
-          <LeaveTheQueueButton
-            closeModal={closeModal}
-            isDisabled={true}
-          />
+          <LeaveTheQueueButton closeModal={closeModal} isDisabled={true} />
         </>
-      }
-      { settingStatus !== 2 &&
-        <LeaveTheQueueButton
-          closeModal={closeModal}
-          isDisabled={false}
-        />
-      }
+      )}
+      {settingStatus !== 2 && (
+        <LeaveTheQueueButton closeModal={closeModal} isDisabled={false} />
+      )}
     </div>
   );
 };

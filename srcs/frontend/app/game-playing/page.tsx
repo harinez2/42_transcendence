@@ -8,9 +8,8 @@ const GamePage = () => {
   const searchParams = useSearchParams();
 
   const [gameSettings, setGameSettings] = useState<GameSettingsType>();
-  let query = searchParams.get('query');
-  if (!query)
-    query = "{}";
+  let query = searchParams.get("query");
+  if (!query) query = "{}";
   setGameSettings(JSON.parse(query));
 
   return (

@@ -11,7 +11,7 @@ const GameUI = () => {
       <div className="flex h-screen items-center justify-center">
         <button
           onClick={() => router.push("/game-preparing")}
-          className="group flex items-center rounded-lg bg-black p-2 text-white hover:bg-gray-700 cursor-pointer"
+          className="group flex cursor-pointer items-center rounded-lg bg-black p-2 text-white hover:bg-gray-700"
         >
           <span className="ml-3 shrink-0 pr-8 text-29xl">Play game</span>
         </button>

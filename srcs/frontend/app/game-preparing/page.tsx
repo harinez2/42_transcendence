@@ -6,7 +6,12 @@ import useModal from "../components/useModal";
 import MatchMakingDialog from "./match_making";
 import GameSettingsDialog from "./game_settings";
 import { ErrorContext, ProfileContext, SocketContext } from "../layout";
-import { ModalWindowType, GameUserType, GameSettingsType, ProfileType } from "../types";
+import {
+  ModalWindowType,
+  GameUserType,
+  GameSettingsType,
+  ProfileType,
+} from "../types";
 import GameBackground from "../components/game-background";
 import { useRouter } from "next/navigation";
 
@@ -38,13 +43,13 @@ const GamePreparingUI = () => {
   useEffect(() => {
     modal_matchmake.showModal();
     modal_settings.closeModal();
-    console.log('game-addwaitlist: ', profile);
-    socket?.emit('game-addwaitlist', profile);
+    console.log("game-addwaitlist: ", profile);
+    socket?.emit("game-addwaitlist", profile);
     setSettingStatus(1);
   }, []);
 
   useEffect(() => {
-    console.log('useEffect() of socket is working');
+    console.log("useEffect() of socket is working");
 
     // user1: 設定リクエストが来たとき
     socket?.on("game-configrequest", (gameUserFromServer: any) => {
@@ -91,7 +96,7 @@ const GamePreparingUI = () => {
       // router.push(`/game-playing/?query=${gameSettings}`);
       // router.push({
       //   pathname: '/game-playing',
-      //   query: { 
+      //   query: {
       //     gameSettings: "test",
       //   },
       // });
@@ -108,17 +113,19 @@ const GamePreparingUI = () => {
   // MatchMakingDialogのキャンセルボタン操作時
   const handleMatchMakingDialogClose = () => {
     modal_matchmake.closeModal();
-    socket?.emit('game-removefromwaitlist', profile);
+    socket?.emit("game-removefromwaitlist", profile);
     console.log("game-removefromwaitlist: ", profile);
     router.push("/game");
-  }
+  };
 
   // GameSettingsDialogのPlayボタン操作時
-  const handleGameSettingsDialogPlay = (gameSettingsFromModal: GameSettingsType) => {
+  const handleGameSettingsDialogPlay = (
+    gameSettingsFromModal: GameSettingsType,
+  ) => {
     modal_settings.closeModal();
-    socket?.emit('game-config', gameSettingsFromModal);
+    socket?.emit("game-config", gameSettingsFromModal);
     gameSettings = gameSettingsFromModal;
-  }
+  };
 
   return (
     <GameBackground user1="" user2="">

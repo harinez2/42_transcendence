@@ -1,10 +1,16 @@
 import React from "react";
 
-const GameBackground = ({ children, user1, user2 }: { children: React.ReactNode, user1: string, user2: string }) => {
+const GameBackground = ({
+  children,
+  user1,
+  user2,
+}: {
+  children: React.ReactNode;
+  user1: string;
+  user2: string;
+}) => {
   return (
-    <div
-      className="relative h-screen w-full overflow-hidden bg-darkslategray-100 text-left font-body text-29xl text-base-white"
-    >
+    <div className="relative h-screen w-full overflow-hidden bg-darkslategray-100 text-left font-body text-29xl text-base-white">
       <div className="relative h-screen w-full overflow-hidden bg-darkslategray-100 text-left font-body text-29xl text-base-white">
         <div className="absolute left-[70px] top-[9px] h-[1092px] w-[1301px] font-geo text-181xl">
           <div className="absolute left-[643px] top-[0px] font-body text-17xl tracking-[0.1em]">
