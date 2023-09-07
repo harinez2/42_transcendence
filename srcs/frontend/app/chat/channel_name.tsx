@@ -1,9 +1,13 @@
 import React from "react";
 import type { ChannelType } from "./types";
 
-const ChannelName = ({ channel, onSelectChannel }:
-    { channel: ChannelType, onSelectChannel: (c: ChannelType) => void }) => { // eslint-disable-line no-unused-vars
-
+const ChannelName = ({
+  channel,
+  onSelectChannel,
+}: {
+  channel: ChannelType;
+  onSelectChannel: (c: ChannelType) => void; // eslint-disable-line no-unused-vars
+}) => {
   const handleClick = () => {
     onSelectChannel(channel);
   };
@@ -16,9 +20,7 @@ const ChannelName = ({ channel, onSelectChannel }:
         onClick={handleClick}
       >
         <span className="ml-3">{channel.channelName}</span>
-        {channel.channelType === 'PRIVATE' && (
-          <span className="mr-2">🔒</span>
-        )}
+        {channel.channelType === "PRIVATE" && <span className="mr-2">🔒</span>}
       </a>
     </li>
   );
