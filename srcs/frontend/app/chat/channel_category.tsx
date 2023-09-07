@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import useModal from "../components/useModal";
 import makeAPIRequest from "../api/api";
 import { ChannelType } from "./types";
@@ -66,6 +66,10 @@ const ChannelCreateModal = ({ closeModal, channels, setChannels }: {
   channels: ChannelType[],
   setChannels: (channels: ChannelType[]) => void,
 }) => {
+  const [channelName, setChannelName] = useState<string>("");
+  const [channelType, setChannelType] = useState<Publicity>(Publicity.PUBLIC);
+  const [password, setPassword] = useState<string | null>(null);
+
   // dialog の外側をクリックしたときに閉じるために使用する
   const stopPropagation = useCallback(
     (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -79,8 +83,6 @@ const ChannelCreateModal = ({ closeModal, channels, setChannels }: {
   // channels を更新する
   const createChannelAndSetChannels = useCallback(
     async (createChannelDto: createChannelDTO) => {
-
-      console.log(params);
       makeAPIRequest<ChannelType>("post", "/chats", createChannelDto)
         .then((result) => {
           if (result.success) {
@@ -97,12 +99,12 @@ const ChannelCreateModal = ({ closeModal, channels, setChannels }: {
     }
     , [channels]);
 
-
+  // channelNameが更新されたとき dto を更新する
   const params: createChannelDTO = {
-    channelName: "test5",
+    channelName: channelName,
     ownerId: 1,
-    channelType: Publicity.PUBLIC,
-    password: null,
+    channelType: channelType,
+    password: password,
   };
 
   return (
@@ -114,6 +116,8 @@ const ChannelCreateModal = ({ closeModal, channels, setChannels }: {
           className="rounded-md bg-gray-500 px-2 text-white"
           type="text"
           placeholder="Channel Name"
+          value={channelName}
+          onChange={(e) => setChannelName(e.target.value)}
         />
       </div>
       <div className="flex flex-row justify-end">
