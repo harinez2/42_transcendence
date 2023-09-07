@@ -1,25 +1,28 @@
-import { useCallback, useState } from "react";
+import React, { useCallback, useState } from "react";
 import useModal from "../components/useModal";
 import makeAPIRequest from "../api/api";
 import { ChannelType } from "./types";
 
-
 type createChannelDTO = {
-  channelName: string,
-  ownerId: number,
-  channelType: Publicity,
-  password: string | null,
-}
+  channelName: string;
+  ownerId: number;
+  channelType: Publicity;
+  password: string | null;
+};
 
 export enum Publicity {
-  PUBLIC = 'PUBLIC',
-  PRIVATE = 'PRIVATE',
+  PUBLIC = "PUBLIC",
+  PRIVATE = "PRIVATE",
 }
 
-const ChannelCategory = ({ categoryName, channels, setChannels }: {
-  categoryName: string,
-  channels: ChannelType[],
-  setChannels: (channels: ChannelType[]) => void,
+const ChannelCategory = ({
+  categoryName,
+  channels,
+  setChannels,
+}: {
+  categoryName: string;
+  channels: ChannelType[];
+  setChannels: (channels: ChannelType[]) => void;
 }) => {
   const { ref, showModal, closeModal } = useModal();
 
@@ -34,7 +37,8 @@ const ChannelCategory = ({ categoryName, channels, setChannels }: {
         style={{ top: "30px" }}
         className="rounded-lg bg-gray-600"
       >
-        <ChannelCreateModal closeModal={closeModal}
+        <ChannelCreateModal
+          closeModal={closeModal}
           channels={channels}
           setChannels={setChannels}
         />
@@ -57,14 +61,18 @@ const ShowDialogButton = ({ showModal }: { showModal: () => void }) => {
         d="M10 18a8 8 0 100-16 8 8 0 000 16zM9 9V5a1 1 0 112 0v4h4a1 1 0 110 2h-4v4a1 1 0 11-2 0v-4H5a1 1 0 110-2h4z"
         clipRule="evenodd"
       />
-    </svg>);
-}
+    </svg>
+  );
+};
 
-
-const ChannelCreateModal = ({ closeModal, channels, setChannels }: {
-  closeModal: () => void,
-  channels: ChannelType[],
-  setChannels: (channels: ChannelType[]) => void,
+const ChannelCreateModal = ({
+  closeModal,
+  channels,
+  setChannels,
+}: {
+  closeModal: () => void;
+  channels: ChannelType[];
+  setChannels: (channels: ChannelType[]) => void;
 }) => {
   const [channelName, setChannelName] = useState<string>("");
   const [channelType, setChannelType] = useState<Publicity>(Publicity.PUBLIC);
@@ -92,12 +100,13 @@ const ChannelCreateModal = ({ closeModal, channels, setChannels }: {
           } else {
             console.error(result.error);
           }
-        }
-        ).catch((err) => {
+        })
+        .catch((err) => {
           console.error("channel create failed:", err);
         });
-    }
-    , [channels]);
+    },
+    [channels],
+  );
 
   // channelNameが更新されたとき dto を更新する
   const params: createChannelDTO = {
@@ -108,7 +117,10 @@ const ChannelCreateModal = ({ closeModal, channels, setChannels }: {
   };
 
   return (
-    <div onClick={stopPropagation} className="flex flex-col text-white px-6 py-2">
+    <div
+      onClick={stopPropagation}
+      className="flex flex-col px-6 py-2 text-white"
+    >
       <div className="text-lg">Create Channel</div>
       <div className="flex flex-row justify-between">
         <div className="text-sm">Channel Name: </div>
@@ -123,16 +135,19 @@ const ChannelCreateModal = ({ closeModal, channels, setChannels }: {
       <div className="flex flex-row justify-end">
         <button
           onClick={() => createChannelAndSetChannels(params)}
-          className="m-2 rounded-md bg-gray-400 px-2 text-white">
+          className="m-2 rounded-md bg-gray-400 px-2 text-white"
+        >
           Create
         </button>
-        <button onClick={closeModal}
-          className="m-2 rounded-md bg-gray-500 px-2 text-white">
+        <button
+          onClick={closeModal}
+          className="m-2 rounded-md bg-gray-500 px-2 text-white"
+        >
           Cancel
         </button>
       </div>
     </div>
   );
-}
+};
 
 export default ChannelCategory;
