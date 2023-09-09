@@ -13,12 +13,3 @@ export type GameSettingsType = {
   points: number;
   isSpeedUp: boolean;
 };
-
-const waitStatus = {
-  NotMatched: 0,
-  WaitingForSetting: 1,
-  Gaming: 2,
-} as const;
-
-type waitStatus = (typeof waitStatus)[keyof typeof waitStatus];
-// 上は type Position = 0 | 1 | 2 | 3 と同じ意味

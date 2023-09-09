@@ -40,7 +40,7 @@ export class GamesGateway {
       const user2 = this.waitList.shift();
       if (user1 && user2) {
         // ゲーム情報の保存
-        let gameInfo: GameInfoType = {
+        const gameInfo: GameInfoType = {
           gameId: -1,
           user1Id: user1.userId,
           user1Socket: user1.socket,

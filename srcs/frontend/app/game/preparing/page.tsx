@@ -11,6 +11,8 @@ import {
   GameUserType,
   GameSettingsType,
   ProfileType,
+  WaitStatus,
+  WaitStatusType,
 } from "../../types";
 import GameBackground from "../../components/game-background";
 import { useRouter } from "next/navigation";
@@ -32,12 +34,7 @@ const GamePreparingUI = () => {
     [],
   );
 
-  // settingStatus
-  //   0 : 初期状態
-  //   1 : waitlist登録済み、相手探し中
-  //   2 : マッチした、設定中
-  //   3 : 設定完了、ゲーム開始可能
-  let [settingStatus, setSettingStatus] = useState(0);
+  let [settingStatus, setSettingStatus] = useState<WaitStatusType>(WaitStatus.Initial);
   const [gameId, setGameId] = useState(-1);
   let gameUser: GameUserType;
   let gameSettings: GameSettingsType = {
@@ -48,27 +45,27 @@ const GamePreparingUI = () => {
   useEffect(() => {
     console.log("settingStatus: ", settingStatus);
 
-    if (settingStatus === 0) {
+    if (settingStatus === WaitStatus.Initial) {
       // waitlistに登録
       modal_matchmake.showModal();
       modal_settings.closeModal();
       console.log("game-addwaitlist: ", profile);
       socket?.emit("game-addwaitlist", profile);
-      setSettingStatus(1);
+      setSettingStatus(WaitStatus.NotMatched);
     }
 
-    if (settingStatus === 1) {
+    if (settingStatus === WaitStatus.NotMatched) {
       // user1: 設定リクエストが来たとき
       socket?.on("game-configrequest", (gameUserFromServer: any) => {
         console.log("game-configrequest: ", gameUserFromServer);
-        if (settingStatus !== 1) {
+        if (settingStatus !== WaitStatus.NotMatched) {
           console.error("Status error: ", settingStatus);
           router.push("/game");
           return;
         }
         gameUser = gameUserFromServer;
         setGameId(gameUserFromServer.gameId);
-        setSettingStatus(2);
+        setSettingStatus(WaitStatus.WaitingForSetting);
         socket?.off("game-configrequest");
         socket?.off("game-configuring");
         modal_matchmake.closeModal();
@@ -77,30 +74,30 @@ const GamePreparingUI = () => {
       // user2: user1が設定中のイベントが来た時
       socket?.on("game-configuring", (gameUserFromServer: any) => {
         console.log("game-configuring: ", gameUserFromServer);
-        if (settingStatus !== 1) {
+        if (settingStatus !== WaitStatus.NotMatched) {
           console.error("Status error: ", settingStatus);
           router.push("/game");
           return;
         }
         gameUser = gameUserFromServer;
         setGameId(gameUserFromServer.gameId);
-        setSettingStatus(2);
+        setSettingStatus(WaitStatus.WaitingForSetting);
         socket?.off("game-configrequest");
         socket?.off("game-configuring");
       });
     }
 
-    if (settingStatus === 2) {
+    if (settingStatus === WaitStatus.WaitingForSetting) {
       // 設定が完了し、ゲーム開始したとき
       socket?.on("game-start", (gameUserFromServer: any) => {
         console.log("game-start: ", gameUserFromServer);
         console.log("settingStatus: ", settingStatus);
-        if (settingStatus !== 2) {
+        if (settingStatus !== WaitStatus.WaitingForSetting) {
           console.error("Status error: ", settingStatus);
           router.push("/game");
           return;
         }
-        setSettingStatus(3);
+        setSettingStatus(WaitStatus.Gaming);
         socket?.off("game-start");
         router.push(`/game/${gameUserFromServer.gameId}`);
       });
