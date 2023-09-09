@@ -1,10 +1,11 @@
 import { Module } from '@nestjs/common';
-import { GamesGateway } from './games.gateway';
+import { GamesMatchingGateway } from './games.matching.gateway';
+import { GamesPlayGateway } from './games.play.gateway';
 import { PrismaModule } from '../prisma/prisma.module';
 import { UsersModule } from '../users/users.module';
 
 @Module({
-  providers: [GamesGateway],
+  providers: [GamesMatchingGateway, GamesPlayGateway],
   controllers: [],
   imports: [PrismaModule, UsersModule],
 })

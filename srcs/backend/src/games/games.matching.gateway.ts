@@ -15,7 +15,7 @@ import { UsersService } from '../users/users.service';
     origin: '*',
   },
 })
-export class GamesGateway {
+export class GamesMatchingGateway {
   constructor(
     private prisma: PrismaService,
     private userService: UsersService,

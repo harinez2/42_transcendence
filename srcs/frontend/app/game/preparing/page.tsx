@@ -34,7 +34,9 @@ const GamePreparingUI = () => {
     [],
   );
 
-  let [settingStatus, setSettingStatus] = useState<WaitStatusType>(WaitStatus.Initial);
+  let [settingStatus, setSettingStatus] = useState<WaitStatusType>(
+    WaitStatus.Initial,
+  );
   const [gameId, setGameId] = useState(-1);
   let gameUser: GameUserType;
   let gameSettings: GameSettingsType = {

@@ -13,3 +13,8 @@ export type GameSettingsType = {
   points: number;
   isSpeedUp: boolean;
 };
+
+export type PositionType = {
+  x: number;
+  y: number;
+};
