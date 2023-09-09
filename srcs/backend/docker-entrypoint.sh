@@ -2,7 +2,8 @@
 
 set -e
 
-npm run db:migrate
+npm run db:deploy
 npm run db:generate
+npm run db:seed
 
 exec "$@"
