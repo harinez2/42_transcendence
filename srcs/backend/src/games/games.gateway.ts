@@ -16,20 +16,26 @@ import { UsersService } from '../users/users.service';
   },
 })
 export class GamesGateway {
-  constructor(private prisma: PrismaService, private userService: UsersService) {}
+  constructor(
+    private prisma: PrismaService,
+    private userService: UsersService,
+  ) {}
 
-  private waitList: { userId: number, socket: Socket }[] = [];
+  private waitList: { userId: number; socket: Socket }[] = [];
   private gameList: GameInfoType[] = [];
 
   // 待ち行列に並ぶ
   @SubscribeMessage('game-addwaitlist')
-  async handleAddWaitList(@ConnectedSocket() socket: Socket, @MessageBody() data: any) {
+  async handleAddWaitList(
+    @ConnectedSocket() socket: Socket,
+    @MessageBody() data: any,
+  ) {
     this.waitList.push({ userId: data.userId, socket: socket });
     console.log(
       `added to waitList: userId: ${data.userId}, socket id: ${socket.id}`,
     );
     if (this.waitList.length >= 2) {
-      console.log("Matched!");
+      console.log('Matched!');
       const user1 = this.waitList.shift();
       const user2 = this.waitList.shift();
       if (user1 && user2) {
@@ -44,14 +50,14 @@ export class GamesGateway {
         const storedGameInfo = await this.storeGameInfo(gameInfo);
         gameInfo.gameId = storedGameInfo.gameId;
         this.gameList.push(gameInfo);
-        console.log("waiting for configuring the game: ", gameInfo.gameId);
+        console.log('waiting for configuring the game: ', gameInfo.gameId);
         const gameUser = {
           gameId: gameInfo.gameId,
           user1Id: gameInfo.user1Id,
           user1Name: this.userService.findOne(gameInfo.user1Id),
           user2Id: gameInfo.user2Id,
           user2Name: this.userService.findOne(gameInfo.user2Id),
-        }
+        };
         // コンフィグリクエスト
         gameInfo.user1Socket.emit('game-configrequest', gameUser);
         gameInfo.user2Socket.emit('game-configuring', gameUser);
@@ -61,8 +67,11 @@ export class GamesGateway {
 
   // 待ち行列から外れる
   @SubscribeMessage('game-removefromwaitlist')
-  handleLeaveWaitList(@ConnectedSocket() socket: Socket, @MessageBody() data: any) {
-    this.waitList = this.waitList.filter(item => item.userId !== data.userId);
+  handleLeaveWaitList(
+    @ConnectedSocket() socket: Socket,
+    @MessageBody() data: any,
+  ) {
+    this.waitList = this.waitList.filter((item) => item.userId !== data.userId);
     console.log(
       `leaved from waitList: userId: ${data.userId}, socket id: ${socket.id}`,
     );
@@ -74,16 +83,18 @@ export class GamesGateway {
     @ConnectedSocket() client: Socket,
     @MessageBody() gameSettings: GameSettingsType,
   ) {
-    console.log("gameSettings:", gameSettings);
+    console.log('gameSettings:', gameSettings);
     // コンフィグの妥当性チェック
     if (gameSettings.points < 3 || 7 < gameSettings.points) {
-      client.emit('error', "Config error: point range is invalid.");
+      client.emit('error', 'Config error: point range is invalid.');
       return;
     }
     // ゲーム情報を検索
-    const gameInfo = this.gameList.find((gameInfo) => gameInfo.gameId === gameSettings.gameId);
+    const gameInfo = this.gameList.find(
+      (gameInfo) => gameInfo.gameId === gameSettings.gameId,
+    );
     if (!gameInfo) {
-      client.emit('error', "Game not found.");
+      client.emit('error', 'Game not found.');
       return;
     }
     const gameData = {
@@ -91,7 +102,7 @@ export class GamesGateway {
       user1Id: gameInfo.user1Id,
       user2Id: gameInfo.user2Id,
       config: gameSettings,
-    }
+    };
     // ゲーム開始
     gameInfo.user1Socket.emit('game-start', gameData);
     gameInfo.user2Socket.emit('game-start', gameData);
@@ -109,7 +120,7 @@ export class GamesGateway {
         },
       });
       if (!query) {
-        throw new WsException("Failed to create gameInfo record in the DB.");
+        throw new WsException('Failed to create gameInfo record in the DB.');
       }
       return query;
     } catch (e) {

@@ -10,7 +10,14 @@ import { ProfilesModule } from './profiles/profiles.module';
 import { AuthModule } from './auth/auth.module';
 
 @Module({
-  imports: [UsersModule, ChatsModule, DmsModule, GamesModule, ProfilesModule, AuthModule],
+  imports: [
+    UsersModule,
+    ChatsModule,
+    DmsModule,
+    GamesModule,
+    ProfilesModule,
+    AuthModule,
+  ],
   controllers: [AppController],
   providers: [AppGateway, AppService],
 })

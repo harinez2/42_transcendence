@@ -49,6 +49,7 @@ const GamePreparingUI = () => {
     console.log("settingStatus: ", settingStatus);
 
     if (settingStatus === 0) {
+      // waitlistに登録
       modal_matchmake.showModal();
       modal_settings.closeModal();
       console.log("game-addwaitlist: ", profile);
