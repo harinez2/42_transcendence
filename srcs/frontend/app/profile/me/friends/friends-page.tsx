@@ -3,7 +3,7 @@
 import type { NextPage } from "next";
 import { useCallback } from "react";
 import { useRouter } from "next/navigation";
-import HeaderMenu from "../components/headermenu";
+import HeaderMenu from "../../../components/headermenu";
 import FriendsList from "./friendsList";
 
 const FriendsPage: NextPage = () => {

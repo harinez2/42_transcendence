@@ -13,7 +13,7 @@ const GameWonPage: NextPage = () => {
   }, [router]);
 
   const onPlayWithOtherClick = useCallback(() => {
-    router.push("/game-match-making-parent");
+    router.push("../match-making-parent");
   }, [router]);
 
   return (

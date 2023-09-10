@@ -3,9 +3,9 @@
 import type { NextPage } from "next";
 import { useCallback } from "react";
 import { useRouter } from "next/navigation";
-import HeaderMenu from "../components/headermenu";
-import RankingContainer from "../components/raking-container";
-import MatchHistoryContainer from "../components/match-history-container";
+import HeaderMenu from "../../components/headermenu";
+import RankingContainer from "../../components/raking-container";
+import MatchHistoryContainer from "../../components/match-history-container";
 import React from "react";
 
 const ProfileOtherPage: NextPage = () => {
@@ -16,7 +16,7 @@ const ProfileOtherPage: NextPage = () => {
   }, [router]);
 
   const onInviteToGameClick = useCallback(() => {
-    router.push("/game-settings");
+    router.push("../../game/settings");
   }, [router]);
 
   return (
@@ -83,3 +83,32 @@ const ProfileOtherPage: NextPage = () => {
 };
 
 export default ProfileOtherPage;
+
+
+
+
+// import { PostType } from "@/utils/Types";
+// import { getPostById} from "@/utils/api";
+// import React from "react";
+// import { ProfileType } from "@/app/types";
+
+// async function PostPage({id}: any) {
+//     // console.log(id);
+//     try {
+//         const post: PostType = await getPostById(id)
+//         return (
+//             <div className="container">
+//                 <h1 className="title"> {post.title}</h1>
+//                 <p className="content">{post.content}</p>
+//                 <p className="meta">Author: {post.author}</p>
+//                 <p className="meta">Created at: {post.createdAt}</p>
+//             </div>
+//         );
+//     } catch (error) {
+//         console.error("Error fetching posts:", error);
+//         return <div>Error loading post.</div>
+//     }
+// };
+
+// export default PostPage;
+

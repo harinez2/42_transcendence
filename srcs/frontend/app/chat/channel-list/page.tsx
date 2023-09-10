@@ -1,4 +1,4 @@
-import ChannelListPage from "./chat-channel-list";
+import ChannelListPage from "./channel-list";
 import React from "react";
 
 const ChannelList = () => {
