@@ -97,6 +97,8 @@ export class GamesMatchingGateway {
       client.emit('error', 'Game not found.');
       return;
     }
+    // コンフィグ情報の保存
+    this.storeGameSettings(gameSettings);
     const gameData = {
       gameId: gameInfo.gameId,
       user1Id: gameInfo.user1Id,
@@ -121,6 +123,20 @@ export class GamesMatchingGateway {
       });
       if (!query) {
         throw new WsException('Failed to create gameInfo record in the DB.');
+      }
+      return query;
+    } catch (e) {
+      throw this.prisma.handleError(e);
+    }
+  }
+
+  private async storeGameSettings(gameSettings: GameSettingsType): Promise<any> {
+    try {
+      const query: any = await this.prisma.gameSettings.create({
+        data: gameSettings,
+      });
+      if (!query) {
+        throw new WsException('Failed to create gameSettings record in the DB.');
       }
       return query;
     } catch (e) {

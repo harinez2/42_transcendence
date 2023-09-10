@@ -12,6 +12,7 @@ export class GamesService {
         include: {
           user1: true,
           user2: true,
+          gameSettings: true,
         },
       });
       return games;
@@ -27,6 +28,7 @@ export class GamesService {
         include: {
           user1: true,
           user2: true,
+          gameSettings: true,
         },
       });
       if (!post) {
@@ -47,6 +49,7 @@ export class GamesService {
         include: {
           user1: true,
           user2: true,
+          gameSettings: true,
         },
       });
       if (!channel) {

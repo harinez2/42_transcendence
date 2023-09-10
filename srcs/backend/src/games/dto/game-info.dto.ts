@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { User } from '@prisma/client';
+import { GameSettings, User } from '@prisma/client';
 
 export class GameInfoDto {
   @ApiProperty()
@@ -22,4 +22,7 @@ export class GameInfoDto {
 
   @ApiProperty()
   endedAt: Date;
+  
+  @ApiProperty()
+  gameSettings: GameSettings;
 }
