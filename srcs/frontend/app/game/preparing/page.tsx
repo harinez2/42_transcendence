@@ -6,14 +6,13 @@ import useModal from "../../components/useModal";
 import MatchMakingDialog from "./match_making";
 import GameSettingsDialog from "./game_settings";
 import { ErrorContext, ProfileContext, SocketContext } from "../../layout";
+import { ModalWindowType, ProfileType } from "../../types";
 import {
-  ModalWindowType,
   GameUserType,
   GameSettingsType,
-  ProfileType,
   WaitStatus,
   WaitStatusType,
-} from "../../types";
+} from "../types";
 import GameBackground from "../../components/game-background";
 import { useRouter } from "next/navigation";
 

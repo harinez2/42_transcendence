@@ -130,13 +130,17 @@ export class GamesMatchingGateway {
     }
   }
 
-  private async storeGameSettings(gameSettings: GameSettingsType): Promise<any> {
+  private async storeGameSettings(
+    gameSettings: GameSettingsType,
+  ): Promise<any> {
     try {
       const query: any = await this.prisma.gameSettings.create({
         data: gameSettings,
       });
       if (!query) {
-        throw new WsException('Failed to create gameSettings record in the DB.');
+        throw new WsException(
+          'Failed to create gameSettings record in the DB.',
+        );
       }
       return query;
     } catch (e) {

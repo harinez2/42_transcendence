@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { GameSettingsType } from "../types";
+import { GameSettingsType } from "../game/types";
 import { useSearchParams } from "next/navigation";
 
 const GamePage = () => {

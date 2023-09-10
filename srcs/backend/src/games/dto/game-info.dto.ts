@@ -22,7 +22,7 @@ export class GameInfoDto {
 
   @ApiProperty()
   endedAt: Date;
-  
+
   @ApiProperty()
   gameSettings: GameSettings;
 }

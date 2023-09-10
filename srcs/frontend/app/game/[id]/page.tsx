@@ -45,13 +45,19 @@ const GamePlayingUI = ({ params }: { params: { id: string } }) => {
     <GameBackground user1="" user2="">
       <div className="flex h-screen items-center justify-center">
         <div className="ml-3 shrink-0 pr-8 text-29xl">
-          {gameInfo?.user1.username}&nbsp;&nbsp;&nbsp;vs&nbsp;&nbsp;&nbsp;{gameInfo?.user2.username}<br />
-          Score: {user1Score} vs {user2Score}<br />
+          {gameInfo?.user1.username}&nbsp;&nbsp;&nbsp;vs&nbsp;&nbsp;&nbsp;
+          {gameInfo?.user2.username}
           <br />
-          Game settings:<br />
-            point: {gameInfo?.gameSettings.points}<br />
-            isSpeedUp: {gameInfo?.gameSettings.isSpeedUp ? 'true' : 'false'}<br />
-          <GameCanvasComponent/>
+          Score: {user1Score} vs {user2Score}
+          <br />
+          <br />
+          Game settings:
+          <br />
+          point: {gameInfo?.gameSettings.points}
+          <br />
+          isSpeedUp: {gameInfo?.gameSettings.isSpeedUp ? "true" : "false"}
+          <br />
+          <GameCanvasComponent />
         </div>
       </div>
     </GameBackground>

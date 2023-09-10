@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { FormControlLabel, Switch, Box, Slider } from "@mui/material";
-import { GameSettingsType } from "../../types";
 
 const GameSettingsDialog = ({ closeModal, stopPropagation, gameId }: any) => {
   const [points, setPoints] = useState<number>(3);
