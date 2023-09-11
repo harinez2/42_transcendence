@@ -65,13 +65,13 @@ const MePage: NextPage = () => {
           alt=""
           src="/line-2.svg"
         />
-        <RankingContainer userId="1"/>
+        <RankingContainer userId="1" />
         <img
           className="absolute left-[470px] top-[768px] h-0.5 w-[500px]"
           alt=""
           src="/line-2.svg"
         />
-        <MatchHistoryContainer userId="1"/>
+        <MatchHistoryContainer userId="1" />
       </div>
       {isMSettingsMinePopupOpen && (
         <ModalPopup

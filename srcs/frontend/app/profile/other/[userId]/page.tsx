@@ -1,6 +1,6 @@
 import ProfileOtherPage from "./profile-other-page";
 import React from "react";
-import { ProfileType } from "../../../types"
+import { ProfileType } from "../../../types";
 import { getAllProfile } from "@/app/api/api";
 
 export const dynamicParams = false;
@@ -13,7 +13,7 @@ export const dynamicParams = false;
 // }
 
 const ProfileOther = async ({ params }: any) => {
-  const { userId } = params 
+  const { userId } = params;
   return <ProfileOtherPage userId={userId} />;
 };
 

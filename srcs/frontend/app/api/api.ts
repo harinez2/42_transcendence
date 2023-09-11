@@ -89,15 +89,15 @@ export default async function makeAPIRequest<T>(
 }
 
 export async function getAllProfile() {
-    const response = await fetch("http://localhost:5000/users", {
-        method: "GET",
-        cache: 'no-store'
-    });
-    return response.json();
+  const response = await fetch("http://localhost:5000/users", {
+    method: "GET",
+    cache: "no-store",
+  });
+  return response.json();
 }
 
 export async function getProfileByUserId(userId: string) {
-    try {
+  try {
     const response = await fetch(`http://localhost:5000/users/${userId}`, {
       method: "GET",
       cache: "no-store",

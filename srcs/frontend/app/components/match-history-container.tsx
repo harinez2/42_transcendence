@@ -7,7 +7,7 @@ import ModalPopup from "./modal/modal-popup";
 import { ProfileType } from "../types";
 import { getProfileByUserId } from "../api/api";
 
-async function MatchHistoryContainer ({userId}: any) {
+async function MatchHistoryContainer({ userId }: any) {
   // const prof: ProfileType = await getProfileByUserId(userId);
 
   // const [isMUserOpsDMOpen, setMUserOpsDMOpen] = useState(false);

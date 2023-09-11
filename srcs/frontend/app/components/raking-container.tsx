@@ -3,7 +3,7 @@ import type { NextPage } from "next";
 import { getProfileByUserId } from "../api/api";
 import { ProfileType } from "../types";
 
-async function RankingContainer ({userId}: any) {
+async function RankingContainer({ userId }: any) {
   // const prof: ProfileType = await getProfileByUserId(userId); //unused yet.
 
   return (
