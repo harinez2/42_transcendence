@@ -10,7 +10,7 @@ const FriendsPage: NextPage = () => {
   const router = useRouter();
 
   const onBlockedClick = useCallback(() => {
-    router.push("/friends-blocked");
+    router.push("/profile/me/blocked");
   }, [router]);
 
   return (
