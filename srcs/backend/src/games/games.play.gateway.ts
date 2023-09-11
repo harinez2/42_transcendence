@@ -6,8 +6,8 @@ import {
   WsException,
 } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
-import { PositionType } from './games.interface';
-// import { PrismaService } from 'src/prisma/prisma.service';
+import { GameSettingsType, PositionType } from './games.interface';
+import { PrismaService } from 'src/prisma/prisma.service';
 // import { UsersService } from '../users/users.service';
 
 // キャンバス
@@ -16,7 +16,7 @@ const canvasWidth = 600;
 // パドル
 const paddleHeight = canvasHeight / 4.5;
 const paddleWidth = paddleHeight / 9.5;
-const lPaddleX = paddleWidth * 2.5; // 右パドルの左端
+const lPaddleX = paddleWidth * 2.5; // 左パドルの左端
 const lPaddleRightX = lPaddleX + paddleWidth; // 左パドルの右端
 const rPaddleX = canvasWidth - paddleWidth * 2.5 - paddleWidth; // 右パドルの左端
 // ボール
@@ -33,7 +33,7 @@ const ballIntialPosY = canvasHeight / 2 - ballSize / 2;
   },
 })
 export class GamesPlayGateway {
-  constructor() {}
+  constructor(private prisma: PrismaService) {}
 
   // ボールの位置
   private ballPos: PositionType = { x: ballIntialPosX, y: ballIntialPosY };
@@ -45,13 +45,22 @@ export class GamesPlayGateway {
   // パドルの移動量
   private paddleDxDy: PositionType = { x: 0, y: 10 };
   private interval = undefined;
+  // ゲーム情報
+  private gameSettings = undefined;
+  // スコア
+  private user1Score = 0;
+  private user2Score = 0;
 
   // ゲームに参加
   @SubscribeMessage('game-join')
-  async handleJoinGame(@ConnectedSocket() socket: Socket) {
-    console.log('game-join event happened.');
+  async handleJoinGame(
+    @ConnectedSocket() socket: Socket,
+    @MessageBody() data: any,
+  ) {
+    console.log('game-join event happened: ', data.gameId);
+    this.gameSettings = await this.getGameSettings(Number(data.gameId));
     this.interval = setInterval(async () => {
-      await this.emit_update_game(socket);
+      await this.emitUpdateGame(socket);
     }, timerInterval);
   }
 
@@ -70,7 +79,7 @@ export class GamesPlayGateway {
 
   //-------------------------------------------------------------------------
 
-  private emit_update_game = async (socket) => {
+  private emitUpdateGame = async (socket) => {
     await new Promise(() => {
       socket?.emit('update_canvas', {
         ballPos: { x: this.ballPos.x, y: this.ballPos.y },
@@ -80,12 +89,20 @@ export class GamesPlayGateway {
       const newBallX = this.ballPos.x + this.ballDxDy.x;
       const newBallY = this.ballPos.y + this.ballDxDy.y;
       // 左右の壁判定
-      if (
-        newBallX < 0 || // 左
-        canvasWidth <= newBallX + ballSize // 右
-      ) {
-        this.ballPos.x = ballIntialPosX;
-        this.ballPos.y = ballIntialPosY;
+      if (newBallX < 0) {
+        // 左
+        this.scoredOperation({
+          user1ScoreAdd: 1,
+          user2ScoreAdd: 0,
+          socket: socket,
+        });
+      } else if (canvasWidth <= newBallX + ballSize) {
+        // 右
+        this.scoredOperation({
+          user1ScoreAdd: 0,
+          user2ScoreAdd: 1,
+          socket: socket,
+        });
       }
       // パドルの跳ね返り判定
       if (
@@ -115,4 +132,54 @@ export class GamesPlayGateway {
       this.rPaddlePos.y += this.paddleDxDy.y;
     });
   };
+
+  private scoredOperation = ({
+    user1ScoreAdd,
+    user2ScoreAdd,
+    socket,
+  }: {
+    user1ScoreAdd: number;
+    user2ScoreAdd: number;
+    socket: any;
+  }) => {
+    // スコア計算
+    this.user1Score += user1ScoreAdd;
+    this.user2Score += user2ScoreAdd;
+    console.log(
+      'current score: ',
+      this.user1Score,
+      this.user2Score,
+      this.gameSettings,
+    );
+    // フロントにスコア送信
+    socket?.emit('update_score', {
+      user1Score: this.user1Score,
+      user2Score: this.user2Score,
+      gameFinished:
+        this.gameSettings.points &&
+        (this.user1Score >= this.gameSettings.points ||
+          this.user2Score >= this.gameSettings.points)
+          ? true
+          : false,
+    });
+    // ボール位置をリセット
+    this.ballPos.x = ballIntialPosX;
+    this.ballPos.y = ballIntialPosY;
+  };
+
+  private async getGameSettings(gameId: number): Promise<any> {
+    try {
+      const query: any = await this.prisma.gameSettings.findUnique({
+        where: {
+          gameId: gameId,
+        },
+      });
+      if (!query) {
+        throw new WsException(`No game information with ID ${gameId}.`);
+      }
+      return query;
+    } catch (e) {
+      throw this.prisma.handleError(e);
+    }
+  }
 }

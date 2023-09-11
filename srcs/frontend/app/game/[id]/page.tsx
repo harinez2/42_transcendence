@@ -23,7 +23,20 @@ const GamePlayingUI = ({ params }: { params: { id: string } }) => {
   }, [error]);
 
   useEffect(() => {
-    socket?.emit("game-join");
+    socket?.emit("game-join", { gameId: params.id });
+    // スコアを受け取る
+    socket?.on("update_score", (data: any) => {
+      console.log("update_score: ", data);
+      setUser1Score(data.user1Score);
+      setUser2Score(data.user2Score);
+      if (data.gameFinished) {
+        socket?.off("update_score");
+        router.push(`/game/${params.id}/result`);
+      }
+    });
+    return () => {
+      socket?.off("update_score");
+    };
   }, [socket]);
 
   useEffect(() => {

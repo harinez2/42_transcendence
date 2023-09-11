@@ -92,7 +92,6 @@ const GamePreparingUI = () => {
       // 設定が完了し、ゲーム開始したとき
       socket?.on("game-start", (gameUserFromServer: any) => {
         console.log("game-start: ", gameUserFromServer);
-        console.log("settingStatus: ", settingStatus);
         if (settingStatus !== WaitStatus.WaitingForSetting) {
           console.error("Status error: ", settingStatus);
           router.push("/game");

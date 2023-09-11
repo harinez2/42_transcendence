@@ -1,5 +1,5 @@
 import { ErrorContext, SocketContext } from "@/app/layout";
-import { Position } from "@/app/types";
+import { Position } from "../types";
 import React, { useContext, useEffect, useState } from "react";
 
 // キャンバス
