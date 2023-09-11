@@ -44,15 +44,15 @@ export class ChatsService {
         },
       });
 
-      this.addChannelUsers(
-        createdPost.channelId,
-        createChannelDto.ownerId,
-        UserType.ADMIN,
-      );
-      this.addChannelUsers(
+      await this.addChannelUsers(
         createdPost.channelId,
         createChannelDto.ownerId,
         UserType.USER,
+      );
+      await this.addChannelUsers(
+        createdPost.channelId,
+        createChannelDto.ownerId,
+        UserType.ADMIN,
       );
       return this.findById(createdPost.channelId);
     } catch (e) {
