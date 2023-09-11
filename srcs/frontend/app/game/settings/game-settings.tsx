@@ -46,7 +46,7 @@ const GameSettingsPage: NextPage = () => {
       <div className="absolute left-[763px] top-[15px] inline-block h-14 w-[149px] tracking-[0.1em]">
         user2
       </div>
-      <div className="absolute left-[2px] top-[0px] h-screen w-full overflow-hidden bg-gray-600 bg-opacity-50">
+      <div className="absolute left-[2px] top-[0px] h-screen w-full overflow-hidden bg-gray-600/50">
         <GameSettingsContainer />
       </div>
     </div>
