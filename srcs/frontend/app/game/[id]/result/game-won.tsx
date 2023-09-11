@@ -13,7 +13,7 @@ const GameWonPage: NextPage = () => {
   }, [router]);
 
   const onPlayWithOtherClick = useCallback(() => {
-    router.push("/game-match-making-parent");
+    router.push("/game");
   }, [router]);
 
   return (
@@ -21,12 +21,14 @@ const GameWonPage: NextPage = () => {
       <i className="absolute left-[493px] top-[392px] tracking-[0.1em]">
         You won!!
       </i>
-      <button className="absolute left-[593px] top-[596px] h-[41px] w-[254px] cursor-pointer bg-[transparent] p-0 [border:none]">
+      <button
+        className="absolute left-[593px] top-[596px] h-[41px] w-[254px] cursor-pointer bg-[transparent] p-0 [border:none]"
+        onClick={onPlayWithOtherClick}
+      >
         <img
           className="absolute left-[0px] top-[0px] h-[41px] w-[254px] cursor-pointer"
           alt=""
           src="/rectangle-122.svg"
-          onClick={onPlayWithOtherClick}
         />
         <div className="absolute left-[34px] top-[7px] inline-block h-[34px] w-[200px] text-left font-body text-5xl tracking-[0.1em] text-base-white">
           Play with other
