@@ -1,9 +1,11 @@
-"use client";
-
 import React from "react";
 import type { NextPage } from "next";
+import { getProfileByUserId } from "../api/api";
+import { ProfileType } from "../types";
 
-const RankingContainer: NextPage = () => {
+async function RankingContainer ({userId}: any) {
+  // const prof: ProfileType = await getProfileByUserId(userId); //unused yet.
+
   return (
     <div className="absolute left-[590px] top-[506px] h-[227px] w-[229px]">
       <div className="absolute left-[1px] top-[0px] flex h-14 w-[228px] flex-row items-center justify-start gap-[66px] overflow-hidden">
@@ -22,6 +24,6 @@ const RankingContainer: NextPage = () => {
       </div>
     </div>
   );
-};
+}
 
 export default RankingContainer;

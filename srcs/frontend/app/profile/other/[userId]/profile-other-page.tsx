@@ -3,12 +3,14 @@
 import type { NextPage } from "next";
 import { useCallback } from "react";
 import { useRouter } from "next/navigation";
-import HeaderMenu from "../../components/headermenu";
-import RankingContainer from "../../components/raking-container";
-import MatchHistoryContainer from "../../components/match-history-container";
+import HeaderMenu from "../../../components/headermenu";
+import RankingContainer from "../../../components/raking-container";
+import MatchHistoryContainer from "../../../components/match-history-container";
 import React from "react";
 
-const ProfileOtherPage: NextPage = () => {
+function ProfileOtherPage({userId}: any) {
+  console.log(userId);
+  
   const router = useRouter();
 
   const onDMClick = useCallback(() => {
@@ -19,6 +21,7 @@ const ProfileOtherPage: NextPage = () => {
     router.push("../../game/settings");
   }, [router]);
 
+try {
   return (
     <div className="relative h-screen w-full overflow-hidden bg-darkslategray-100 text-left font-body text-xl text-base-white">
       <HeaderMenu />
@@ -71,44 +74,19 @@ const ProfileOtherPage: NextPage = () => {
         alt=""
         src="/line-2.svg"
       />
-      <RankingContainer />
+      <RankingContainer userId={userId}/>
       <img
         className="absolute left-[470px] top-[768px] h-0.5 w-[500px]"
         alt=""
         src="/line-2.svg"
       />
-      <MatchHistoryContainer />
+      <MatchHistoryContainer userId={userId}/>
     </div>
   );
-};
+  } catch (error) {
+        console.error("Error fetching profile:", error);
+        return <div>Error loading profile.</div>
+      }
+}
 
 export default ProfileOtherPage;
-
-
-
-
-// import { PostType } from "@/utils/Types";
-// import { getPostById} from "@/utils/api";
-// import React from "react";
-// import { ProfileType } from "@/app/types";
-
-// async function PostPage({id}: any) {
-//     // console.log(id);
-//     try {
-//         const post: PostType = await getPostById(id)
-//         return (
-//             <div className="container">
-//                 <h1 className="title"> {post.title}</h1>
-//                 <p className="content">{post.content}</p>
-//                 <p className="meta">Author: {post.author}</p>
-//                 <p className="meta">Created at: {post.createdAt}</p>
-//             </div>
-//         );
-//     } catch (error) {
-//         console.error("Error fetching posts:", error);
-//         return <div>Error loading post.</div>
-//     }
-// };
-
-// export default PostPage;
-
