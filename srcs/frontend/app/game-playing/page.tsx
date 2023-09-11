@@ -1,16 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
-import { GameSettingsType } from "../game/types";
-import { useSearchParams } from "next/navigation";
-
 const GamePage = () => {
-  const searchParams = useSearchParams();
-
-  const [gameSettings, setGameSettings] = useState<GameSettingsType>();
-  let query = searchParams.get("query");
-  if (!query) query = "{}";
-  setGameSettings(JSON.parse(query));
 
   return (
     <div className="relative h-[1024px] w-full overflow-hidden bg-darkslategray-100 text-left font-body text-29xl text-base-white">
@@ -53,10 +43,10 @@ const GamePage = () => {
         user1
       </div>
       <div className="absolute left-[41px] top-[15px] inline-block h-[35px] w-[129px] text-5xl tracking-[0.1em]">
-        Points: {gameSettings?.points}
+        Points: 3
       </div>
       <div className="absolute left-[189px] top-[15px] inline-block h-[35px] w-[198px] text-5xl tracking-[0.1em]">
-        Speed up: {gameSettings?.isSpeedUp}
+        Speed up: true
       </div>
       <div className="absolute left-[763px] top-[15px] inline-block h-14 w-[149px] tracking-[0.1em]">
         user2

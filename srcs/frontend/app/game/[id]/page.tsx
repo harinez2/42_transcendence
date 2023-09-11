@@ -29,7 +29,7 @@ const GamePlayingUI = ({ params }: { params: { id: string } }) => {
       console.log("update_score: ", data);
       setUser1Score(data.user1Score);
       setUser2Score(data.user2Score);
-      if (data.gameFinished) {
+      if (data.isGameFinished) {
         socket?.off("update_score");
         router.push(`/game/${params.id}/result`);
       }

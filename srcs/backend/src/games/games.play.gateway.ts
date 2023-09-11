@@ -91,18 +91,15 @@ export class GamesPlayGateway {
       // 左右の壁判定
       if (newBallX < 0) {
         // 左
-        this.scoredOperation({
-          user1ScoreAdd: 1,
-          user2ScoreAdd: 0,
-          socket: socket,
-        });
+        this.addAndEmitScore(1, 0, socket);
+        this.resetBallPos();
       } else if (canvasWidth <= newBallX + ballSize) {
         // 右
-        this.scoredOperation({
-          user1ScoreAdd: 0,
-          user2ScoreAdd: 1,
-          socket: socket,
-        });
+        this.addAndEmitScore(0, 1, socket);
+        this.resetBallPos();
+      }
+      if (this.isGameFinished()) {
+        clearInterval(this.interval);
       }
       // パドルの跳ね返り判定
       if (
@@ -133,16 +130,8 @@ export class GamesPlayGateway {
     });
   };
 
-  private scoredOperation = ({
-    user1ScoreAdd,
-    user2ScoreAdd,
-    socket,
-  }: {
-    user1ScoreAdd: number;
-    user2ScoreAdd: number;
-    socket: any;
-  }) => {
-    // スコア計算
+  private addAndEmitScore = (user1ScoreAdd: number, user2ScoreAdd: number, socket: any) => {
+    // スコア加算
     this.user1Score += user1ScoreAdd;
     this.user2Score += user2ScoreAdd;
     console.log(
@@ -151,23 +140,30 @@ export class GamesPlayGateway {
       this.user2Score,
       this.gameSettings,
     );
-    // フロントにスコア送信
+    // クライアントにemit
     socket?.emit('update_score', {
       user1Score: this.user1Score,
       user2Score: this.user2Score,
-      gameFinished:
-        this.gameSettings.points &&
-        (this.user1Score >= this.gameSettings.points ||
-          this.user2Score >= this.gameSettings.points)
-          ? true
-          : false,
+      isGameFinished: this.isGameFinished(),
     });
-    // ボール位置をリセット
+  }
+
+  private isGameFinished = (): boolean => {
+    const pointsToFinish = this.gameSettings.points;
+    if (pointsToFinish &&
+      (this.user1Score >= pointsToFinish || this.user2Score >= pointsToFinish)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  private resetBallPos = () => {
     this.ballPos.x = ballIntialPosX;
     this.ballPos.y = ballIntialPosY;
-  };
+  }
 
-  private async getGameSettings(gameId: number): Promise<any> {
+  private getGameSettings = async (gameId: number): Promise<any> => {
     try {
       const query: any = await this.prisma.gameSettings.findUnique({
         where: {
