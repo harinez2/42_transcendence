@@ -90,16 +90,16 @@ const GamePreparingUI = () => {
 
     if (settingStatus === WaitStatus.WaitingForSetting) {
       // 設定が完了し、ゲーム開始したとき
-      socket?.on("game-start", (gameUserFromServer: any) => {
-        console.log("game-start: ", gameUserFromServer);
+      socket?.on("game-ready", (gameId: number) => {
+        console.log(`game-ready: gameId=${gameId}`);
         if (settingStatus !== WaitStatus.WaitingForSetting) {
           console.error("Status error: ", settingStatus);
           router.push("/game");
           return;
         }
         setSettingStatus(WaitStatus.Gaming);
-        socket?.off("game-start");
-        router.push(`/game/${gameUserFromServer.gameId}`);
+        socket?.off("game-ready");
+        router.push(`/game/${gameId}`);
       });
     }
   }, [socket, settingStatus]);

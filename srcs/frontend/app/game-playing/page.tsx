@@ -1,7 +1,6 @@
 "use client";
 
 const GamePage = () => {
-
   return (
     <div className="relative h-[1024px] w-full overflow-hidden bg-darkslategray-100 text-left font-body text-29xl text-base-white">
       <div className="absolute left-[69px] top-[15px] h-[1092px] w-[1301px] font-geo text-181xl">

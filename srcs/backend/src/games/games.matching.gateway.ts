@@ -3,12 +3,12 @@ import {
   SubscribeMessage,
   WebSocketGateway,
   ConnectedSocket,
-  WsException,
 } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { GameInfoType, GameSettingsType } from './games.interface';
-import { UsersService } from '../users/users.service';
+import { GameAllType, GameInfoType } from './games.interface';
+import { GameSettings } from '@prisma/client';
+import { InternalServerErrorException } from '@nestjs/common';
 
 @WebSocketGateway({
   cors: {
@@ -16,13 +16,10 @@ import { UsersService } from '../users/users.service';
   },
 })
 export class GamesMatchingGateway {
-  constructor(
-    private prisma: PrismaService,
-    private userService: UsersService,
-  ) {}
+  constructor(private prisma: PrismaService) {}
 
   private waitList: { userId: number; socket: Socket }[] = [];
-  private gameList: GameInfoType[] = [];
+  private gameList: GameAllType = {};
 
   // 待ち行列に並ぶ
   @SubscribeMessage('game-addwaitlist')
@@ -32,35 +29,42 @@ export class GamesMatchingGateway {
   ) {
     this.waitList.push({ userId: data.userId, socket: socket });
     console.log(
-      `added to waitList: userId: ${data.userId}, socket id: ${socket.id}`,
+      `added to waitList: userId=${data.userId}, socket id=${socket.id}`,
     );
     if (this.waitList.length >= 2) {
       console.log('Matched!');
       const user1 = this.waitList.shift();
       const user2 = this.waitList.shift();
       if (user1 && user2) {
-        // ゲーム情報の保存
-        const gameInfo: GameInfoType = {
-          gameId: -1,
-          user1Id: user1.userId,
-          user1Socket: user1.socket,
-          user2Id: user2.userId,
-          user2Socket: user2.socket,
+        // ゲーム情報をDBに保存
+        const storedGameInfo: GameInfoType = await this.storeGameInfo(
+          user1.userId,
+          user2.userId,
+        );
+
+        // ゲーム情報をgameListに保存
+        this.gameList[storedGameInfo.gameId] = {
+          info: storedGameInfo,
+          socket: {
+            user1Socket: user1.socket,
+            user2Socket: user2.socket,
+          },
+          play: undefined,
         };
-        const storedGameInfo = await this.storeGameInfo(gameInfo);
-        gameInfo.gameId = storedGameInfo.gameId;
-        this.gameList.push(gameInfo);
-        console.log('waiting for configuring the game: ', gameInfo.gameId);
-        const gameUser = {
-          gameId: gameInfo.gameId,
-          user1Id: gameInfo.user1Id,
-          user1Name: this.userService.findOne(gameInfo.user1Id),
-          user2Id: gameInfo.user2Id,
-          user2Name: this.userService.findOne(gameInfo.user2Id),
-        };
+
         // コンフィグリクエスト
-        gameInfo.user1Socket.emit('game-configrequest', gameUser);
-        gameInfo.user2Socket.emit('game-configuring', gameUser);
+        console.log(
+          'waiting for configuring the game: ',
+          storedGameInfo.gameId,
+        );
+        this.gameList[storedGameInfo.gameId].socket.user1Socket.emit(
+          'game-configrequest',
+          storedGameInfo,
+        );
+        this.gameList[storedGameInfo.gameId].socket.user2Socket.emit(
+          'game-configuring',
+          storedGameInfo,
+        );
       }
     }
   }
@@ -73,56 +77,67 @@ export class GamesMatchingGateway {
   ) {
     this.waitList = this.waitList.filter((item) => item.userId !== data.userId);
     console.log(
-      `leaved from waitList: userId: ${data.userId}, socket id: ${socket.id}`,
+      `leaved from waitList: userId=${data.userId}, socket id=${socket.id}`,
     );
   }
 
   // コンフィグ受信
   @SubscribeMessage('game-config')
   handleGetConfig(
-    @ConnectedSocket() client: Socket,
-    @MessageBody() gameSettings: GameSettingsType,
+    @ConnectedSocket() socket: Socket,
+    @MessageBody() gameSettings: GameSettings,
   ) {
     console.log('gameSettings:', gameSettings);
     // コンフィグの妥当性チェック
     if (gameSettings.points < 3 || 7 < gameSettings.points) {
-      client.emit('error', 'Config error: point range is invalid.');
+      socket.emit('error', 'Config error: point range is invalid.');
       return;
     }
+
     // ゲーム情報を検索
-    const gameInfo = this.gameList.find(
-      (gameInfo) => gameInfo.gameId === gameSettings.gameId,
-    );
-    if (!gameInfo) {
-      client.emit('error', 'Game not found.');
+    if (!this.gameList[gameSettings.gameId]) {
+      socket.emit('error', 'Game not found.');
       return;
     }
-    // コンフィグ情報の保存
+
+    // コンフィグ情報をDBに保存
     this.storeGameSettings(gameSettings);
-    const gameData = {
-      gameId: gameInfo.gameId,
-      user1Id: gameInfo.user1Id,
-      user2Id: gameInfo.user2Id,
-      config: gameSettings,
-    };
+
     // ゲーム開始
-    gameInfo.user1Socket.emit('game-start', gameData);
-    gameInfo.user2Socket.emit('game-start', gameData);
+    this.gameList[gameSettings.gameId].socket.user1Socket.emit(
+      'game-ready',
+      gameSettings.gameId,
+    );
+    this.gameList[gameSettings.gameId].socket.user2Socket.emit(
+      'game-ready',
+      gameSettings.gameId,
+    );
+    delete this.gameList[gameSettings.gameId];
   }
 
   //-------------------------------------------------------------------------
 
-  private async storeGameInfo(gameInfo: GameInfoType): Promise<any> {
+  private async storeGameInfo(
+    user1Id: number,
+    user2Id: number,
+  ): Promise<GameInfoType> {
     try {
-      const query: any = await this.prisma.gameInfo.create({
+      const query: GameInfoType = await this.prisma.gameInfo.create({
         data: {
-          user1Id: gameInfo.user1Id,
-          user2Id: gameInfo.user2Id,
+          user1Id: user1Id,
+          user2Id: user2Id,
           startedAt: new Date(),
+        },
+        include: {
+          user1: true,
+          user2: true,
+          gameSettings: true,
         },
       });
       if (!query) {
-        throw new WsException('Failed to create gameInfo record in the DB.');
+        throw new InternalServerErrorException(
+          'Failed to create gameInfo record in the DB.',
+        );
       }
       return query;
     } catch (e) {
@@ -131,14 +146,14 @@ export class GamesMatchingGateway {
   }
 
   private async storeGameSettings(
-    gameSettings: GameSettingsType,
-  ): Promise<any> {
+    gameSettings: GameSettings,
+  ): Promise<GameSettings> {
     try {
-      const query: any = await this.prisma.gameSettings.create({
+      const query: GameSettings = await this.prisma.gameSettings.create({
         data: gameSettings,
       });
       if (!query) {
-        throw new WsException(
+        throw new InternalServerErrorException(
           'Failed to create gameSettings record in the DB.',
         );
       }

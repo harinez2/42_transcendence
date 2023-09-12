@@ -23,7 +23,7 @@ const downKey = "s";
 const keydownEvent = "keydown";
 const keyupEvent = "keyup";
 
-const GameCanvasComponent = () => {
+const GameCanvasComponent = ({ gameId }: { gameId: number }) => {
   const socket: any = useContext(SocketContext);
   const error: any = useContext(ErrorContext);
 
@@ -114,7 +114,11 @@ const GameCanvasComponent = () => {
 
   const postMyPaddleY = async (mypaddley: number) => {
     await new Promise(() => {
-      socket?.emit("post_paddle_y", { paddleY: mypaddley });
+      socket?.emit("game-post_paddle_y", {
+        paddleY: mypaddley,
+        user: 1,
+        gameId: gameId,
+      });
     });
   };
 
@@ -150,13 +154,13 @@ const GameCanvasComponent = () => {
 
   useEffect(() => {
     // ボールとパドルの位置を受け取る
-    socket?.on("update_canvas", (data: any) => {
+    socket?.on("game-update_canvas", (data: any) => {
       setBallPos(data.ballPos);
       setMyPaddleY(data.lPaddleY);
       setOppPaddleY(data.rPaddleY);
     });
     return () => {
-      socket?.off("update_canvas");
+      socket?.off("game-update_canvas");
     };
   }, [socket]);
 

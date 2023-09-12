@@ -3,29 +3,29 @@ import {
   SubscribeMessage,
   WebSocketGateway,
   ConnectedSocket,
-  WsException,
 } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
-import { GameSettingsType, PositionType } from './games.interface';
+import {
+  BALL_DXDY,
+  BALL_INTIAL_POSX,
+  BALL_INTIAL_POSY,
+  BALL_SIZE,
+  CANVAS_HEIGHT,
+  CANVAS_WIDTH,
+  GameAllType,
+  GameInfoType,
+  GamePlayType,
+  L_PADDLE_RIGHTX,
+  L_PADDLE_X,
+  PADDLE_HEIGHT,
+  R_PADDLE_X,
+  TIMER_INTERVAL,
+} from './games.interface';
 import { PrismaService } from 'src/prisma/prisma.service';
-// import { UsersService } from '../users/users.service';
-
-// キャンバス
-const canvasHeight = 400;
-const canvasWidth = 600;
-// パドル
-const paddleHeight = canvasHeight / 4.5;
-const paddleWidth = paddleHeight / 9.5;
-const lPaddleX = paddleWidth * 2.5; // 左パドルの左端
-const lPaddleRightX = lPaddleX + paddleWidth; // 左パドルの右端
-const rPaddleX = canvasWidth - paddleWidth * 2.5 - paddleWidth; // 右パドルの左端
-// ボール
-const ballSize = paddleWidth * 1.5;
-// インターバル
-const timerInterval = 120;
-// ボールの位置
-const ballIntialPosX = canvasWidth / 2 - ballSize / 2;
-const ballIntialPosY = canvasHeight / 2 - ballSize / 2;
+import {
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 
 @WebSocketGateway({
   cors: {
@@ -35,21 +35,7 @@ const ballIntialPosY = canvasHeight / 2 - ballSize / 2;
 export class GamesPlayGateway {
   constructor(private prisma: PrismaService) {}
 
-  // ボールの位置
-  private ballPos: PositionType = { x: ballIntialPosX, y: ballIntialPosY };
-  // ボールの移動量
-  private ballDxDy: PositionType = { x: 8, y: 8 };
-  // パドルの位置
-  private lPaddlePos: PositionType = { x: lPaddleX, y: 0 };
-  private rPaddlePos: PositionType = { x: rPaddleX, y: 0 };
-  // パドルの移動量
-  private paddleDxDy: PositionType = { x: 0, y: 10 };
-  private interval = undefined;
-  // ゲーム情報
-  private gameSettings = undefined;
-  // スコア
-  private user1Score = 0;
-  private user2Score = 0;
+  private gameList: GameAllType = {};
 
   // ゲームに参加
   @SubscribeMessage('game-join')
@@ -57,125 +43,252 @@ export class GamesPlayGateway {
     @ConnectedSocket() socket: Socket,
     @MessageBody() data: any,
   ) {
-    console.log('game-join event happened: ', data.gameId);
-    this.gameSettings = await this.getGameSettings(Number(data.gameId));
-    this.interval = setInterval(async () => {
-      await this.emitUpdateGame(socket);
-    }, timerInterval);
+    console.log(`game-join event happened: gameId=${data.gameId}`);
+    const gameId: number = Number(data.gameId);
+    let isFetchedFromDb = false;
+
+    // ゲームIDの情報を保持していなければDBより取得
+    if (!this.gameList[gameId]) {
+      this.gameList[gameId] = {
+        info: await this.getGameInfo(gameId),
+        socket: {
+          user1Socket: undefined,
+          user2Socket: undefined,
+        },
+        play: this.getInitialGamePlayType(),
+      };
+      isFetchedFromDb = true;
+    }
+
+    // ログインユーザがゲームに含まれていなければエラー
+    if (
+      data.userId !== this.gameList[gameId].info.user1Id &&
+      data.userId !== this.gameList[gameId].info.user2Id
+    ) {
+      console.error(`The user is not part of this game: userId=${data.userId}`);
+      socket.emit(
+        'exception',
+        `The user is not part of this game: userId=${data.userId}`,
+      );
+      if (isFetchedFromDb) delete this.gameList[gameId];
+      return;
+    }
+
+    // ソケット情報を保存
+    if (data.userId === this.gameList[gameId].info.user1Id) {
+      this.gameList[gameId].socket.user1Socket = socket;
+    } else {
+      this.gameList[gameId].socket.user2Socket = socket;
+    }
+
+    // プレイユーザが2人そろっていなければ離脱
+    if (
+      !this.gameList[gameId].socket.user1Socket ||
+      !this.gameList[gameId].socket.user2Socket
+    ) {
+      console.log('Waiting for the opponent...');
+      socket.emit('info', 'Waiting for the opponent...');
+      return;
+    }
+
+    // ゲームのタイマーを開始
+    this.gameList[gameId].socket.user1Socket.emit('game-start', gameId);
+    this.gameList[gameId].socket.user2Socket.emit('game-start', gameId);
+    this.gameList[gameId].play.interval = setInterval(async () => {
+      await this.emitUpdateGame(gameId);
+    }, TIMER_INTERVAL);
   }
 
   // パドルの位置更新
-  @SubscribeMessage('post_paddle_y')
+  @SubscribeMessage('game-post_paddle_y')
   async handleUpdatePaddleY(@MessageBody() data: any) {
-    this.lPaddlePos.y = data.paddleY;
+    this.gameList[data.gameId].play.lPaddlePos.y = data.paddleY;
   }
 
   // ゲームから離脱
   @SubscribeMessage('game-leave')
-  async handleLeaveGame(@ConnectedSocket() socket: Socket) {
+  async handleLeaveGame(@MessageBody() data: any) {
     console.log('game-leave event happened.');
-    clearInterval(this.interval);
+    this.finishGame(data.gameId);
   }
 
   //-------------------------------------------------------------------------
 
-  private emitUpdateGame = async (socket) => {
+  private emitUpdateGame = async (gameId: number) => {
     await new Promise(() => {
-      socket?.emit('update_canvas', {
-        ballPos: { x: this.ballPos.x, y: this.ballPos.y },
-        lPaddleY: this.lPaddlePos.y,
-        rPaddleY: this.rPaddlePos.y,
-      });
-      const newBallX = this.ballPos.x + this.ballDxDy.x;
-      const newBallY = this.ballPos.y + this.ballDxDy.y;
+      // ゲームデータ送付
+      const sendData = {
+        ballPos: {
+          x: this.gameList[gameId].play.ballPos.x,
+          y: this.gameList[gameId].play.ballPos.y,
+        },
+        lPaddleY: this.gameList[gameId].play.lPaddlePos.y,
+        rPaddleY: this.gameList[gameId].play.rPaddlePos.y,
+      };
+      this.gameList[gameId].socket.user1Socket.emit(
+        'game-update_canvas',
+        sendData,
+      );
+      this.gameList[gameId].socket.user2Socket.emit(
+        'game-update_canvas',
+        sendData,
+      );
+
       // 左右の壁判定
+      const newBallX =
+        this.gameList[gameId].play.ballPos.x +
+        this.gameList[gameId].play.ballDxDy.x;
+      const newBallY =
+        this.gameList[gameId].play.ballPos.y +
+        this.gameList[gameId].play.ballDxDy.y;
       if (newBallX < 0) {
         // 左
-        this.addAndEmitScore(1, 0, socket);
-        this.resetBallPos();
-      } else if (canvasWidth <= newBallX + ballSize) {
+        this.addAndEmitScore(gameId, 0, 1);
+        this.resetBallPos(gameId);
+      } else if (CANVAS_WIDTH <= newBallX + BALL_SIZE) {
         // 右
-        this.addAndEmitScore(0, 1, socket);
-        this.resetBallPos();
+        this.addAndEmitScore(gameId, 1, 0);
+        this.resetBallPos(gameId);
       }
-      if (this.isGameFinished()) {
-        clearInterval(this.interval);
+      // ゲーム終了判定
+      if (this.isGameFinished(gameId)) {
+        this.finishGame(gameId);
+        return;
       }
       // パドルの跳ね返り判定
       if (
-        (newBallX < lPaddleRightX &&
-          this.lPaddlePos.y <= newBallY &&
-          newBallY <= this.lPaddlePos.y + paddleHeight) || // 左
-        (newBallX + ballSize >= rPaddleX &&
-          this.rPaddlePos.y <= newBallY &&
-          newBallY <= this.rPaddlePos.y + paddleHeight) // 右
+        (newBallX <= L_PADDLE_RIGHTX &&
+          L_PADDLE_RIGHTX + BALL_SIZE < newBallX &&
+          this.gameList[gameId].play.lPaddlePos.y <= newBallY &&
+          newBallY <=
+            this.gameList[gameId].play.lPaddlePos.y + PADDLE_HEIGHT) || // 左
+        (R_PADDLE_X <= newBallX + BALL_SIZE &&
+          newBallX + BALL_SIZE < R_PADDLE_X + BALL_SIZE &&
+          this.gameList[gameId].play.rPaddlePos.y <= newBallY &&
+          newBallY <= this.gameList[gameId].play.rPaddlePos.y + PADDLE_HEIGHT) // 右
       ) {
-        this.ballDxDy.x *= -1;
+        this.gameList[gameId].play.ballDxDy.x *= -1;
       }
-      this.ballPos.x += this.ballDxDy.x;
+      this.gameList[gameId].play.ballPos.x +=
+        this.gameList[gameId].play.ballDxDy.x;
       // 上下の跳ね返り判定
-      if (newBallY < 0 || canvasHeight <= newBallY + ballSize) {
-        this.ballDxDy.y *= -1;
+      if (newBallY < 0 || CANVAS_HEIGHT <= newBallY + BALL_SIZE) {
+        this.gameList[gameId].play.ballDxDy.y *= -1;
       }
-      this.ballPos.y += this.ballDxDy.y;
-
-      // 自動パドル、削除予定
-      if (
-        this.rPaddlePos.y + this.paddleDxDy.y < 0 ||
-        canvasHeight <= this.rPaddlePos.y + this.paddleDxDy.y + paddleHeight
-      ) {
-        this.paddleDxDy.y *= -1;
-      }
-      this.rPaddlePos.y += this.paddleDxDy.y;
+      this.gameList[gameId].play.ballPos.y +=
+        this.gameList[gameId].play.ballDxDy.y;
     });
   };
 
-  private addAndEmitScore = (user1ScoreAdd: number, user2ScoreAdd: number, socket: any) => {
+  private addAndEmitScore = (
+    gameId: number,
+    user1ScoreAdd: number,
+    user2ScoreAdd: number,
+  ) => {
     // スコア加算
-    this.user1Score += user1ScoreAdd;
-    this.user2Score += user2ScoreAdd;
-    console.log(
-      'current score: ',
-      this.user1Score,
-      this.user2Score,
-      this.gameSettings,
-    );
-    // クライアントにemit
-    socket?.emit('update_score', {
-      user1Score: this.user1Score,
-      user2Score: this.user2Score,
-      isGameFinished: this.isGameFinished(),
-    });
-  }
+    this.gameList[gameId].play.user1Score += user1ScoreAdd;
+    this.gameList[gameId].play.user2Score += user2ScoreAdd;
 
-  private isGameFinished = (): boolean => {
-    const pointsToFinish = this.gameSettings.points;
-    if (pointsToFinish &&
-      (this.user1Score >= pointsToFinish || this.user2Score >= pointsToFinish)) {
+    // クライアントにemit
+    const sendData = {
+      user1Score: this.gameList[gameId].play.user1Score,
+      user2Score: this.gameList[gameId].play.user2Score,
+      isGameFinished: this.isGameFinished(gameId),
+    };
+    console.log('gameId: ', gameId, ', sendData:  ', sendData);
+    this.gameList[gameId].socket.user1Socket.emit(
+      'game-update_score',
+      sendData,
+    );
+    this.gameList[gameId].socket.user2Socket.emit(
+      'game-update_score',
+      sendData,
+    );
+  };
+
+  private isGameFinished = (gameId: number): boolean => {
+    const pointsToFinish = this.gameList[gameId].info.gameSettings.points;
+    if (
+      this.gameList[gameId].play.user1Score >= pointsToFinish ||
+      this.gameList[gameId].play.user2Score >= pointsToFinish
+    ) {
       return true;
     } else {
       return false;
     }
-  }
+  };
 
-  private resetBallPos = () => {
-    this.ballPos.x = ballIntialPosX;
-    this.ballPos.y = ballIntialPosY;
-  }
+  private finishGame = async (gameId: number) => {
+    // ゲームのタイマーを止める
+    clearInterval(this.gameList[gameId].play.interval);
 
-  private getGameSettings = async (gameId: number): Promise<any> => {
+    // スコアをDBに書き込み
     try {
-      const query: any = await this.prisma.gameSettings.findUnique({
+      const gameInfo = await this.prisma.gameInfo.update({
         where: {
           gameId: gameId,
         },
+        data: {
+          user1Score: this.gameList[gameId].play.user1Score,
+          user2Score: this.gameList[gameId].play.user2Score,
+          endedAt: new Date(),
+        },
       });
-      if (!query) {
-        throw new WsException(`No game information with ID ${gameId}.`);
+      if (!gameInfo) {
+        throw new InternalServerErrorException(
+          `Failed to store game score: gameid=${gameId}.`,
+        );
       }
-      return query;
+
+      // 変数から削除
+      delete this.gameList[gameId];
     } catch (e) {
       throw this.prisma.handleError(e);
     }
-  }
+  };
+
+  private resetBallPos = (gameId: number) => {
+    this.gameList[gameId].play.ballPos.x = BALL_INTIAL_POSX;
+    this.gameList[gameId].play.ballPos.y = BALL_INTIAL_POSY;
+  };
+
+  private getGameInfo = async (gameId: number): Promise<GameInfoType> => {
+    try {
+      const gameInfo: GameInfoType = await this.prisma.gameInfo.findUnique({
+        where: {
+          gameId: gameId,
+        },
+        include: {
+          user1: true,
+          user2: true,
+          gameSettings: true,
+        },
+      });
+      if (!gameInfo) {
+        throw new NotFoundException(`No game information with ID ${gameId}.`);
+      }
+      return gameInfo;
+    } catch (e) {
+      throw this.prisma.handleError(e);
+    }
+  };
+
+  private getInitialGamePlayType = (): GamePlayType => {
+    return {
+      // ボールの位置
+      ballPos: { x: BALL_INTIAL_POSX, y: BALL_INTIAL_POSY },
+      // ボールの移動量
+      ballDxDy: { x: BALL_DXDY, y: BALL_DXDY },
+      // パドルの位置
+      lPaddlePos: { x: L_PADDLE_X, y: 0 },
+      rPaddlePos: { x: R_PADDLE_X, y: 0 },
+      // パドルの移動量
+      paddleDxDy: { x: 0, y: 10 },
+      // ゲーム情報
+      interval: undefined,
+      // スコア
+      user1Score: 0,
+      user2Score: 0,
+    };
+  };
 }
