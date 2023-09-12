@@ -5,20 +5,13 @@ import makeAPIRequest from "@/app/api/api";
 import GameWonPage from "./game-won";
 import GameLostPage from "./game-lost";
 import { GameInfoType } from "../../types";
-import { ErrorContext, ProfileContext } from "@/app/layout";
+import { ProfileContext } from "@/app/layout";
 import { ProfileType } from "@/app/types";
 import DefaultErrorPage from "next/error";
 
 const GameResultUI = ({ params }: { params: { id: string } }) => {
   const profile: ProfileType = useContext(ProfileContext);
-  const error: any = useContext(ErrorContext);
   const [isWon, setIsWon] = useState<boolean | undefined>();
-
-  useEffect(() => {
-    if (error) {
-      console.error("Error:", error);
-    }
-  }, [error]);
 
   useEffect(() => {
     if (profile) {

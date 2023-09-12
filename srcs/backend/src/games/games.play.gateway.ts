@@ -44,7 +44,7 @@ export class GamesPlayGateway {
     @MessageBody() data: any,
   ) {
     console.log(`game-join event happened: gameId=${data.gameId}`);
-    const gameId: number = Number(data.gameId);
+    const gameId = Number(data.gameId);
     let isFetchedFromDb = false;
 
     // ゲームIDの情報を保持していなければDBより取得

@@ -158,7 +158,7 @@ model GameInfo {
   gameSettings    GameSettings?
   user1Score      Int?
   user2Score      Int?
-  startedAt       DateTime
+  startedAt       DateTime?
   endedAt         DateTime?
 }
 

@@ -5,7 +5,7 @@ import { useCallback, useContext } from "react";
 import useModal from "../../components/useModal";
 import MatchMakingDialog from "./match_making";
 import GameSettingsDialog from "./game_settings";
-import { ErrorContext, ProfileContext, SocketContext } from "../../layout";
+import { ProfileContext, SocketContext } from "../../layout";
 import { ModalWindowType, ProfileType } from "../../types";
 import {
   GameUserType,
@@ -24,7 +24,6 @@ const GamePreparingUI = () => {
 
   const profile: ProfileType = useContext(ProfileContext);
   const socket: any = useContext(SocketContext);
-  const error: any = useContext(ErrorContext);
 
   const stopPropagation = useCallback(
     (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -103,12 +102,6 @@ const GamePreparingUI = () => {
       });
     }
   }, [socket, settingStatus]);
-
-  useEffect(() => {
-    if (error) {
-      console.error("Error:", error);
-    }
-  }, [error]);
 
   // MatchMakingDialogのキャンセルボタン操作時
   const handleMatchMakingDialogClose = () => {
