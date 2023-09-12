@@ -7,6 +7,7 @@ import { ChatsModule } from './chats/chats.module';
 import { DmsModule } from './dms/dms.module';
 import { GamesModule } from './games/games.module';
 import { ProfilesModule } from './profiles/profiles.module';
+import { FriendsModule } from './friends/friends.module';
 import { AuthModule } from './auth/auth.module';
 
 @Module({
@@ -15,6 +16,7 @@ import { AuthModule } from './auth/auth.module';
     ChatsModule,
     DmsModule,
     GamesModule,
+    FriendsModule,
     ProfilesModule,
     AuthModule,
   ],

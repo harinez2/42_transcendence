@@ -2,7 +2,7 @@
 
 set -e
 
-if [ ! -d "./app/.next" ]; then
+if [ ! -d ".next" ]; then
   npm run build
 fi
 

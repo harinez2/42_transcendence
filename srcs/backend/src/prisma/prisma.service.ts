@@ -28,12 +28,6 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
     await this.$connect();
   }
 
-  async enableShutdownHooks(app: INestApplication) {
-    process.on('beforeExit', async () => {
-      await app.close();
-    });
-  }
-
   // ref: https://www.prisma.io/docs/reference/api-reference/error-reference
   handleError(e: any): HttpException {
     const c_red = '\x1b[31m';

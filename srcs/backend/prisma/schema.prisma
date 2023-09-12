@@ -24,19 +24,22 @@ model User {
   twoFactorAuthEnabled Boolean  @default(false)
   twoFactorAuthSecret  String?
 
-  blockedBy            UserBlock[] @relation("BlockedBy")
-  blocked              UserBlock[] @relation("Blocked")
-  channelUsers         ChatChannelUsers[]
-  chatMessages         ChatMessages[]
-  banned               ChatBan[]
-  muted                ChatMute[]
+  followee Follow[] @relation("Followee")
+  follower Follow[] @relation("Follower")
+  blocker  Block[]  @relation("Blocker")
+  blocked  Block[]  @relation("Blocked")
 
-  user1                DmChannels[] @relation("User1")
-  user2                DmChannels[] @relation("User2")
-  dmMessages           DmMessages[]
+  channelUsers ChatChannelUsers[]
+  chatMessages ChatMessages[]
+  banned       ChatBan[]
+  muted        ChatMute[]
 
-  gameUser1            GameInfo[] @relation("GameUser1")
-  gameUser2            GameInfo[] @relation("GameUser2")
+  user1      DmChannels[] @relation("User1")
+  user2      DmChannels[] @relation("User2")
+  dmMessages DmMessages[]
+
+  gameUser1 GameInfo[] @relation("GameUser1")
+  gameUser2 GameInfo[] @relation("GameUser2")
 }
 
 model Profile {
@@ -46,14 +49,26 @@ model Profile {
   user   User   @relation(fields: [userId], references: [id])
 }
 
-model UserBlock {
-  id              Int             @id @default(autoincrement())
-  user            User            @relation("BlockedBy", fields: [userId], references: [id])
-  userId          Int             // relation scalar field  (used in 'user')
-  blockedUser     User            @relation("Blocked", fields: [blockedUserId], references: [id])
-  blockedUserId   Int             // relation scalar field  (used in 'blockedUser')
+// follower -[follow]-> followee
+model Follow {
+  id         Int  @id @default(autoincrement())
+  followee   User @relation("Followee", fields: [followeeId], references: [id])
+  followeeId Int
+  follower   User @relation("Follower", fields: [followerId], references: [id])
+  followerId Int
 
-  @@unique([userId, blockedUserId])
+  @@unique([followeeId, followerId])
+}
+
+// blocker -[block]-> blocked
+model Block {
+  id        Int  @id @default(autoincrement())
+  blocker   User @relation("Blocker", fields: [blockerId], references: [id])
+  blockerId Int
+  blocked   User @relation("Blocked", fields: [blockedId], references: [id])
+  blockedId Int
+
+  @@unique([blockerId, blockedId])
 }
 
 //--------------------------------------------------------------------------
@@ -71,55 +86,55 @@ enum UserType {
 }
 
 model ChatChannels {
-  channelId       Int             @id @default(autoincrement())
-  channelName     String          @unique
-  createdAt       DateTime
-  channelType     Publicity
-  hashedPassword  String?
-  users           ChatChannelUsers[]
-  chatMessages    ChatMessages[]
-  bannedUsers     ChatBan[]
-  mutedUsers      ChatMute[]
+  channelId      Int                @id @default(autoincrement())
+  channelName    String             @unique
+  createdAt      DateTime
+  channelType    Publicity
+  hashedPassword String?
+  users          ChatChannelUsers[]
+  chatMessages   ChatMessages[]
+  bannedUsers    ChatBan[]
+  mutedUsers     ChatMute[]
 }
 
 model ChatChannelUsers {
-  channelUserId   Int             @id @default(autoincrement())
-  channel         ChatChannels    @relation(fields: [channelId], references: [channelId])
-  channelId       Int             // relation scalar field  (used in 'channel')
-  user            User            @relation(fields: [userId], references: [id])
-  userId          Int             // relation scalar field  (used in 'user')
-  type            UserType
+  channelUserId Int          @id @default(autoincrement())
+  channel       ChatChannels @relation(fields: [channelId], references: [channelId])
+  channelId     Int // relation scalar field  (used in 'channel')
+  user          User         @relation(fields: [userId], references: [id])
+  userId        Int // relation scalar field  (used in 'user')
+  type          UserType
 
   @@unique([channelId, userId, type])
 }
 
 model ChatMessages {
-  messageId       Int             @id @default(autoincrement())
-  channel         ChatChannels    @relation(fields: [channelId], references: [channelId])
-  channelId       Int             // relation scalar field  (used in 'channel')
-  sender          User            @relation(fields: [senderId], references: [id])
-  senderId        Int             // relation scalar field  (used in 'sender')
-  content         String
-  createdAt       DateTime
+  messageId Int          @id @default(autoincrement())
+  channel   ChatChannels @relation(fields: [channelId], references: [channelId])
+  channelId Int // relation scalar field  (used in 'channel')
+  sender    User         @relation(fields: [senderId], references: [id])
+  senderId  Int // relation scalar field  (used in 'sender')
+  content   String
+  createdAt DateTime
 }
 
 model ChatBan {
-  id              Int             @id @default(autoincrement())
-  channel         ChatChannels    @relation(fields: [channelId], references: [channelId])
-  channelId       Int             // relation scalar field  (used in 'channel')
-  bannedUser      User            @relation(fields: [bannedUserId], references: [id])
-  bannedUserId    Int             // relation scalar field  (used in 'bannedUser')
+  id           Int          @id @default(autoincrement())
+  channel      ChatChannels @relation(fields: [channelId], references: [channelId])
+  channelId    Int // relation scalar field  (used in 'channel')
+  bannedUser   User         @relation(fields: [bannedUserId], references: [id])
+  bannedUserId Int // relation scalar field  (used in 'bannedUser')
 
   @@unique([channelId, bannedUserId])
 }
 
 model ChatMute {
-  id              Int             @id @default(autoincrement())
-  channel         ChatChannels    @relation(fields: [channelId], references: [channelId])
-  channelId       Int             // relation scalar field  (used in 'channel')
-  mutedUser       User            @relation(fields: [mutedUserId], references: [id])
-  mutedUserId     Int             // relation scalar field  (used in 'mutedUser')
-  muteUntil       DateTime
+  id          Int          @id @default(autoincrement())
+  channel     ChatChannels @relation(fields: [channelId], references: [channelId])
+  channelId   Int // relation scalar field  (used in 'channel')
+  mutedUser   User         @relation(fields: [mutedUserId], references: [id])
+  mutedUserId Int // relation scalar field  (used in 'mutedUser')
+  muteUntil   DateTime
 
   @@unique([channelId, mutedUserId])
 }
@@ -128,22 +143,22 @@ model ChatMute {
 // dm
 
 model DmChannels {
-  channelId       Int             @id @default(autoincrement())
-  user1           User            @relation("User1", fields: [user1Id], references: [id])
-  user1Id         Int             // relation scalar field  (used in 'user1')
-  user2           User            @relation("User2", fields: [user2Id], references: [id])
-  user2Id         Int             // relation scalar field  (used in 'user2')
-  dmMessages      DmMessages[]
+  channelId  Int          @id @default(autoincrement())
+  user1      User         @relation("User1", fields: [user1Id], references: [id])
+  user1Id    Int // relation scalar field  (used in 'user1')
+  user2      User         @relation("User2", fields: [user2Id], references: [id])
+  user2Id    Int // relation scalar field  (used in 'user2')
+  dmMessages DmMessages[]
 }
 
 model DmMessages {
-  messageId       Int             @id @default(autoincrement())
-  channel         DmChannels      @relation(fields: [channelId], references: [channelId])
-  channelId       Int             // relation scalar field  (used in 'channel')
-  sender          User            @relation(fields: [senderId], references: [id])
-  senderId        Int             // relation scalar field  (used in 'sender')
-  content         String
-  createdAt       DateTime
+  messageId Int        @id @default(autoincrement())
+  channel   DmChannels @relation(fields: [channelId], references: [channelId])
+  channelId Int // relation scalar field  (used in 'channel')
+  sender    User       @relation(fields: [senderId], references: [id])
+  senderId  Int // relation scalar field  (used in 'sender')
+  content   String
+  createdAt DateTime
 }
 
 //--------------------------------------------------------------------------

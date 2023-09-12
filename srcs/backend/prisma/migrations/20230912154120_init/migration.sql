@@ -27,12 +27,21 @@ CREATE TABLE "Profile" (
 );
 
 -- CreateTable
-CREATE TABLE "UserBlock" (
+CREATE TABLE "Follow" (
     "id" SERIAL NOT NULL,
-    "userId" INTEGER NOT NULL,
-    "blockedUserId" INTEGER NOT NULL,
+    "followeeId" INTEGER NOT NULL,
+    "followerId" INTEGER NOT NULL,
 
-    CONSTRAINT "UserBlock_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Follow_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Block" (
+    "id" SERIAL NOT NULL,
+    "blockerId" INTEGER NOT NULL,
+    "blockedId" INTEGER NOT NULL,
+
+    CONSTRAINT "Block_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -113,7 +122,7 @@ CREATE TABLE "GameInfo" (
     "user2Id" INTEGER NOT NULL,
     "user1Score" INTEGER,
     "user2Score" INTEGER,
-    "startedAt" TIMESTAMP(3) NOT NULL,
+    "startedAt" TIMESTAMP(3),
     "endedAt" TIMESTAMP(3),
 
     CONSTRAINT "GameInfo_pkey" PRIMARY KEY ("gameId")
@@ -139,7 +148,10 @@ CREATE UNIQUE INDEX "User_username_key" ON "User"("username");
 CREATE UNIQUE INDEX "Profile_userId_key" ON "Profile"("userId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "UserBlock_userId_blockedUserId_key" ON "UserBlock"("userId", "blockedUserId");
+CREATE UNIQUE INDEX "Follow_followeeId_followerId_key" ON "Follow"("followeeId", "followerId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Block_blockerId_blockedId_key" ON "Block"("blockerId", "blockedId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "ChatChannels_channelName_key" ON "ChatChannels"("channelName");
@@ -160,10 +172,16 @@ CREATE UNIQUE INDEX "GameSettings_gameId_key" ON "GameSettings"("gameId");
 ALTER TABLE "Profile" ADD CONSTRAINT "Profile_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "UserBlock" ADD CONSTRAINT "UserBlock_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Follow" ADD CONSTRAINT "Follow_followeeId_fkey" FOREIGN KEY ("followeeId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "UserBlock" ADD CONSTRAINT "UserBlock_blockedUserId_fkey" FOREIGN KEY ("blockedUserId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Follow" ADD CONSTRAINT "Follow_followerId_fkey" FOREIGN KEY ("followerId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Block" ADD CONSTRAINT "Block_blockerId_fkey" FOREIGN KEY ("blockerId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Block" ADD CONSTRAINT "Block_blockedId_fkey" FOREIGN KEY ("blockedId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "ChatChannelUsers" ADD CONSTRAINT "ChatChannelUsers_channelId_fkey" FOREIGN KEY ("channelId") REFERENCES "ChatChannels"("channelId") ON DELETE RESTRICT ON UPDATE CASCADE;
