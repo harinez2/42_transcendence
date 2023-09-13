@@ -27,6 +27,8 @@ async function bootstrap() {
     credentials: true,
   });
 
+  app.enableShutdownHooks();
+
   await app.listen(5000);
 }
 bootstrap();
