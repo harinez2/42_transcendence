@@ -4,16 +4,14 @@ import { hash } from 'bcrypt';
 
 const prisma = new PrismaClient();
 
-async function main() {
-  const hashedPassword1 = await hash('password1', 10);
-
+async function seed() {
   // ダミーユーザー作成
   const user1 = await prisma.user.create({
     data: {
       username: 'user01',
       email: 'user01@example.com',
       staff: true,
-      password: hashedPassword1,
+      password: await hash('password1', 10),
       profile: {
         create: { bio: 'Hi! This is user01.' },
       },
@@ -29,8 +27,7 @@ async function main() {
       hashedPassword: '',
     },
   });
-  if (!user1 || !channel)
-    return;
+  if (!user1 || !channel) return;
 
   // generalチャンネルのユーザ権限設定
   await prisma.chatChannelUsers.create({
@@ -54,9 +51,21 @@ async function main() {
       type: UserType.USER,
     },
   });
-  
+
   console.log({ user1 });
   console.log({ channel });
+}
+
+async function main() {
+  const testuser = await prisma.user.findMany({
+    where: { username: 'user01' },
+  });
+  if (testuser.length !== 0) {
+    console.log('Test data already seeded');
+  } else {
+    console.log('Seeding ...');
+    await seed();
+  }
 }
 
 main()
