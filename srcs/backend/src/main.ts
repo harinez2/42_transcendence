@@ -13,6 +13,7 @@ async function bootstrap() {
     .setTitle('42 transcendence')
     .setDescription('The 42 transcendence API description.')
     .setVersion('0.1')
+    .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
