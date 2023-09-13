@@ -10,7 +10,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { FollowService } from './follow.service';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { FollowDto } from './follow.dto';
 
@@ -25,12 +25,14 @@ export class FollowController {
   }
 
   @Get('followers')
+  @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'))
   getFollowers(@Req() req) {
     return this.followService.getFollows(undefined, req.user.id);
   }
 
   @Get('followees')
+  @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'))
   getFollowees(@Req() req) {
     return this.followService.getFollows(req.user.id, undefined);
@@ -47,12 +49,14 @@ export class FollowController {
   }
 
   @Post()
+  @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'))
   follow(@Req() req, @Body() followDto: FollowDto) {
     return this.followService.setFollow(req.user.id, followDto.followeeId);
   }
 
   @Delete()
+  @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'))
   unfollow(@Req() req, @Body() followDto: FollowDto) {
     return this.followService.deleteFollow(req.user.id, followDto.followeeId);
