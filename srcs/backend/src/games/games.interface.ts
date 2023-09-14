@@ -14,6 +14,7 @@ export const START_PADDLE_Y = CANVAS_HEIGHT / 2.0 - PADDLE_HEIGHT / 2.0;
 // ボール
 export const BALL_SIZE = PADDLE_WIDTH * 1.5;
 export const BALL_DXDY = 8;
+export const SPEEDUP_AMOUNT = 8;
 // インターバル
 export const TIMER_INTERVAL = 120;
 // ボールの位置

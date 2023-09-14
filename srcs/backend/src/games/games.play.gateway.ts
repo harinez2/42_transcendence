@@ -19,6 +19,7 @@ import {
   L_PADDLE_X,
   PADDLE_HEIGHT,
   R_PADDLE_X,
+  SPEEDUP_AMOUNT,
   START_PADDLE_Y,
   TIMER_INTERVAL,
 } from './games.interface';
@@ -58,6 +59,10 @@ export class GamesPlayGateway {
         },
         play: this.getInitialGamePlayType(),
       };
+      if (this.gameList[gameId].info.gameSettings.isSpeedUp) {
+        this.gameList[gameId].play.ballDxDy.x += SPEEDUP_AMOUNT;
+        this.gameList[gameId].play.ballDxDy.y += SPEEDUP_AMOUNT;
+      }
       isFetchedFromDb = true;
     }
 
