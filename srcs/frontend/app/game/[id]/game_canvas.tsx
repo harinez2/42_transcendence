@@ -27,7 +27,13 @@ const downKey = "s";
 const keydownEvent = "keydown";
 const keyupEvent = "keyup";
 
-const GameCanvasComponent = ({ gameId, isUser1 }: { gameId: number, isUser1: boolean }) => {
+const GameCanvasComponent = ({
+  gameId,
+  isUser1,
+}: {
+  gameId: number;
+  isUser1: boolean;
+}) => {
   const socket: any = useContext(SocketContext);
 
   const [ballPos, setBallPos] = useState<Position>({
@@ -109,7 +115,7 @@ const GameCanvasComponent = ({ gameId, isUser1 }: { gameId: number, isUser1: boo
     }
   };
 
-  const postMyPaddleY = async (userNum:number, mypaddley: number) => {
+  const postMyPaddleY = async (userNum: number, mypaddley: number) => {
     await new Promise(() => {
       socket?.emit("game-post_paddle_y", {
         paddleY: mypaddley,
@@ -129,9 +135,15 @@ const GameCanvasComponent = ({ gameId, isUser1 }: { gameId: number, isUser1: boo
       }
     } else if (!isPressingUp && isPressingDown) {
       // downキー押下時
-      if (isUser1 && lPaddlePos.y + paddleSpeed + PADDLE_HEIGHT < CANVAS_HEIGHT) {
+      if (
+        isUser1 &&
+        lPaddlePos.y + paddleSpeed + PADDLE_HEIGHT < CANVAS_HEIGHT
+      ) {
         postMyPaddleY(1, lPaddlePos.y + paddleSpeed);
-      } else if (!isUser1 && rPaddlePos.y + paddleSpeed + PADDLE_HEIGHT < CANVAS_HEIGHT) {
+      } else if (
+        !isUser1 &&
+        rPaddlePos.y + paddleSpeed + PADDLE_HEIGHT < CANVAS_HEIGHT
+      ) {
         postMyPaddleY(2, rPaddlePos.y + paddleSpeed);
       }
     }

@@ -12,7 +12,7 @@ import { GameInfoType } from "./types";
 const GameUI = () => {
   const router = useRouter();
   const profile: ProfileType = useContext(ProfileContext);
-  
+
   useEffect(() => {
     if (profile) {
       // 継続中のゲームがあればページ遷移

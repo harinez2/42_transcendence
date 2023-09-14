@@ -32,7 +32,9 @@ export class GamesController {
     type: GameInfoDto,
   })
   @Get(':gameid')
-  async findById(@Param('gameid', ParseIntPipe) gameId: number): Promise<GameInfoDto> {
+  async findById(
+    @Param('gameid', ParseIntPipe) gameId: number,
+  ): Promise<GameInfoDto> {
     return await this.gamesService.findById(gameId);
   }
 
@@ -48,7 +50,9 @@ export class GamesController {
     type: [GameInfoDto],
   })
   @Get('user/:userid')
-  async findByUserId(@Param('userid', ParseIntPipe) userId: number): Promise<GameInfoDto[]> {
+  async findByUserId(
+    @Param('userid', ParseIntPipe) userId: number,
+  ): Promise<GameInfoDto[]> {
     return await this.gamesService.findByUserId(userId);
   }
 
@@ -64,7 +68,9 @@ export class GamesController {
     type: [GameSummaryDto],
   })
   @Get('summary/user/:userid')
-  async countWonLostNum(@Param('userid', ParseIntPipe) userId: number): Promise<GameSummaryDto> {
+  async countWonLostNum(
+    @Param('userid', ParseIntPipe) userId: number,
+  ): Promise<GameSummaryDto> {
     return await this.gamesService.countWonLostNum(userId);
   }
 }

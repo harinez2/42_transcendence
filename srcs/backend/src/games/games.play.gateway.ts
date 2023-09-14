@@ -125,9 +125,7 @@ export class GamesPlayGateway {
 
   //-------------------------------------------------------------------------
 
-  private async storeGameStartTime(
-    gameId: number
-  ) {
+  private async storeGameStartTime(gameId: number) {
     try {
       const query = await this.prisma.gameInfo.update({
         where: { gameId: gameId },
@@ -148,7 +146,7 @@ export class GamesPlayGateway {
   private emitUpdateGame = async (gameId: number) => {
     await new Promise(() => {
       // すでにゲームが終わっていれば抜ける
-      if (!this.gameList[gameId]) return ;
+      if (!this.gameList[gameId]) return;
 
       // ゲームデータ送付
       const sendData = {

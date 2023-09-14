@@ -61,25 +61,29 @@ export class GamesService {
       throw this.prisma.handleError(e);
     }
   }
-  
+
   async countWonLostNum(userId: number): Promise<GameSummaryDto> {
     try {
       const games = await this.prisma.gameInfo.findMany({
         where: {
           OR: [{ user1Id: userId }, { user2Id: userId }],
           NOT: {
-              endedAt: null
-          }
+            endedAt: null,
+          },
         },
       });
       let wonCount = 0;
       let lostCount = 0;
       games.map((game) => {
-        if (game.user1Id === userId && game.user1Score > game.user2Score ||
-          game.user2Id === userId && game.user1Score < game.user2Score) {
+        if (
+          (game.user1Id === userId && game.user1Score > game.user2Score) ||
+          (game.user2Id === userId && game.user1Score < game.user2Score)
+        ) {
           wonCount++;
-        } else if (game.user1Id === userId && game.user1Score < game.user2Score ||
-          game.user2Id === userId && game.user1Score > game.user2Score) {
+        } else if (
+          (game.user1Id === userId && game.user1Score < game.user2Score) ||
+          (game.user2Id === userId && game.user1Score > game.user2Score)
+        ) {
           lostCount++;
         }
       });

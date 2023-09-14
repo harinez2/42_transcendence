@@ -1,5 +1,4 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { User } from '@prisma/client';
 
 export class GameSummaryDto {
   @ApiProperty()
@@ -13,5 +12,4 @@ export class GameSummaryDto {
 
   @ApiProperty()
   lostCount: number;
-
 }
