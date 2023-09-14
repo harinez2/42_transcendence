@@ -93,6 +93,7 @@ export class GamesPlayGateway {
     }
 
     // ゲームのタイマーを開始
+    this.storeGameStartTime(gameId);
     this.gameList[gameId].socket.user1Socket.emit('game-start', gameId);
     this.gameList[gameId].socket.user2Socket.emit('game-start', gameId);
     this.gameList[gameId].play.interval = setInterval(async () => {
@@ -118,6 +119,26 @@ export class GamesPlayGateway {
   }
 
   //-------------------------------------------------------------------------
+
+  private async storeGameStartTime(
+    gameId: number
+  ) {
+    try {
+      const query = await this.prisma.gameInfo.update({
+        where: { gameId: gameId },
+        data: {
+          startedAt: new Date(),
+        },
+      });
+      if (!query) {
+        throw new InternalServerErrorException(
+          'Failed to add startedAt record in the DB.',
+        );
+      }
+    } catch (e) {
+      throw this.prisma.handleError(e);
+    }
+  }
 
   private emitUpdateGame = async (gameId: number) => {
     await new Promise(() => {

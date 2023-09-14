@@ -126,7 +126,6 @@ export class GamesMatchingGateway {
         data: {
           user1Id: user1Id,
           user2Id: user2Id,
-          startedAt: new Date(),
         },
         include: {
           user1: true,
