@@ -1,7 +1,8 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, ParseIntPipe } from '@nestjs/common';
 import { GamesService } from './games.service';
 import { ApiOperation, ApiResponse, ApiParam, ApiTags } from '@nestjs/swagger';
 import { GameInfoDto } from './dto/game-info.dto';
+import { GameSummaryDto } from './dto/game-summary';
 
 @Controller('games')
 @ApiTags('games')
@@ -31,8 +32,8 @@ export class GamesController {
     type: GameInfoDto,
   })
   @Get(':gameid')
-  async findById(@Param('gameid') gameId: string): Promise<GameInfoDto> {
-    return await this.gamesService.findById(Number(gameId));
+  async findById(@Param('gameid', ParseIntPipe) gameId: number): Promise<GameInfoDto> {
+    return await this.gamesService.findById(gameId);
   }
 
   @ApiOperation({ summary: '指定したユーザが含まれるゲームの一覧を取得する' })
@@ -47,7 +48,23 @@ export class GamesController {
     type: [GameInfoDto],
   })
   @Get('user/:userid')
-  async findByUserId(@Param('userid') userId: string): Promise<GameInfoDto[]> {
-    return await this.gamesService.findByUserId(Number(userId));
+  async findByUserId(@Param('userid', ParseIntPipe) userId: number): Promise<GameInfoDto[]> {
+    return await this.gamesService.findByUserId(userId);
+  }
+
+  @ApiOperation({ summary: 'ユーザの勝敗数を取得する' })
+  @ApiParam({
+    name: 'userid',
+    type: 'string',
+    example: '1',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '指定したユーザの勝敗数を返却',
+    type: [GameSummaryDto],
+  })
+  @Get('summary/user/:userid')
+  async countWonLostNum(@Param('userid', ParseIntPipe) userId: number): Promise<GameSummaryDto> {
+    return await this.gamesService.countWonLostNum(userId);
   }
 }
