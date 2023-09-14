@@ -22,9 +22,9 @@ const GameInfoComponent = ({
       <br />
       Game settings:
       <br />
-      point: {gameInfo?.gameSettings.points}
+      point: {gameInfo?.gameSettings?.points}
       <br />
-      isSpeedUp: {gameInfo?.gameSettings.isSpeedUp ? "true" : "false"}
+      isSpeedUp: {gameInfo?.gameSettings?.isSpeedUp ? "true" : "false"}
       <br />
     </>
   );

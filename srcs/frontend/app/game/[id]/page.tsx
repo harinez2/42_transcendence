@@ -85,7 +85,7 @@ const GamePlayingUI = ({ params }: { params: { id: string } }) => {
           )}
           <GameCanvasComponent
             gameId={Number(params.id)}
-            isUser1={gameInfo?.user1.id === Number(profile.userId)}
+            isUser1={gameInfo?.user1.id === Number(profile?.userId)}
           />
         </div>
       </div>

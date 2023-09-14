@@ -142,6 +142,9 @@ export class GamesPlayGateway {
 
   private emitUpdateGame = async (gameId: number) => {
     await new Promise(() => {
+      // すでにゲームが終わっていれば抜ける
+      if (!this.gameList[gameId]) return ;
+
       // ゲームデータ送付
       const sendData = {
         ballPos: {
@@ -233,7 +236,7 @@ export class GamesPlayGateway {
   };
 
   private isGameFinished = (gameId: number): boolean => {
-    const pointsToFinish = this.gameList[gameId].info.gameSettings.points;
+    const pointsToFinish = this.gameList[gameId].info.gameSettings?.points;
     if (
       this.gameList[gameId].play.user1Score >= pointsToFinish ||
       this.gameList[gameId].play.user2Score >= pointsToFinish
