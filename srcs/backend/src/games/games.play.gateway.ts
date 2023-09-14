@@ -19,6 +19,7 @@ import {
   L_PADDLE_X,
   PADDLE_HEIGHT,
   R_PADDLE_X,
+  START_PADDLE_Y,
   TIMER_INTERVAL,
 } from './games.interface';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -102,7 +103,11 @@ export class GamesPlayGateway {
   // パドルの位置更新
   @SubscribeMessage('game-post_paddle_y')
   async handleUpdatePaddleY(@MessageBody() data: any) {
-    this.gameList[data.gameId].play.lPaddlePos.y = data.paddleY;
+    if (data.user === 1) {
+      this.gameList[data.gameId].play.lPaddlePos.y = data.paddleY;
+    } else if (data.user === 2) {
+      this.gameList[data.gameId].play.rPaddlePos.y = data.paddleY;
+    }
   }
 
   // ゲームから離脱
@@ -158,7 +163,7 @@ export class GamesPlayGateway {
       // パドルの跳ね返り判定
       if (
         (newBallX <= L_PADDLE_RIGHTX &&
-          L_PADDLE_RIGHTX + BALL_SIZE < newBallX &&
+          L_PADDLE_RIGHTX - BALL_SIZE < newBallX &&
           this.gameList[gameId].play.lPaddlePos.y <= newBallY &&
           newBallY <=
             this.gameList[gameId].play.lPaddlePos.y + PADDLE_HEIGHT) || // 左
@@ -280,8 +285,8 @@ export class GamesPlayGateway {
       // ボールの移動量
       ballDxDy: { x: BALL_DXDY, y: BALL_DXDY },
       // パドルの位置
-      lPaddlePos: { x: L_PADDLE_X, y: 0 },
-      rPaddlePos: { x: R_PADDLE_X, y: 0 },
+      lPaddlePos: { x: L_PADDLE_X, y: START_PADDLE_Y },
+      rPaddlePos: { x: R_PADDLE_X, y: START_PADDLE_Y },
       // パドルの移動量
       paddleDxDy: { x: 0, y: 10 },
       // ゲーム情報

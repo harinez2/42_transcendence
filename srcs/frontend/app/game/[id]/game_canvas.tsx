@@ -1,21 +1,25 @@
-import { ErrorContext, SocketContext } from "@/app/layout";
+"use client";
+
+import { SocketContext } from "@/app/layout";
 import { Position } from "../types";
 import React, { useContext, useEffect, useState } from "react";
 
 // キャンバス
-const canvasHeight = 400;
-const canvasWidth = 600;
+const CANVAS_HEIGHT = 400;
+const CANVAS_WIDTH = 600;
 // パドル
-const paddleHeight = canvasHeight / 4.5;
-const paddleWidth = paddleHeight / 9.5;
-const lPaddleX = paddleWidth * 2.5;
-const rPaddleX = canvasWidth - paddleWidth * 2.5 - paddleWidth;
-const startPaddleY = canvasHeight / 2.0 - paddleHeight / 2.0;
-const paddleSpeed = 20;
+const PADDLE_HEIGHT = CANVAS_HEIGHT / 4.5;
+const PADDLE_WIDTH = PADDLE_HEIGHT / 9.5;
+const L_PADDLE_X = PADDLE_WIDTH * 2.5; // 左パドルの左端
+const R_PADDLE_X = CANVAS_WIDTH - PADDLE_WIDTH * 2.5 - PADDLE_WIDTH; // 右パドルの左端
+const START_PADDLE_Y = CANVAS_HEIGHT / 2.0 - PADDLE_HEIGHT / 2.0;
 // ボール
-const ballSize = paddleWidth * 1.5;
+const BALL_SIZE = PADDLE_WIDTH * 1.5;
 // インターバル
-const timerInterval = 120;
+const TIMER_INTERVAL = 120;
+
+// パドル
+const paddleSpeed = 20;
 // 操作キー
 const upKey = "w";
 const downKey = "s";
@@ -23,59 +27,52 @@ const downKey = "s";
 const keydownEvent = "keydown";
 const keyupEvent = "keyup";
 
-const GameCanvasComponent = ({ gameId }: { gameId: number }) => {
+const GameCanvasComponent = ({ gameId, isUser1 }: { gameId: number, isUser1: boolean }) => {
   const socket: any = useContext(SocketContext);
-  const error: any = useContext(ErrorContext);
-
-  useEffect(() => {
-    if (error) {
-      console.error("Error:", error);
-    }
-  }, [error]);
 
   const [ballPos, setBallPos] = useState<Position>({
-    x: canvasWidth / 2 - ballSize / 2,
-    y: canvasHeight / 2 - ballSize / 2,
+    x: CANVAS_WIDTH / 2 - BALL_SIZE / 2,
+    y: CANVAS_HEIGHT / 2 - BALL_SIZE / 2,
   });
-  const [myPaddlePos, setMyPaddlePos] = useState<Position>({
-    x: lPaddleX,
-    y: startPaddleY,
+  const [lPaddlePos, setLPaddlePos] = useState<Position>({
+    x: L_PADDLE_X,
+    y: START_PADDLE_Y,
   });
-  const [oppPaddlePos, setOppPaddlePos] = useState<Position>({
-    x: rPaddleX,
-    y: startPaddleY,
+  const [rPaddlePos, setRPaddlePos] = useState<Position>({
+    x: R_PADDLE_X,
+    y: START_PADDLE_Y,
   });
 
-  const setMyPaddleY = (newPaddleY: number) => {
-    setMyPaddlePos((prev) => ({
+  const setLPaddleY = (newPaddleY: number) => {
+    setLPaddlePos((prev) => ({
       x: prev.x,
       y: newPaddleY,
     }));
   };
-  const setOppPaddleY = (newPaddleY: number) => {
-    setOppPaddlePos((prev) => ({
+  const setRPaddleY = (newPaddleY: number) => {
+    setRPaddlePos((prev) => ({
       x: prev.x,
       y: newPaddleY,
     }));
   };
 
   const clearCanvas = (ctx: any) => {
-    ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+    ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
   };
 
   const drawCanvasBackground = (ctx: any) => {
     ctx.fillStyle = "black";
-    ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+    ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
   };
 
   const drawBall = (ctx: any) => {
     ctx.fillStyle = "white";
-    ctx.fillRect(ballPos.x, ballPos.y, ballSize, ballSize);
+    ctx.fillRect(ballPos.x, ballPos.y, BALL_SIZE, BALL_SIZE);
   };
 
   const drawPaddle = (ctx: any, paddlePos: Position) => {
     ctx.fillStyle = "white";
-    ctx.fillRect(paddlePos.x, paddlePos.y, paddleWidth, paddleHeight);
+    ctx.fillRect(paddlePos.x, paddlePos.y, PADDLE_WIDTH, PADDLE_HEIGHT);
   };
 
   const drawCanvas = () => {
@@ -85,8 +82,8 @@ const GameCanvasComponent = ({ gameId }: { gameId: number }) => {
       clearCanvas(ctx);
       drawCanvasBackground(ctx);
       drawBall(ctx);
-      drawPaddle(ctx, myPaddlePos);
-      drawPaddle(ctx, oppPaddlePos);
+      drawPaddle(ctx, lPaddlePos);
+      drawPaddle(ctx, rPaddlePos);
     }
   };
 
@@ -112,34 +109,38 @@ const GameCanvasComponent = ({ gameId }: { gameId: number }) => {
     }
   };
 
-  const postMyPaddleY = async (mypaddley: number) => {
+  const postMyPaddleY = async (userNum:number, mypaddley: number) => {
     await new Promise(() => {
       socket?.emit("game-post_paddle_y", {
         paddleY: mypaddley,
-        user: 1,
+        user: userNum,
         gameId: gameId,
       });
     });
   };
 
   const moveMyPaddle = () => {
-    if (isPressingUp && !isPressingDown && 0 <= myPaddlePos.y - paddleSpeed) {
+    if (isPressingUp && !isPressingDown) {
       // upキー押下時
-      postMyPaddleY(myPaddlePos.y - paddleSpeed);
-    } else if (
-      !isPressingUp &&
-      isPressingDown &&
-      myPaddlePos.y + paddleSpeed + paddleHeight < canvasHeight
-    ) {
+      if (isUser1 && 0 <= lPaddlePos.y - paddleSpeed) {
+        postMyPaddleY(1, lPaddlePos.y - paddleSpeed);
+      } else if (!isUser1 && 0 <= rPaddlePos.y - paddleSpeed) {
+        postMyPaddleY(2, rPaddlePos.y - paddleSpeed);
+      }
+    } else if (!isPressingUp && isPressingDown) {
       // downキー押下時
-      postMyPaddleY(myPaddlePos.y + paddleSpeed);
+      if (isUser1 && lPaddlePos.y + paddleSpeed + PADDLE_HEIGHT < CANVAS_HEIGHT) {
+        postMyPaddleY(1, lPaddlePos.y + paddleSpeed);
+      } else if (!isUser1 && rPaddlePos.y + paddleSpeed + PADDLE_HEIGHT < CANVAS_HEIGHT) {
+        postMyPaddleY(2, rPaddlePos.y + paddleSpeed);
+      }
     }
   };
 
   // 一定時間おきに再描画
   const interval = setInterval(async () => {
     setFrameCnt(frameCnt + 1);
-  }, timerInterval);
+  }, TIMER_INTERVAL);
 
   useEffect(() => {
     // キーイベントの設定
@@ -156,8 +157,8 @@ const GameCanvasComponent = ({ gameId }: { gameId: number }) => {
     // ボールとパドルの位置を受け取る
     socket?.on("game-update_canvas", (data: any) => {
       setBallPos(data.ballPos);
-      setMyPaddleY(data.lPaddleY);
-      setOppPaddleY(data.rPaddleY);
+      setLPaddleY(data.lPaddleY);
+      setRPaddleY(data.rPaddleY);
     });
     return () => {
       socket?.off("game-update_canvas");
@@ -172,8 +173,8 @@ const GameCanvasComponent = ({ gameId }: { gameId: number }) => {
   return (
     <canvas
       id="canvas"
-      width={canvasWidth.toString()}
-      height={canvasHeight.toString()}
+      width={CANVAS_WIDTH.toString()}
+      height={CANVAS_HEIGHT.toString()}
     ></canvas>
   );
 };

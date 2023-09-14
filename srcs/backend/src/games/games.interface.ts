@@ -10,6 +10,7 @@ const PADDLE_WIDTH = PADDLE_HEIGHT / 9.5;
 export const L_PADDLE_X = PADDLE_WIDTH * 2.5; // 左パドルの左端
 export const L_PADDLE_RIGHTX = L_PADDLE_X + PADDLE_WIDTH; // 左パドルの右端
 export const R_PADDLE_X = CANVAS_WIDTH - PADDLE_WIDTH * 2.5 - PADDLE_WIDTH; // 右パドルの左端
+export const START_PADDLE_Y = CANVAS_HEIGHT / 2.0 - PADDLE_HEIGHT / 2.0;
 // ボール
 export const BALL_SIZE = PADDLE_WIDTH * 1.5;
 export const BALL_DXDY = 8;
