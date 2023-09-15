@@ -1,4 +1,4 @@
-const SidebarCategory = ({ categoryName }: { categoryName: string }) => {
+const UserStatusCategory = ({ categoryName }: { categoryName: string }) => {
   return (
     <span className="flex p-2 font-bold uppercase text-gray-500">
       {categoryName}
@@ -6,4 +6,4 @@ const SidebarCategory = ({ categoryName }: { categoryName: string }) => {
   );
 };
 
-export default SidebarCategory;
+export default UserStatusCategory;

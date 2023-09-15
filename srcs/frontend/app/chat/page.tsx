@@ -2,7 +2,6 @@
 
 import { useContext, useEffect, useState } from "react";
 import ChannelName from "./channel_name";
-import SidebarCategory from "./sidebar_category";
 import MessageComponent from "./message";
 import { User } from "./user";
 
@@ -11,6 +10,8 @@ import makeAPIRequest from "@/app/api/api";
 import type { ChannelType, MessageType } from "./types";
 import { ProfileContext, SocketContext, ErrorContext } from "../layout";
 import { ProfileType } from "../types";
+import ChannelCategory from "./channel_category";
+import UserStatusCategory from "./user_status_category";
 
 const ChatUI = () => {
   const Users: Array<User> = [
@@ -113,7 +114,11 @@ const ChatUI = () => {
           aria-label="Sidebar"
         >
           <div className="h-full overflow-y-auto bg-gray-800 px-3 py-4 ">
-            <SidebarCategory categoryName="Channels" />
+            <ChannelCategory
+              categoryName="Channels"
+              channels={channels}
+              setChannels={setChannels}
+            />
             <ul className="space-y-2 font-medium">
               {channels?.map((channel: ChannelType) => (
                 <ChannelName
@@ -142,14 +147,14 @@ const ChatUI = () => {
           aria-label="Sidebar"
         >
           <div className="h-full shrink-0 overflow-y-auto bg-gray-800 px-3 py-4">
-            <SidebarCategory categoryName="online" />
+            <UserStatusCategory categoryName="online" />
             <ul className="space-y-2 font-medium">
               {Users.map((u) => (
                 <UserComponent key={u.id} user={u} />
               ))}
             </ul>
             <ul className="mt-4 space-y-2 border-t border-gray-700 pt-4 font-medium">
-              <SidebarCategory categoryName="offline" />
+              <UserStatusCategory categoryName="offline" />
               {Users.map((u) => (
                 <UserComponent key={u.id} user={u} />
               ))}
