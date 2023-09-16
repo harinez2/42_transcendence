@@ -108,33 +108,33 @@ const ChatUI = () => {
 
   return (
     <>
-        <div className="relative h-screen w-full bg-darkslategray-100 text-left font-body text-xl text-base-white">
+      <div className="relative h-screen w-full bg-darkslategray-100 text-left font-body text-xl text-base-white">
         <HeaderMenu />
         {/* <aside
           id="separator-sidebar"
           // className="left-0 top-0 z-40 h-screen w-64 translate-x-0 transition-transform"
           aria-label="Sidebar"
         > */}
-          <div className="absolute left-[0px] top-[100px] h-[calc(100%_-_131px)] w-64 shrink-0 bg-darkslategray-200 px-3 py-4 ">
-            <ChannelCategory
-              categoryName="Channels"
-              channels={channels}
-              setChannels={setChannels}
-            />
-            <ul className="space-y-2 font-medium">
-              {channels?.map((channel: ChannelType) => (
-                <ChannelName
-                  key={channel.channelId}
-                  channel={channel}
-                  onSelectChannel={handleChannelSelect}
-                />
-              ))}
-            </ul>
-            <ul className="mt-4 space-y-2 border-t border-gray-700 pt-4 font-medium">
-              {/* <ChannelName channel={{ id: 1, name: "general" }} />
+        <div className="absolute left-[0px] top-[100px] h-[calc(100%_-_131px)] w-64 shrink-0 bg-darkslategray-200 px-3 py-4 ">
+          <ChannelCategory
+            categoryName="Channels"
+            channels={channels}
+            setChannels={setChannels}
+          />
+          <ul className="space-y-2 font-medium">
+            {channels?.map((channel: ChannelType) => (
+              <ChannelName
+                key={channel.channelId}
+                channel={channel}
+                onSelectChannel={handleChannelSelect}
+              />
+            ))}
+          </ul>
+          <ul className="mt-4 space-y-2 border-t border-gray-700 pt-4 font-medium">
+            {/* <ChannelName channel={{ id: 1, name: "general" }} />
               <ChannelName channel={{ id: 2, name: "random" }} /> */}
-            </ul>
-          </div>
+          </ul>
+        </div>
         {/* </aside> */}
         <div className="container bg-darkslategray-100">
           <div className="grow flex-col-reverse divide-y divide-gray-500/30 px-4">
@@ -148,20 +148,20 @@ const ChatUI = () => {
           // className="w-64 shrink-0 translate-x-0 transition-transform "
           aria-label="Sidebar"
         > */}
-          <div className="absolute right-[0px] top-[100px] h-[calc(100%_-_131px)] w-64 shrink-0 bg-darkslategray-200 px-3 py-4">
-            <UserStatusCategory categoryName="online" />
-            <ul className="space-y-2 font-medium">
-              {Users.map((u) => (
-                <UserComponent key={u.id} user={u} />
-              ))}
-            </ul>
-            <ul className="mt-4 space-y-2 border-t border-gray-700 pt-4 font-medium">
+        <div className="absolute right-[0px] top-[100px] h-[calc(100%_-_131px)] w-64 shrink-0 bg-darkslategray-200 px-3 py-4">
+          <UserStatusCategory categoryName="online" />
+          <ul className="space-y-2 font-medium">
+            {Users.map((u) => (
+              <UserComponent key={u.id} user={u} />
+            ))}
+          </ul>
+          <ul className="mt-4 space-y-2 border-t border-gray-700 pt-4 font-medium">
             <UserStatusCategory categoryName="offline" />
-              {Users.map((u) => (
-                <UserComponent key={u.id} user={u} />
-              ))}
-            </ul>
-          </div>
+            {Users.map((u) => (
+              <UserComponent key={u.id} user={u} />
+            ))}
+          </ul>
+        </div>
         {/* </aside> */}
       </div>
     </>

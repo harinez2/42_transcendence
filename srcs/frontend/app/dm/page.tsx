@@ -97,7 +97,7 @@ const DirectMessageUI = () => {
       <HeaderMenu />
       <aside
         id="separator-sidebar"
-        className="absolute left-0 top-[100px] z-40 h-[calc(100%_-_131px)]  w-64 translate-x-0 transition-transform bg-darkslategray-200"
+        className="absolute left-0 top-[100px] z-40 h-[calc(100%_-_131px)]  w-64 translate-x-0 bg-darkslategray-200 transition-transform"
         aria-label="Sidebar"
       >
         {profile != null && (
