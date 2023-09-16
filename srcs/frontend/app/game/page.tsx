@@ -8,6 +8,7 @@ import makeAPIRequest from "../api/api";
 import { ProfileType } from "../types";
 import { ProfileContext } from "../layout";
 import { GameInfoType } from "./types";
+import HeaderMenu from "../components/headermenu";
 
 const GameUI = () => {
   const router = useRouter();
@@ -37,7 +38,6 @@ const GameUI = () => {
 
   return (
     <>
-      <Header />
       <GameBackground user1="" user2="">
         <div className="flex h-screen items-center justify-center">
           <button
@@ -48,6 +48,7 @@ const GameUI = () => {
           </button>
         </div>
       </GameBackground>
+      <HeaderMenu />
     </>
   );
 };
