@@ -1,9 +1,13 @@
 import React, { useCallback, useRef, useState } from "react";
 import makeAPIRequest from "../..//api/api";
 import type { NextPage } from "next";
-import { TextField, FormControlLabel, Switch, createChainedFunction } from "@mui/material";
+import {
+  TextField,
+  FormControlLabel,
+  Switch,
+  createChainedFunction,
+} from "@mui/material";
 import { ChannelType, Publicity, createChannelDTO } from "../../chat/types";
-
 
 type MCreateChannelType = {
   closeModal: () => void;
@@ -11,7 +15,11 @@ type MCreateChannelType = {
   setChannels: (channels: ChannelType[]) => void;
 };
 
-const MCreateChannel: NextPage<MCreateChannelType> = ({ closeModal, channels, setChannels }) => {
+const MCreateChannel: NextPage<MCreateChannelType> = ({
+  closeModal,
+  channels,
+  setChannels,
+}) => {
   const inputPasswordRef = useRef<HTMLInputElement>(null);
   const inputChannelNameRef = useRef<HTMLInputElement>(null);
 
@@ -22,8 +30,10 @@ const MCreateChannel: NextPage<MCreateChannelType> = ({ closeModal, channels, se
     password: null,
   });
 
-  const [publicityButtonDisabled, setPublicityButtonDisabled] = useState<boolean>(false); // [true: private, false: public
-  const [passwordButtonDisabled, setPasswordButtonDisabled] = useState<boolean>(true);
+  const [publicityButtonDisabled, setPublicityButtonDisabled] =
+    useState<boolean>(false); // [true: private, false: public
+  const [passwordButtonDisabled, setPasswordButtonDisabled] =
+    useState<boolean>(true);
   const [passwordDisabled, setPasswordDisabled] = useState<boolean>(true);
 
   // dialog の外側をクリックしたときに閉じるために使用する
@@ -41,16 +51,15 @@ const MCreateChannel: NextPage<MCreateChannelType> = ({ closeModal, channels, se
         channel.channelType = Publicity.PRIVATE;
         setPasswordButtonDisabled(false);
         return channel;
-      })
-    }
-    else {
+      });
+    } else {
       setChannelDTO((channel) => {
         channel.channelType = Publicity.PUBLIC;
         setPasswordButtonDisabled(true);
         return channel;
-      })
+      });
     }
-  }
+  };
   // button を click して channel を作成する
   // onclick に設定する
   // channels を更新する
@@ -82,7 +91,7 @@ const MCreateChannel: NextPage<MCreateChannelType> = ({ closeModal, channels, se
     setChannelDTO((channel) => {
       channel.channelName = channelName;
       return channel;
-    })
+    });
   };
 
   // チャンネルのパスワードを設定する
@@ -90,7 +99,7 @@ const MCreateChannel: NextPage<MCreateChannelType> = ({ closeModal, channels, se
     setChannelDTO((channel) => {
       channel.password = channelPassword;
       return channel;
-    })
+    });
   };
 
   // チェックボックスの on/off によって password の入力を有効/無効にする
@@ -98,8 +107,7 @@ const MCreateChannel: NextPage<MCreateChannelType> = ({ closeModal, channels, se
     if (event.target.checked) {
       setPublicityButtonDisabled(true);
       setPasswordDisabled(false);
-    }
-    else {
+    } else {
       setPasswordDisabled(true);
       setPublicityButtonDisabled(false);
       // チェックボックスを off にしたときに password を空にする
@@ -158,15 +166,27 @@ const MCreateChannel: NextPage<MCreateChannelType> = ({ closeModal, channels, se
       <FormControlLabel
         className="absolute left-[248px] top-[156px]"
         label="" // private/public
-        control={<Switch color="info" size="medium" onChange={(e) => onSwitchType(e)} />}
+        control={
+          <Switch
+            color="info"
+            size="medium"
+            onChange={(e) => onSwitchType(e)}
+          />
+        }
         disabled={publicityButtonDisabled}
       />
       <FormControlLabel
         className="absolute left-[247px] top-[199px]"
         label="" // password on/off
-        control={<Switch color="info" size="medium"
-          onChange={(e) => { onSwitchPassword(e) }}
-        />}
+        control={
+          <Switch
+            color="info"
+            size="medium"
+            onChange={(e) => {
+              onSwitchPassword(e);
+            }}
+          />
+        }
         disabled={passwordButtonDisabled}
       />
       <TextField
@@ -179,11 +199,14 @@ const MCreateChannel: NextPage<MCreateChannelType> = ({ closeModal, channels, se
         label="Password"
         size="medium"
         margin="none"
-        onChange={(e) => { setChannelPassword(e.target.value) }}
+        onChange={(e) => {
+          setChannelPassword(e.target.value);
+        }}
         inputRef={inputPasswordRef}
         disabled={passwordDisabled}
       />
-      <button className="absolute left-[62px] top-[322px] h-[41px] w-[242px] cursor-pointer bg-[transparent] p-0 [border:none]"
+      <button
+        className="absolute left-[62px] top-[322px] h-[41px] w-[242px] cursor-pointer bg-[transparent] p-0 [border:none]"
         onClick={() => createChannelAndSetChannels(channelDTO)}
       >
         <img
@@ -195,7 +218,7 @@ const MCreateChannel: NextPage<MCreateChannelType> = ({ closeModal, channels, se
           Create channel
         </div>
       </button>
-    </div >
+    </div>
   );
 };
 

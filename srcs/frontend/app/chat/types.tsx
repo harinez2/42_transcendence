@@ -31,7 +31,7 @@ export type createChannelDTO = {
   ownerId: number;
   channelType: Publicity;
   password: string | null;
-}
+};
 export enum Publicity {
   PUBLIC = "PUBLIC",
   PRIVATE = "PRIVATE",

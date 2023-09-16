@@ -4,7 +4,6 @@ import { ChannelType, Publicity, createChannelDTO } from "./types";
 import MCreateChannel from "../components/modal/m-create-channel";
 import { channel } from "diagnostics_channel";
 
-
 const ChannelCategory = ({
   categoryName,
   channels,
@@ -33,7 +32,7 @@ const ChannelCategory = ({
           setChannels={setChannels}
         />
       </dialog>
-    </span >
+    </span>
   );
 };
 const ShowDialogButton = ({ showModal }: { showModal: () => void }) => {
@@ -54,7 +53,4 @@ const ShowDialogButton = ({ showModal }: { showModal: () => void }) => {
   );
 };
 
-
-
 export default ChannelCategory;
-
