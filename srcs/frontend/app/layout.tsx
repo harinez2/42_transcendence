@@ -11,7 +11,7 @@ export let SocketContext: any = createContext(undefined);
 export let ErrorContext: any = createContext(undefined);
 
 const RootLayout = ({ children }: { children: React.ReactNode }) => {
-  const [profile, setProfile] = useState<ProfileType>({ userId: "", bio: "" });
+  const [profile, setProfile] = useState<ProfileType | undefined>(undefined);
   const [socket, setSocket] = useState<any>(undefined);
   const [error, setError] = useState<any>(undefined);
 
@@ -35,14 +35,26 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
     const socket = io("http://localhost:5000");
 
     socket.on("connect", () => {
-      console.log("connected: ", socket.id);
+      console.log("connected:", socket.id);
+    });
+
+    socket.on("info", (data: any) => {
+      console.log("info:", data);
     });
 
     socket.on("exception", (data: any) => {
-      console.error("exception", data);
+      console.error("exception:", data);
     });
+
     setSocket(socket);
   }, []);
+
+  // エラー時
+  useEffect(() => {
+    if (error) {
+      console.error("Error:", error);
+    }
+  }, [error]);
 
   return (
     <html lang="en">

@@ -5,6 +5,7 @@ import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { ChatsModule } from './chats/chats.module';
 import { DmsModule } from './dms/dms.module';
+import { GamesModule } from './games/games.module';
 import { ProfilesModule } from './profiles/profiles.module';
 import { FriendsModule } from './friends/friends.module';
 import { AuthModule } from './auth/auth.module';
@@ -14,6 +15,7 @@ import { AuthModule } from './auth/auth.module';
     UsersModule,
     ChatsModule,
     DmsModule,
+    GamesModule,
     FriendsModule,
     ProfilesModule,
     AuthModule,

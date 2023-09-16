@@ -115,6 +115,29 @@ CREATE TABLE "DmMessages" (
     CONSTRAINT "DmMessages_pkey" PRIMARY KEY ("messageId")
 );
 
+-- CreateTable
+CREATE TABLE "GameInfo" (
+    "gameId" SERIAL NOT NULL,
+    "user1Id" INTEGER NOT NULL,
+    "user2Id" INTEGER NOT NULL,
+    "user1Score" INTEGER,
+    "user2Score" INTEGER,
+    "startedAt" TIMESTAMP(3),
+    "endedAt" TIMESTAMP(3),
+
+    CONSTRAINT "GameInfo_pkey" PRIMARY KEY ("gameId")
+);
+
+-- CreateTable
+CREATE TABLE "GameSettings" (
+    "id" SERIAL NOT NULL,
+    "gameId" INTEGER NOT NULL,
+    "points" INTEGER NOT NULL,
+    "isSpeedUp" BOOLEAN NOT NULL,
+
+    CONSTRAINT "GameSettings_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
@@ -141,6 +164,9 @@ CREATE UNIQUE INDEX "ChatBan_channelId_bannedUserId_key" ON "ChatBan"("channelId
 
 -- CreateIndex
 CREATE UNIQUE INDEX "ChatMute_channelId_mutedUserId_key" ON "ChatMute"("channelId", "mutedUserId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "GameSettings_gameId_key" ON "GameSettings"("gameId");
 
 -- AddForeignKey
 ALTER TABLE "Profile" ADD CONSTRAINT "Profile_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -192,3 +218,12 @@ ALTER TABLE "DmMessages" ADD CONSTRAINT "DmMessages_channelId_fkey" FOREIGN KEY 
 
 -- AddForeignKey
 ALTER TABLE "DmMessages" ADD CONSTRAINT "DmMessages_senderId_fkey" FOREIGN KEY ("senderId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "GameInfo" ADD CONSTRAINT "GameInfo_user1Id_fkey" FOREIGN KEY ("user1Id") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "GameInfo" ADD CONSTRAINT "GameInfo_user2Id_fkey" FOREIGN KEY ("user2Id") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "GameSettings" ADD CONSTRAINT "GameSettings_gameId_fkey" FOREIGN KEY ("gameId") REFERENCES "GameInfo"("gameId") ON DELETE RESTRICT ON UPDATE CASCADE;

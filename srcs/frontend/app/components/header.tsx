@@ -14,7 +14,7 @@ const Header = () => {
           <a
             href="#"
             className="rounded-lg text-2xl font-medium text-gray-500 hover:bg-gray-700"
-            onClick={() => router.push("/friend")}
+            onClick={() => router.push("/friends")}
           >
             friends
           </a>
