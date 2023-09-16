@@ -1,10 +1,68 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, User } from '@prisma/client';
 import { Publicity, UserType } from '../src/chats/chats.interface';
 import { hash } from 'bcrypt';
 
 const prisma = new PrismaClient();
 
+async function seedUser(username: string): Promise<User> {
+  const lowerUsername = username.toLowerCase();
+  return await prisma.user.create({
+    data: {
+      username: username,
+      email: `${lowerUsername}@example.com`,
+      staff: true,
+      password: await hash(lowerUsername, 10),
+      profile: {
+        create: { bio: `Hi! This is ${username}.` },
+      },
+    },
+  });
+}
+
+async function seedFollow(follower: User, followee: User) {
+  await prisma.follow.create({
+    data: {
+      followerId: follower.id,
+      followeeId: followee.id,
+    },
+  });
+}
+
+async function seedBlock(blocker: User, blocked: User) {
+  await prisma.block.create({
+    data: {
+      blockerId: blocker.id,
+      blockedId: blocked.id,
+    },
+  });
+}
+
 async function seed() {
+  // Dummy User
+  const alice = await seedUser('Alice');
+  const bob = await seedUser('Bob');
+  const charlie = await seedUser('Charlie');
+  const dave = await seedUser('Dave');
+
+  // Dummy Friend
+  /**
+   *   | A | B | C | D
+   * --+---+---+---+---
+   * A | X | F |   | b
+   * B | F | X |   | b
+   * C | f |   | X | B
+   * D | f |   | B | X
+   * ex) Alice blocks Dave and Dave follows Alice.
+   */
+  seedFollow(alice, bob);
+  seedBlock(alice, dave);
+  seedFollow(bob, alice);
+  seedBlock(bob, dave);
+  seedFollow(charlie, alice);
+  seedBlock(charlie, dave);
+  seedFollow(dave, alice);
+  seedBlock(dave, charlie);
+
   // ダミーユーザー作成
   const user1 = await prisma.user.create({
     data: {
