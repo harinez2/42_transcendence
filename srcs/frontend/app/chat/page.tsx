@@ -115,7 +115,7 @@ const ChatUI = () => {
           // className="left-0 top-0 z-40 h-screen w-64 translate-x-0 transition-transform"
           aria-label="Sidebar"
         > */}
-          <div className="absolute left-[0px] top-[100px] h-[calc(100%_-_131px)] w-64 flex-shrink-0 bg-darkslategray-200 px-3 py-4 ">
+          <div className="absolute left-[0px] top-[100px] h-[calc(100%_-_131px)] w-64 shrink-0 bg-darkslategray-200 px-3 py-4 ">
             <ChannelCategory
               categoryName="Channels"
               channels={channels}
@@ -148,7 +148,7 @@ const ChatUI = () => {
           // className="w-64 shrink-0 translate-x-0 transition-transform "
           aria-label="Sidebar"
         > */}
-          <div className="absolute right-[0px] top-[100px] h-[calc(100%_-_131px)] w-64 flex-shrink-0 bg-darkslategray-200 px-3 py-4">
+          <div className="absolute right-[0px] top-[100px] h-[calc(100%_-_131px)] w-64 shrink-0 bg-darkslategray-200 px-3 py-4">
             <UserStatusCategory categoryName="online" />
             <ul className="space-y-2 font-medium">
               {Users.map((u) => (
