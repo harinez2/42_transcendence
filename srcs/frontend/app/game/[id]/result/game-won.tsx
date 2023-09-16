@@ -13,11 +13,7 @@ const GameWonPage: NextPage = () => {
   }, [router]);
 
   const onPlayWithOtherClick = useCallback(() => {
-<<<<<<< HEAD:srcs/frontend/app/game/[id]/result/game-won.tsx
     router.push("/game");
-=======
-    router.push("../match-making-parent");
->>>>>>> f1b7fd52dde60a23a1dc07beea04db32e91844ca:srcs/frontend/app/game/[gameId]/result/won/game-won-page.tsx
   }, [router]);
 
   return (

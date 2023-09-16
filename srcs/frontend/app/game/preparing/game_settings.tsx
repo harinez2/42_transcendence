@@ -15,7 +15,6 @@ const GameSettingsDialog = ({ closeModal, stopPropagation, gameId }: any) => {
     setIsSpeedUp(event.target.checked);
   };
 
-<<<<<<< HEAD:srcs/frontend/app/game/preparing/game_settings.tsx
   const onClickPlayButton = () => {
     closeModal({
       gameId: gameId,
@@ -23,11 +22,6 @@ const GameSettingsDialog = ({ closeModal, stopPropagation, gameId }: any) => {
       isSpeedUp: isSpeedUp,
     });
   };
-=======
-  const onPlayClick = useCallback(() => {
-    router.push("../match-making-parent");
-  }, [router]);
->>>>>>> f1b7fd52dde60a23a1dc07beea04db32e91844ca:srcs/frontend/app/game/preparing/settings/game-settings-container.tsx
 
   return (
     <div

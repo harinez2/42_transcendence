@@ -13,13 +13,6 @@ const GameLostPage: NextPage = () => {
   }, [router]);
 
   const onSignIn1Click = useCallback(() => {
-<<<<<<< HEAD:srcs/frontend/app/game/[id]/result/game-lost.tsx
-=======
-    router.push("/game/match-making-parent");
-  }, [router]);
-
-  const onRectangle1Click = useCallback(() => {
->>>>>>> f1b7fd52dde60a23a1dc07beea04db32e91844ca:srcs/frontend/app/game/[gameId]/result/lost/game-lost-page.tsx
     router.push("/game");
   }, [router]);
 
