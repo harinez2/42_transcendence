@@ -7,6 +7,7 @@ import UserListComponent from "./user_list";
 import makeAPIRequest from "@/app/api/api";
 import { ProfileContext, SocketContext, ErrorContext } from "../layout";
 import { ProfileType } from "../types";
+import HeaderMenu from "../components/headermenu";
 
 const DirectMessageUI = () => {
   const [channels, setChannels] = useState<DmChannelType[]>([]);
@@ -92,10 +93,11 @@ const DirectMessageUI = () => {
   };
 
   return (
-    <div className="flex">
+    <div className="relative h-screen w-full bg-darkslategray-100 text-left font-body text-xl text-base-white">
+      <HeaderMenu />
       <aside
         id="separator-sidebar"
-        className="left-0 top-0 z-40 h-screen w-64 translate-x-0 transition-transform"
+        className="absolute left-0 top-[100px] z-40 h-[calc(100%_-_100px)]  w-64 translate-x-0 transition-transform bg-darkslategray-200"
         aria-label="Sidebar"
       >
         {profile != null && (
