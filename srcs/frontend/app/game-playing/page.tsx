@@ -1,11 +1,9 @@
-import type { NextPage } from "next";
-import React from "react";
-import GameSettingsContainer from "./game-settings-container";
+"use client";
 
-const GameSettingsPage: NextPage = () => {
+const GamePage = () => {
   return (
-    <div className="relative h-screen w-full overflow-hidden bg-darkslategray-100 text-left font-body text-29xl text-base-white">
-      <div className="absolute left-[70px] top-[9px] h-[1092px] w-[1301px] font-geo text-181xl">
+    <div className="relative h-[1024px] w-full overflow-hidden bg-darkslategray-100 text-left font-body text-29xl text-base-white">
+      <div className="absolute left-[69px] top-[15px] h-[1092px] w-[1301px] font-geo text-181xl">
         <div className="absolute left-[643px] top-[0px] font-body text-17xl tracking-[0.1em]">
           <p className="m-0">|</p>
           <p className="m-0">|</p>
@@ -43,14 +41,17 @@ const GameSettingsPage: NextPage = () => {
       <div className="absolute left-[538px] top-[15px] inline-block h-14 w-[149px] tracking-[0.1em]">
         user1
       </div>
+      <div className="absolute left-[41px] top-[15px] inline-block h-[35px] w-[129px] text-5xl tracking-[0.1em]">
+        Points: 3
+      </div>
+      <div className="absolute left-[189px] top-[15px] inline-block h-[35px] w-[198px] text-5xl tracking-[0.1em]">
+        Speed up: true
+      </div>
       <div className="absolute left-[763px] top-[15px] inline-block h-14 w-[149px] tracking-[0.1em]">
         user2
-      </div>
-      <div className="absolute left-[2px] top-[0px] h-screen w-full overflow-hidden bg-gray-600/50">
-        <GameSettingsContainer />
       </div>
     </div>
   );
 };
 
-export default GameSettingsPage;
+export default GamePage;

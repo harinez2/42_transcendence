@@ -13,10 +13,6 @@ const GameLostPage: NextPage = () => {
   }, [router]);
 
   const onSignIn1Click = useCallback(() => {
-    router.push("/game/match-making-parent");
-  }, [router]);
-
-  const onRectangle1Click = useCallback(() => {
     router.push("/game");
   }, [router]);
 
@@ -33,7 +29,6 @@ const GameLostPage: NextPage = () => {
           className="absolute left-[0px] top-[0px] h-[41px] w-[257px] cursor-pointer"
           alt=""
           src="/rectangle-123.svg"
-          onClick={onRectangle1Click}
         />
         <div className="absolute left-[30px] top-[7px] inline-block h-[34px] w-[220px] text-left font-body text-5xl tracking-[0.1em] text-base-white">
           Play with other
