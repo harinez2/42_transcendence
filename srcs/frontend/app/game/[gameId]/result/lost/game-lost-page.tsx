@@ -13,7 +13,7 @@ const GameLostPage: NextPage = () => {
   }, [router]);
 
   const onSignIn1Click = useCallback(() => {
-    router.push("/game-match-making-parent");
+    router.push("/game/match-making-parent");
   }, [router]);
 
   const onRectangle1Click = useCallback(() => {

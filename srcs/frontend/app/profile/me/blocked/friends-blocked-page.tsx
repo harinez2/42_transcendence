@@ -3,18 +3,18 @@
 import React from "react";
 import type { NextPage } from "next";
 import { useState, useCallback } from "react";
-import MAddFriend from "../components/modal/m-add-friend";
+import MAddFriend from "../../../components/modal/m-add-friend";
 import { useRouter } from "next/navigation";
-import HeaderMenu from "../components/headermenu";
+import HeaderMenu from "../../../components/headermenu";
 import FriendsBlockedList from "./friends-blocked-list";
-import ModalPopup from "../components/modal/modal-popup";
+import ModalPopup from "../../../components/modal/modal-popup";
 
 const FriendsBlockedPage: NextPage = () => {
   const [isMAddFriendPopupOpen, setMAddFriendPopupOpen] = useState(false);
   const router = useRouter();
 
   const onAllClick = useCallback(() => {
-    router.push("/friends");
+    router.push("/profile/me/friends");
   }, [router]);
 
   const openMAddFriendPopup = useCallback(() => {

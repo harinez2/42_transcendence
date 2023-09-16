@@ -1,5 +1,5 @@
 import React from "react";
-import GameMatchMakingParentPage from "./game-match-making-parent-page";
+import GameMatchMakingParentPage from "./match-making-parent-page";
 
 const GameMatchMakingParent = () => {
   return <GameMatchMakingParentPage />;

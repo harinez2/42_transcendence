@@ -10,7 +10,7 @@ const GameSettingsContainer: NextPage = () => {
   const router = useRouter();
 
   const onPlayClick = useCallback(() => {
-    router.push("/../game-match-making-parent");
+    router.push("../match-making-parent");
   }, [router]);
 
   return (

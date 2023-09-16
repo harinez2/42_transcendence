@@ -11,7 +11,7 @@ const MUserOps: NextPage<MUserOpsType> = ({ onClose }) => {
   const router = useRouter();
 
   const onSeeProfileClick = useCallback(() => {
-    router.push("/../profile-other");
+    router.push("/../profile/other");
   }, [router]);
 
   const onSendDMClick = useCallback(() => {
@@ -23,7 +23,7 @@ const MUserOps: NextPage<MUserOpsType> = ({ onClose }) => {
   }, [router]);
 
   const onInviteToGameClick = useCallback(() => {
-    router.push("/../game-settings");
+    router.push("/../game/settings");
   }, [router]);
 
   const onBlockThisUserClick = useCallback(() => {

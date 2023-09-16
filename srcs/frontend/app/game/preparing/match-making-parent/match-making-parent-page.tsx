@@ -2,7 +2,7 @@
 
 import React from "react";
 import type { NextPage } from "next";
-import MatchMakingContainer from "../components/match-making-container";
+import MatchMakingContainer from "./match-making-container";
 
 const GameMatchMakingParentPage: NextPage = () => {
   return (
