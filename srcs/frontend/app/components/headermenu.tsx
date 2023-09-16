@@ -21,7 +21,7 @@ const HeaderMenu: NextPage = () => {
   }, [router]);
 
   const onGameClick = useCallback(() => {
-    router.push("/game/preparing/match-making-parent");
+    router.push("/game");
   }, [router]);
 
   const onFtTranscendenceClick = useCallback(() => {
