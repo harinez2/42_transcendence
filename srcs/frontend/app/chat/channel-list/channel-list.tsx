@@ -3,10 +3,10 @@
 import React from "react";
 import type { NextPage } from "next";
 import { useState, useCallback } from "react";
-import MJoinPrivateChannel from "../components/modal/m-join-private-channel";
-import ModalPopup from "../components/modal/modal-popup";
+import MJoinPrivateChannel from "../../components/modal/m-join-private-channel";
+import ModalPopup from "../../components/modal/modal-popup";
 import { useRouter } from "next/navigation";
-import HeaderMenu from "../components/headermenu";
+import HeaderMenu from "../../components/headermenu";
 
 const ChannelListPage: NextPage = () => {
   const [isMJoinPrivateChannelPopupOpen, setMJoinPrivateChannelPopupOpen] =

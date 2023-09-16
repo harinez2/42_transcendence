@@ -1,8 +1,8 @@
-import ProfileMinePage from "./profile-mine-page";
+import MePage from "./me-page";
 import React from "react";
 
 const ProfileMine = () => {
-  return <ProfileMinePage />;
+  return <MePage />;
 };
 
 export default ProfileMine;

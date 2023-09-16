@@ -1,6 +1,7 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Req, UseGuards } from '@nestjs/common';
 import { FriendsService } from './friends.service';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('friends')
 @Controller('friends')
@@ -8,7 +9,9 @@ export class FriendsController {
   constructor(private readonly friendsService: FriendsService) {}
 
   @Get()
-  getHello(): string {
-    return this.friendsService.getHello();
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
+  getFriends(@Req() req) {
+    return this.friendsService.getFriends(req.user.id);
   }
 }
