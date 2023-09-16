@@ -30,24 +30,29 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
       });
   }, []);
 
-  // ソケット接続
+  // ソケット接続(認証後)
   useEffect(() => {
-    const socket = io("http://localhost:5000");
+    if (profile && profile.userId) {
+      const socket = io("http://localhost:5000");
 
-    socket.on("connect", () => {
-      console.log("connected:", socket.id);
-    });
+      socket.on("connect", () => {
+        console.log("connected:", socket.id);
+        // オンラインを申告
+        console.log("sent status-online: userId=", profile.userId);
+        socket.emit("status-online", profile.userId);
+      });
 
-    socket.on("info", (data: any) => {
-      console.log("info:", data);
-    });
+      socket.on("info", (data: any) => {
+        console.log("info:", data);
+      });
 
-    socket.on("exception", (data: any) => {
-      console.error("exception:", data);
-    });
+      socket.on("exception", (data: any) => {
+        console.error("exception:", data);
+      });
 
-    setSocket(socket);
-  }, []);
+      setSocket(socket);
+    }
+  }, [profile]);
 
   // エラー時
   useEffect(() => {

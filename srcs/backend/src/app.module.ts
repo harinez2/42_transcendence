@@ -9,6 +9,7 @@ import { GamesModule } from './games/games.module';
 import { ProfilesModule } from './profiles/profiles.module';
 import { FriendsModule } from './friends/friends.module';
 import { AuthModule } from './auth/auth.module';
+import { StatusModule } from './status/status.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { AuthModule } from './auth/auth.module';
     FriendsModule,
     ProfilesModule,
     AuthModule,
+    StatusModule,
   ],
   controllers: [AppController],
   providers: [AppGateway, AppService],
