@@ -18,5 +18,4 @@ export class StatusGateway {
   ) {
     this.statusService.addToOnline(socket, userId);
   }
-
 }

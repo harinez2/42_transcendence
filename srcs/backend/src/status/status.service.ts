@@ -53,10 +53,8 @@ export class StatusService {
 
   getStatus(userId: number) {
     const client = this.statusList.find((c) => c.userId === userId);
-    if (client)
-      return client.status;
-    else
-      return OnlineStatus.OFFLINE;
+    if (client) return client.status;
+    else return OnlineStatus.OFFLINE;
   }
 
   getStatusList() {
@@ -64,7 +62,7 @@ export class StatusService {
       return {
         userId: c.userId,
         socketId: c.socket.id,
-        status: c.status
+        status: c.status,
       };
     });
   }
