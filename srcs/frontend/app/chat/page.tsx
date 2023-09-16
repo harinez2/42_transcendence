@@ -136,10 +136,6 @@ const ChatUI = () => {
               />
             ))}
           </ul>
-          <ul className="mt-4 space-y-2 border-t border-gray-700 pt-4 font-medium">
-            {/* <ChannelName channel={{ id: 1, name: "general" }} />
-              <ChannelName channel={{ id: 2, name: "random" }} /> */}
-          </ul>
         </div>
         {/* </aside> */}
         <div className="container bg-darkslategray-100">
