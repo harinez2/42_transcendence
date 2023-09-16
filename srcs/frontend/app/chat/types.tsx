@@ -25,3 +25,14 @@ export type MessageType = {
   content: string;
   createdAt: Date;
 };
+
+export type createChannelDTO = {
+  channelName: string;
+  ownerId: number;
+  channelType: Publicity;
+  password: string | null;
+}
+export enum Publicity {
+  PUBLIC = "PUBLIC",
+  PRIVATE = "PRIVATE",
+}
