@@ -29,12 +29,30 @@ export class GamesMatchingGateway {
   ) {
     this.waitList.push({ userId: data.userId, socket: socket });
     console.log(
-      `added to waitList: userId=${data.userId}, socket id=${socket.id}`,
+      `added to waitList: userId=${data.userId}, socket.id=${socket.id}`,
     );
-    if (this.waitList.length >= 2) {
-      console.log('Matched!');
+    this.waitList.forEach((s) => {
+      console.log(`  userId: ${s.userId}, socket.id: ${s.socket.id}`);
+    });
+
+    const uniqueUserIds: number[] = Array.from(
+      new Set(this.waitList.map((i) => i.userId)),
+    );
+    console.log(`  uniqueUserIds: ${uniqueUserIds}`);
+    if (uniqueUserIds.length >= 2) {
+      // waitListからuserIdの違う2つを取り出し
       const user1 = this.waitList.shift();
-      const user2 = this.waitList.shift();
+      let user2;
+      for (let i = 0; i < this.waitList.length; i++) {
+        if (this.waitList[i].userId !== user1.userId) {
+          user2 = this.waitList.splice(i, 1)[0];
+          break;
+        }
+      }
+      console.log('Matched!');
+      console.log(`  userId: ${user1.userId}, socket.id: ${user1.socket.id}`);
+      console.log(`  userId: ${user2.userId}, socket.id: ${user2.socket.id}`);
+
       if (user1 && user2) {
         // ゲーム情報をDBに保存
         const storedGameInfo: GameInfoType = await this.storeGameInfo(
@@ -75,7 +93,9 @@ export class GamesMatchingGateway {
     @ConnectedSocket() socket: Socket,
     @MessageBody() data: any,
   ) {
-    this.waitList = this.waitList.filter((item) => item.userId !== data.userId);
+    this.waitList = this.waitList.filter(
+      (item) => item.socket.id !== data.socket.id,
+    );
     console.log(
       `leaved from waitList: userId=${data.userId}, socket id=${socket.id}`,
     );

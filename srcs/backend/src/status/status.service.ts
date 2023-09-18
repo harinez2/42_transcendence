@@ -56,8 +56,7 @@ export class StatusService {
     const clients = this.statusList.filter((c) => c.userId === userId);
     for (const c of clients) {
       status = c.status;
-      if (status === OnlineStatus.GAMING)
-        break;
+      if (status === OnlineStatus.GAMING) break;
     }
     return status;
   }

@@ -75,10 +75,12 @@ export class GamesPlayGateway {
       data.userId !== this.gameList[gameId].info.user1Id &&
       data.userId !== this.gameList[gameId].info.user2Id
     ) {
-      console.error(`The user is not part of this game: userId=${data.userId}`);
+      console.error(
+        `The user is not part of this game: gameId=${gameId}, userId=${data.userId}`,
+      );
       socket.emit(
         'exception',
-        `The user is not part of this game: userId=${data.userId}`,
+        `The user is not part of this game: gameId=${gameId}, userId=${data.userId}`,
       );
       if (isFetchedFromDb) delete this.gameList[gameId];
       return;
@@ -283,8 +285,12 @@ export class GamesPlayGateway {
       }
 
       // ステータスを「オンライン」に変更
-      this.statusService.switchToOnline(this.gameList[gameId].socket.user1Socket);
-      this.statusService.switchToOnline(this.gameList[gameId].socket.user2Socket);
+      this.statusService.switchToOnline(
+        this.gameList[gameId].socket.user1Socket,
+      );
+      this.statusService.switchToOnline(
+        this.gameList[gameId].socket.user2Socket,
+      );
 
       // 変数から削除
       delete this.gameList[gameId];
