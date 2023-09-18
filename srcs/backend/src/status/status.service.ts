@@ -17,18 +17,18 @@ export class StatusService {
     status: OnlineStatus;
   }[] = [];
 
-  addToOnline(client: Socket, userId: number) {
+  addToOnline(socket: Socket, userId: number) {
     this.statusList.push({
       userId: userId,
-      socket: client,
+      socket: socket,
       status: OnlineStatus.ONLINE,
     });
     console.log('[addToOnline]');
     this.printStatusList();
   }
 
-  switchToGaming(userId: number) {
-    const client = this.statusList.find((c) => c.userId === userId);
+  switchToGaming(socket: Socket) {
+    const client = this.statusList.find((c) => c.socket.id === socket.id);
     if (client) {
       client.status = OnlineStatus.GAMING;
     }
@@ -36,8 +36,8 @@ export class StatusService {
     this.printStatusList();
   }
 
-  switchToOnline(userId: number) {
-    const client = this.statusList.find((c) => c.userId === userId);
+  switchToOnline(socket: Socket) {
+    const client = this.statusList.find((c) => c.socket.id === socket.id);
     if (client) {
       client.status = OnlineStatus.ONLINE;
     }
@@ -45,16 +45,21 @@ export class StatusService {
     this.printStatusList();
   }
 
-  switchToOffline(client: Socket) {
-    this.statusList = this.statusList.filter((c) => c.socket.id !== client.id);
+  switchToOffline(socket: Socket) {
+    this.statusList = this.statusList.filter((c) => c.socket.id !== socket.id);
     console.log('[switchToOffline]');
     this.printStatusList();
   }
 
   getStatus(userId: number) {
-    const client = this.statusList.find((c) => c.userId === userId);
-    if (client) return client.status;
-    else return OnlineStatus.OFFLINE;
+    let status: OnlineStatus = OnlineStatus.OFFLINE;
+    const clients = this.statusList.filter((c) => c.userId === userId);
+    for (const c of clients) {
+      status = c.status;
+      if (status === OnlineStatus.GAMING)
+        break;
+    }
+    return status;
   }
 
   getStatusList() {

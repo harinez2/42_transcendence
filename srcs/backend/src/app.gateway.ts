@@ -20,6 +20,9 @@ export class AppGateway {
   // 接続時
   async handleConnection(@ConnectedSocket() client: Socket) {
     console.log(`socket connected: ${client.id}`);
+
+    // リスナーの最大数を増やす
+    client.setMaxListeners(20);
   }
 
   // 切断時

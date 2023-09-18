@@ -108,8 +108,8 @@ export class GamesPlayGateway {
     this.gameList[gameId].socket.user1Socket.emit('game-start', gameId);
     this.gameList[gameId].socket.user2Socket.emit('game-start', gameId);
     // ステータスを「ゲーム中」に変更
-    this.statusService.switchToGaming(this.gameList[gameId].info.user1Id);
-    this.statusService.switchToGaming(this.gameList[gameId].info.user2Id);
+    this.statusService.switchToGaming(this.gameList[gameId].socket.user1Socket);
+    this.statusService.switchToGaming(this.gameList[gameId].socket.user2Socket);
     // ゲームタイマー開始
     this.gameList[gameId].play.interval = setInterval(async () => {
       await this.emitUpdateGame(gameId);
@@ -283,8 +283,8 @@ export class GamesPlayGateway {
       }
 
       // ステータスを「オンライン」に変更
-      this.statusService.switchToOnline(this.gameList[gameId].info.user1Id);
-      this.statusService.switchToOnline(this.gameList[gameId].info.user2Id);
+      this.statusService.switchToOnline(this.gameList[gameId].socket.user1Socket);
+      this.statusService.switchToOnline(this.gameList[gameId].socket.user2Socket);
 
       // 変数から削除
       delete this.gameList[gameId];
