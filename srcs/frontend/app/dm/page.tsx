@@ -20,7 +20,7 @@ const DirectMessageUI = () => {
   const error: any = useContext(ErrorContext);
 
   useEffect(() => {
-    if (profile.userId != "") {
+    if (profile && profile.userId) {
       // チャンネル一覧を取得
       makeAPIRequest<DmChannelType[]>("get", `/dms/${profile.userId}`)
         .then((result) => {

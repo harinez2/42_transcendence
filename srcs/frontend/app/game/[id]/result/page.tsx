@@ -14,7 +14,7 @@ const GameResultUI = ({ params }: { params: { id: string } }) => {
   const [isWon, setIsWon] = useState<boolean | undefined>();
 
   useEffect(() => {
-    if (profile) {
+    if (profile && profile.userId) {
       // ゲーム結果を取得
       makeAPIRequest<GameInfoType>("get", `/games/${params.id}`)
         .then((result) => {
