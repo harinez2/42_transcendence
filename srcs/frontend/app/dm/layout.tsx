@@ -1,13 +1,9 @@
 import React from "react";
-import Header from "../components/header";
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
     <html lang="en">
-      <body>
-        <Header />
-        {children}
-      </body>
+      <body>{children}</body>
     </html>
   );
 };
