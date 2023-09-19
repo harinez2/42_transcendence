@@ -28,24 +28,24 @@ export class BlockController {
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'))
   getBlockers(@Req() req) {
-    return this.blockService.getBlocks(undefined, req.user.id);
+    return this.blockService.getBlockers(req.user.id);
   }
 
   @Get('blockeds')
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'))
   getBlockeds(@Req() req) {
-    return this.blockService.getBlocks(req.user.id, undefined);
+    return this.blockService.getBlockeds(req.user.id);
   }
 
   @Get('blockers/:blockedId')
   getBlockersOfOthers(@Param('blockedId', ParseIntPipe) blockedId: number) {
-    return this.blockService.getBlocks(undefined, blockedId);
+    return this.blockService.getBlockers(blockedId);
   }
 
   @Get('blockeds/:blockerId')
   getBlockedsOfOthers(@Param('blockerId', ParseIntPipe) blockerId: number) {
-    return this.blockService.getBlocks(blockerId, undefined);
+    return this.blockService.getBlockeds(blockerId);
   }
 
   @Post()

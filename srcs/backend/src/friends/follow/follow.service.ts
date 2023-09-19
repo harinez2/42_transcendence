@@ -15,10 +15,26 @@ export class FollowService {
         followeeId: followeeId,
         followerId: followerId,
       },
+      include: {
+        followee: true,
+        follower: true,
+      },
     });
   }
 
+  async getFollowers(followeeId: number) {
+    const followers = await this.getFollows(undefined, followeeId);
+    return followers.map((follow) => follow.follower);
+  }
+
+  async getFollowees(followerId: number) {
+    const followees = await this.getFollows(followerId, undefined);
+    return followees.map((follow) => follow.followee);
+  }
+
   async setFollow(followerId: number, followeeId: number) {
+    if (followerId == followeeId)
+      throw new BadRequestException('You cannot follow yourself');
     const block = await this.prisma.block.findFirst({
       where: { blockerId: followerId, blockedId: followeeId },
     });
@@ -32,12 +48,14 @@ export class FollowService {
     }
   }
 
-  deleteFollow(followerId: number, followeeId: number) {
-    return this.prisma.follow.deleteMany({
+  async deleteFollow(followerId: number, followeeId: number) {
+    const deleted = await this.prisma.follow.deleteMany({
       where: {
         followeeId: followeeId,
         followerId: followerId,
       },
     });
+    if (!deleted) throw new BadRequestException('No entries are deleted');
+    return deleted;
   }
 }
