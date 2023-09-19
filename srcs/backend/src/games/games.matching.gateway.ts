@@ -9,6 +9,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { GameAllType, GameInfoType } from './games.interface';
 import { GameSettings } from '@prisma/client';
 import { InternalServerErrorException } from '@nestjs/common';
+import { StatusService } from 'src/status/status.service';
 
 @WebSocketGateway({
   cors: {
@@ -16,7 +17,10 @@ import { InternalServerErrorException } from '@nestjs/common';
   },
 })
 export class GamesMatchingGateway {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private readonly statusService: StatusService,
+  ) {}
 
   private waitList: { userId: number; socket: Socket }[] = [];
   private gameList: GameAllType = {};
@@ -34,6 +38,9 @@ export class GamesMatchingGateway {
     this.waitList.forEach((s) => {
       console.log(`  userId: ${s.userId}, socket.id: ${s.socket.id}`);
     });
+
+    // ステータスを「ゲーム中」に変更
+    this.statusService.switchToGaming(socket);
 
     const uniqueUserIds: number[] = Array.from(
       new Set(this.waitList.map((i) => i.userId)),
@@ -94,11 +101,14 @@ export class GamesMatchingGateway {
     @MessageBody() data: any,
   ) {
     this.waitList = this.waitList.filter(
-      (item) => item.socket.id !== data.socket.id,
+      (item) => item.socket.id !== socket.id,
     );
     console.log(
       `leaved from waitList: userId=${data.userId}, socket id=${socket.id}`,
     );
+
+    // ステータスを「オンライン」に変更
+    this.statusService.switchToOnline(socket);
   }
 
   // コンフィグ受信

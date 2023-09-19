@@ -11,11 +11,16 @@ import { Socket } from 'socket.io';
 export class StatusGateway {
   constructor(private readonly statusService: StatusService) {}
 
-  @SubscribeMessage('status-online')
-  handleOnline(
+  @SubscribeMessage('status-add_to_online')
+  handleAddToOnline(
     @ConnectedSocket() socket: Socket,
     @MessageBody() userId: number,
   ) {
     this.statusService.addToOnline(socket, userId);
+  }
+
+  @SubscribeMessage('status-switch_to_online')
+  handleSwitchToOnline(@ConnectedSocket() socket: Socket) {
+    this.statusService.switchToOnline(socket);
   }
 }

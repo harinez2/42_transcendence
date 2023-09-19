@@ -28,7 +28,6 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
-import { StatusService } from 'src/status/status.service';
 
 @WebSocketGateway({
   cors: {
@@ -36,10 +35,7 @@ import { StatusService } from 'src/status/status.service';
   },
 })
 export class GamesPlayGateway {
-  constructor(
-    private prisma: PrismaService,
-    private readonly statusService: StatusService,
-  ) {}
+  constructor(private prisma: PrismaService) {}
 
   private gameList: GameAllType = {};
 
@@ -109,9 +105,6 @@ export class GamesPlayGateway {
     // クライアントに通知
     this.gameList[gameId].socket.user1Socket.emit('game-start', gameId);
     this.gameList[gameId].socket.user2Socket.emit('game-start', gameId);
-    // ステータスを「ゲーム中」に変更
-    this.statusService.switchToGaming(this.gameList[gameId].socket.user1Socket);
-    this.statusService.switchToGaming(this.gameList[gameId].socket.user2Socket);
     // ゲームタイマー開始
     this.gameList[gameId].play.interval = setInterval(async () => {
       await this.emitUpdateGame(gameId);
@@ -283,14 +276,6 @@ export class GamesPlayGateway {
           `Failed to store game score: gameid=${gameId}.`,
         );
       }
-
-      // ステータスを「オンライン」に変更
-      this.statusService.switchToOnline(
-        this.gameList[gameId].socket.user1Socket,
-      );
-      this.statusService.switchToOnline(
-        this.gameList[gameId].socket.user2Socket,
-      );
 
       // 変数から削除
       delete this.gameList[gameId];

@@ -2,7 +2,7 @@
 
 import "../styles/globals.css";
 import React, { createContext, useEffect, useState } from "react";
-import { io } from "socket.io-client";
+import { Socket, io } from "socket.io-client";
 import makeAPIRequest from "./api/api";
 import { ProfileType } from "./types";
 
@@ -12,7 +12,7 @@ export let ErrorContext: any = createContext(undefined);
 
 const RootLayout = ({ children }: { children: React.ReactNode }) => {
   const [profile, setProfile] = useState<ProfileType | undefined>(undefined);
-  const [socket, setSocket] = useState<any>(undefined);
+  const [socket, setSocket] = useState<Socket | undefined>(undefined);
   const [error, setError] = useState<any>(undefined);
 
   // 自身のプロファイルを取得
@@ -38,8 +38,8 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
       socket.on("connect", () => {
         console.log("connected:", socket.id);
         // オンラインを申告
-        console.log("sent status-online: userId=", profile.userId);
-        socket.emit("status-online", profile.userId);
+        console.log("sent status-add_to_online: userId=", profile.userId);
+        socket.emit("status-add_to_online", profile.userId);
       });
 
       socket.on("info", (data: any) => {

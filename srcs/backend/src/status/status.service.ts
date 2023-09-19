@@ -17,6 +17,7 @@ export class StatusService {
     status: OnlineStatus;
   }[] = [];
 
+  // offline->onlineのとき
   addToOnline(socket: Socket, userId: number) {
     this.statusList.push({
       userId: userId,
@@ -36,6 +37,7 @@ export class StatusService {
     this.printStatusList();
   }
 
+  // gaming->onlineのとき
   switchToOnline(socket: Socket) {
     const client = this.statusList.find((c) => c.socket.id === socket.id);
     if (client) {
