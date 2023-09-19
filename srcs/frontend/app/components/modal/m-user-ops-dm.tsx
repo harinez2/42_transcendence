@@ -13,11 +13,11 @@ const MUserOpsDM: NextPage<MUserOpsDMType> = ({ onClose }) => {
   const router = useRouter();
 
   const onSeeProfileClick = useCallback(() => {
-    router.push("/../profile-other");
+    router.push("/../profile/other");
   }, [router]);
 
   const onInviteToGameClick = useCallback(() => {
-    router.push("/../game-settings");
+    router.push("/../game/settings");
   }, [router]);
 
   return (

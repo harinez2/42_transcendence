@@ -11,7 +11,7 @@ export let SocketContext: any = createContext(undefined);
 export let ErrorContext: any = createContext(undefined);
 
 const RootLayout = ({ children }: { children: React.ReactNode }) => {
-  const [profile, setProfile] = useState<ProfileType | undefined>(undefined);
+  const [profile, setProfile] = useState<ProfileType>({ userId: "", bio: "" });
   const [socket, setSocket] = useState<Socket | undefined>(undefined);
   const [error, setError] = useState<any>(undefined);
 

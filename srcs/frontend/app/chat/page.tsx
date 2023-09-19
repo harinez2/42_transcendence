@@ -12,6 +12,7 @@ import { ProfileContext, SocketContext, ErrorContext } from "../layout";
 import { ProfileType } from "../types";
 import ChannelCategory from "./channel_category";
 import UserStatusCategory from "./user_status_category";
+import HeaderMenu from "../components/headermenu";
 
 const ChatUI = () => {
   const Users: Array<User> = [
@@ -107,60 +108,61 @@ const ChatUI = () => {
 
   return (
     <>
-      <div className="flex">
-        <aside
+      <div className="relative h-screen w-full bg-darkslategray-100 text-left font-body text-xl text-base-white">
+        <HeaderMenu />
+        {/* <aside
           id="separator-sidebar"
-          className="left-0 top-0 z-40 h-screen w-64 translate-x-0 transition-transform"
+          // className="left-0 top-0 z-40 h-screen w-64 translate-x-0 transition-transform"
           aria-label="Sidebar"
-        >
-          <div className="h-full overflow-y-auto bg-gray-800 px-3 py-4 ">
-            <ChannelCategory
-              categoryName="Channels"
-              channels={channels}
-              setChannels={setChannels}
-            />
-            <ul className="space-y-2 font-medium">
-              {channels?.map((channel: ChannelType) => (
-                <ChannelName
-                  key={channel.channelId}
-                  channel={channel}
-                  onSelectChannel={handleChannelSelect}
-                />
-              ))}
-            </ul>
-            <ul className="mt-4 space-y-2 border-t border-gray-700 pt-4 font-medium">
-              {/* <ChannelName channel={{ id: 1, name: "general" }} />
+        > */}
+        <div className="absolute left-[0px] top-[100px] h-[calc(100%_-_131px)] w-64 shrink-0 bg-darkslategray-200 px-3 py-4 ">
+          <ChannelCategory
+            categoryName="Channels"
+            channels={channels}
+            setChannels={setChannels}
+          />
+          <ul className="space-y-2 font-medium">
+            {channels?.map((channel: ChannelType) => (
+              <ChannelName
+                key={channel.channelId}
+                channel={channel}
+                onSelectChannel={handleChannelSelect}
+              />
+            ))}
+          </ul>
+          <ul className="mt-4 space-y-2 border-t border-gray-700 pt-4 font-medium">
+            {/* <ChannelName channel={{ id: 1, name: "general" }} />
               <ChannelName channel={{ id: 2, name: "random" }} /> */}
-            </ul>
-          </div>
-        </aside>
-        <div className="container bg-gray-700">
-          <div className="grow  flex-col-reverse divide-y divide-gray-500/30 px-4">
+          </ul>
+        </div>
+        {/* </aside> */}
+        <div className="container bg-darkslategray-100">
+          <div className="grow flex-col-reverse divide-y divide-gray-500/30 px-4">
             {messages?.map((message: MessageType) => (
               <MessageComponent key={message.channelId} message={message} />
             ))}
           </div>
         </div>
-        <aside
+        {/* <aside
           id="separator-sidebar"
-          className="left-0 top-0 z-40 h-screen w-64 shrink-0 translate-x-0 transition-transform "
+          // className="w-64 shrink-0 translate-x-0 transition-transform "
           aria-label="Sidebar"
-        >
-          <div className="h-full shrink-0 overflow-y-auto bg-gray-800 px-3 py-4">
-            <UserStatusCategory categoryName="online" />
-            <ul className="space-y-2 font-medium">
-              {Users.map((u) => (
-                <UserComponent key={u.id} user={u} />
-              ))}
-            </ul>
-            <ul className="mt-4 space-y-2 border-t border-gray-700 pt-4 font-medium">
-              <UserStatusCategory categoryName="offline" />
-              {Users.map((u) => (
-                <UserComponent key={u.id} user={u} />
-              ))}
-            </ul>
-          </div>
-        </aside>
+        > */}
+        <div className="absolute right-[0px] top-[100px] h-[calc(100%_-_131px)] w-64 shrink-0 bg-darkslategray-200 px-3 py-4">
+          <UserStatusCategory categoryName="online" />
+          <ul className="space-y-2 font-medium">
+            {Users.map((u) => (
+              <UserComponent key={u.id} user={u} />
+            ))}
+          </ul>
+          <ul className="mt-4 space-y-2 border-t border-gray-700 pt-4 font-medium">
+            <UserStatusCategory categoryName="offline" />
+            {Users.map((u) => (
+              <UserComponent key={u.id} user={u} />
+            ))}
+          </ul>
+        </div>
+        {/* </aside> */}
       </div>
     </>
   );

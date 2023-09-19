@@ -1,21 +1,24 @@
-"use client";
+// "use client";
 
 import React from "react";
-import type { NextPage } from "next";
-import { useState, useCallback } from "react";
+// import { useState, useCallback } from "react";
 import MUserOpsDM from "./modal/m-user-ops-dm";
 import ModalPopup from "./modal/modal-popup";
+import { ProfileType } from "../types";
+import { getProfileByUserId } from "../api/api";
 
-const MatchHistoryContainer: NextPage = () => {
-  const [isMUserOpsDMOpen, setMUserOpsDMOpen] = useState(false);
+async function MatchHistoryContainer({ userId }: any) {
+  // const prof: ProfileType = await getProfileByUserId(userId);
 
-  const openMUserOpsDM = useCallback(() => {
-    setMUserOpsDMOpen(true);
-  }, []);
+  // const [isMUserOpsDMOpen, setMUserOpsDMOpen] = useState(false);
 
-  const closeMUserOpsDM = useCallback(() => {
-    setMUserOpsDMOpen(false);
-  }, []);
+  // const openMUserOpsDM = useCallback(() => {
+  //   setMUserOpsDMOpen(true);
+  // }, []);
+
+  // const closeMUserOpsDM = useCallback(() => {
+  //   setMUserOpsDMOpen(false);
+  // }, []);
 
   return (
     <div>
@@ -28,7 +31,7 @@ const MatchHistoryContainer: NextPage = () => {
             className="relative h-[45px] w-[45px] cursor-pointer"
             alt=""
             src="/icon2.svg"
-            onClick={openMUserOpsDM}
+            // onClick={openMUserOpsDM}
           />
           <div className="relative tracking-[0.1em]">user2</div>
         </div>
@@ -48,7 +51,7 @@ const MatchHistoryContainer: NextPage = () => {
             className="relative h-[45px] w-[45px] cursor-pointer"
             alt=""
             src="/icon3.svg"
-            onClick={openMUserOpsDM}
+            // onClick={openMUserOpsDM}
           />
           <div className="relative tracking-[0.1em]">user4</div>
         </div>
@@ -62,7 +65,7 @@ const MatchHistoryContainer: NextPage = () => {
           </div>
         </div>
       </div>
-      {isMUserOpsDMOpen && (
+      {/* {isMUserOpsDMOpen && (
         <ModalPopup
           overlayColor="rgba(113, 113, 113, 0.3)"
           placement="Centered"
@@ -70,9 +73,9 @@ const MatchHistoryContainer: NextPage = () => {
         >
           <MUserOpsDM onClose={closeMUserOpsDM} />
         </ModalPopup>
-      )}
+      )} */}
     </div>
   );
-};
+}
 
 export default MatchHistoryContainer;

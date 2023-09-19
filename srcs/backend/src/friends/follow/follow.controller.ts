@@ -1,6 +1,18 @@
-import { Controller, Get } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseIntPipe,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { FollowService } from './follow.service';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { AuthGuard } from '@nestjs/passport';
+import { FollowDto } from './follow.dto';
 
 @ApiTags('friends/follow')
 @Controller('friends/follow')
@@ -10,5 +22,43 @@ export class FollowController {
   @Get()
   getHello(): string {
     return this.followService.getHello();
+  }
+
+  @Get('followers')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
+  getFollowers(@Req() req) {
+    return this.followService.getFollows(undefined, req.user.id);
+  }
+
+  @Get('followees')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
+  getFollowees(@Req() req) {
+    return this.followService.getFollows(req.user.id, undefined);
+  }
+
+  @Get('followers/:followeeId')
+  getFollowersOfOthers(@Param('followeeId', ParseIntPipe) followeeId: number) {
+    return this.followService.getFollows(undefined, followeeId);
+  }
+
+  @Get('followees/:followerId')
+  getFolloweesOfOthers(@Param('followerId', ParseIntPipe) followerId: number) {
+    return this.followService.getFollows(followerId, undefined);
+  }
+
+  @Post()
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
+  follow(@Req() req, @Body() followDto: FollowDto) {
+    return this.followService.setFollow(req.user.id, followDto.followeeId);
+  }
+
+  @Delete()
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
+  unfollow(@Req() req, @Body() followDto: FollowDto) {
+    return this.followService.deleteFollow(req.user.id, followDto.followeeId);
   }
 }

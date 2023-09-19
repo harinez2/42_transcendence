@@ -2,14 +2,14 @@
 
 import type { NextPage } from "next";
 import { useState, useCallback } from "react";
-import ModalPopup from "../components/modal/modal-popup";
-import MSettingsMine from "../components/modal/m-settings-mine";
-import HeaderMenu from "../components/headermenu";
-import RankingContainer from "../components/raking-container";
-import MatchHistoryContainer from "../components/match-history-container";
+import ModalPopup from "../../components/modal/modal-popup";
+import MSettingsMine from "../../components/modal/m-settings-mine";
+import HeaderMenu from "../../components/headermenu";
+import RankingContainer from "../../components/raking-container";
+import MatchHistoryContainer from "../../components/match-history-container";
 import React from "react";
 
-const ProfileMinePage: NextPage = () => {
+const MePage: NextPage = () => {
   const [isMSettingsMinePopupOpen, setMSettingsMinePopupOpen] = useState(false);
 
   const openMSettingsMinePopup = useCallback(() => {
@@ -65,13 +65,13 @@ const ProfileMinePage: NextPage = () => {
           alt=""
           src="/line-2.svg"
         />
-        <RankingContainer />
+        <RankingContainer userId="1" />
         <img
           className="absolute left-[470px] top-[768px] h-0.5 w-[500px]"
           alt=""
           src="/line-2.svg"
         />
-        <MatchHistoryContainer />
+        <MatchHistoryContainer userId="1" />
       </div>
       {isMSettingsMinePopupOpen && (
         <ModalPopup
@@ -86,4 +86,4 @@ const ProfileMinePage: NextPage = () => {
   );
 };
 
-export default ProfileMinePage;
+export default MePage;

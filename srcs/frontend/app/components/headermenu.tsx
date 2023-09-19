@@ -9,11 +9,11 @@ const HeaderMenu: NextPage = () => {
   const router = useRouter();
 
   const onMyIconClick = useCallback(() => {
-    router.push("/profile-mine");
+    router.push("/profile/me");
   }, [router]);
 
   const onFriendsClick = useCallback(() => {
-    router.push("/friends");
+    router.push("/profile/me/friends");
   }, [router]);
 
   const onDMClick = useCallback(() => {
@@ -21,7 +21,7 @@ const HeaderMenu: NextPage = () => {
   }, [router]);
 
   const onGameClick = useCallback(() => {
-    router.push("/game-match-making-parent");
+    router.push("/game");
   }, [router]);
 
   const onFtTranscendenceClick = useCallback(() => {

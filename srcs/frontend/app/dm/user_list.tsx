@@ -52,7 +52,7 @@ const UserListComponent = ({
   onSelectChannel: (c: DmChannelType) => void; // eslint-disable-line no-unused-vars
 }) => {
   return (
-    <div className="relative h-full overflow-y-auto bg-gray-800 px-3 py-4">
+    <div className="relative h-full overflow-y-auto bg-darkslategray-200 px-3 py-4">
       <ul className="divide-y divide-gray-500/30">
         {channels?.map((c) => (
           <UserComponent
