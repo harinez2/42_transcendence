@@ -15,10 +15,26 @@ export class BlockService {
         blockerId: blockerId,
         blockedId: blockedId,
       },
+      include: {
+        blocker: true,
+        blocked: true,
+      },
     });
   }
 
+  async getBlockers(blockedId: number) {
+    const blockers = await this.getBlocks(undefined, blockedId);
+    return blockers.map((block) => block.blocker);
+  }
+
+  async getBlockeds(blockedId: number) {
+    const blockeds = await this.getBlocks(blockedId, undefined);
+    return blockeds.map((block) => block.blocked);
+  }
+
   async setBlock(blockerId: number, blockedId: number) {
+    if (blockerId == blockedId)
+      throw new BadRequestException('You cannot block yourself');
     try {
       await this.prisma.follow.deleteMany({
         where: { followerId: blockerId, followeeId: blockedId },
@@ -31,12 +47,14 @@ export class BlockService {
     }
   }
 
-  deleteBlock(blockerId: number, blockedId: number) {
-    return this.prisma.block.deleteMany({
+  async deleteBlock(blockerId: number, blockedId: number) {
+    const deleted = await this.prisma.block.deleteMany({
       where: {
         blockerId: blockerId,
         blockedId: blockedId,
       },
     });
+    if (!deleted) throw new BadRequestException('No entries are deleted');
+    return deleted;
   }
 }

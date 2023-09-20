@@ -28,24 +28,24 @@ export class FollowController {
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'))
   getFollowers(@Req() req) {
-    return this.followService.getFollows(undefined, req.user.id);
+    return this.followService.getFollowers(req.user.id);
   }
 
   @Get('followees')
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'))
   getFollowees(@Req() req) {
-    return this.followService.getFollows(req.user.id, undefined);
+    return this.followService.getFollowees(req.user.id);
   }
 
   @Get('followers/:followeeId')
   getFollowersOfOthers(@Param('followeeId', ParseIntPipe) followeeId: number) {
-    return this.followService.getFollows(undefined, followeeId);
+    return this.followService.getFollowers(followeeId);
   }
 
   @Get('followees/:followerId')
   getFolloweesOfOthers(@Param('followerId', ParseIntPipe) followerId: number) {
-    return this.followService.getFollows(followerId, undefined);
+    return this.followService.getFollowees(followerId);
   }
 
   @Post()
