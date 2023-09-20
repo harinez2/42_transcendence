@@ -28,6 +28,7 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
+import { StatusService } from 'src/status/status.service';
 
 @WebSocketGateway({
   cors: {
@@ -35,7 +36,10 @@ import {
   },
 })
 export class GamesPlayGateway {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private readonly statusService: StatusService,
+  ) {}
 
   private gameList: GameAllType = {};
 
@@ -45,7 +49,9 @@ export class GamesPlayGateway {
     @ConnectedSocket() socket: Socket,
     @MessageBody() data: any,
   ) {
-    console.log(`game-join event happened: gameId=${data.gameId}`);
+    console.log(
+      `game-join event happened: gameId=${data.gameId}, userId=${data.userId}`,
+    );
     const gameId = Number(data.gameId);
     let isFetchedFromDb = false;
 
@@ -98,6 +104,10 @@ export class GamesPlayGateway {
       socket.emit('info', 'Waiting for the opponent...');
       return;
     }
+
+    // 念のためステータスを「ゲーム中」に変更
+    this.statusService.switchToGaming(this.gameList[gameId].socket.user1Socket);
+    this.statusService.switchToGaming(this.gameList[gameId].socket.user2Socket);
 
     // ゲームを開始
     // 開始時刻をDBに保存

@@ -5,6 +5,7 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { StatusService } from './status/status.service';
+import { GamesMatchingGateway } from './games/games.matching.gateway';
 
 @WebSocketGateway({
   cors: {
@@ -12,7 +13,10 @@ import { StatusService } from './status/status.service';
   },
 })
 export class AppGateway {
-  constructor(private readonly statusService: StatusService) {}
+  constructor(
+    private readonly statusService: StatusService,
+    private readonly gamesMatchingGateway: GamesMatchingGateway,
+  ) {}
 
   @WebSocketServer()
   server: Server;
@@ -28,7 +32,8 @@ export class AppGateway {
   // 切断時
   handleDisconnect(@ConnectedSocket() client: Socket) {
     console.log(`socket disconnected: ${client.id}`);
-
+    // ゲームのwaitlistから削除
+    this.gamesMatchingGateway.removeFromWaitlist(client);
     // statusServiceのclientsから削除
     this.statusService.switchToOffline(client);
   }
