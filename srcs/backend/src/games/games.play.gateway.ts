@@ -71,10 +71,12 @@ export class GamesPlayGateway {
       data.userId !== this.gameList[gameId].info.user1Id &&
       data.userId !== this.gameList[gameId].info.user2Id
     ) {
-      console.error(`The user is not part of this game: userId=${data.userId}`);
+      console.error(
+        `The user is not part of this game: gameId=${gameId}, userId=${data.userId}`,
+      );
       socket.emit(
         'exception',
-        `The user is not part of this game: userId=${data.userId}`,
+        `The user is not part of this game: gameId=${gameId}, userId=${data.userId}`,
       );
       if (isFetchedFromDb) delete this.gameList[gameId];
       return;
@@ -97,10 +99,13 @@ export class GamesPlayGateway {
       return;
     }
 
-    // ゲームのタイマーを開始
+    // ゲームを開始
+    // 開始時刻をDBに保存
     this.storeGameStartTime(gameId);
+    // クライアントに通知
     this.gameList[gameId].socket.user1Socket.emit('game-start', gameId);
     this.gameList[gameId].socket.user2Socket.emit('game-start', gameId);
+    // ゲームタイマー開始
     this.gameList[gameId].play.interval = setInterval(async () => {
       await this.emitUpdateGame(gameId);
     }, TIMER_INTERVAL);

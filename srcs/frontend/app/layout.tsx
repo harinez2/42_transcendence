@@ -2,7 +2,7 @@
 
 import "../styles/globals.css";
 import React, { createContext, useEffect, useState } from "react";
-import { io } from "socket.io-client";
+import { Socket, io } from "socket.io-client";
 import makeAPIRequest from "./api/api";
 import { ProfileType } from "./types";
 
@@ -12,7 +12,7 @@ export let ErrorContext: any = createContext(undefined);
 
 const RootLayout = ({ children }: { children: React.ReactNode }) => {
   const [profile, setProfile] = useState<ProfileType>({ userId: "", bio: "" });
-  const [socket, setSocket] = useState<any>(undefined);
+  const [socket, setSocket] = useState<Socket | undefined>(undefined);
   const [error, setError] = useState<any>(undefined);
 
   // 自身のプロファイルを取得
@@ -30,24 +30,29 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
       });
   }, []);
 
-  // ソケット接続
+  // ソケット接続(認証後)
   useEffect(() => {
-    const socket = io("http://localhost:5000");
+    if (profile && profile.userId) {
+      const socket = io("http://localhost:5000");
 
-    socket.on("connect", () => {
-      console.log("connected:", socket.id);
-    });
+      socket.on("connect", () => {
+        console.log("connected:", socket.id);
+        // オンラインを申告
+        console.log("sent status-add_to_online: userId=", profile.userId);
+        socket.emit("status-add_to_online", profile.userId);
+      });
 
-    socket.on("info", (data: any) => {
-      console.log("info:", data);
-    });
+      socket.on("info", (data: any) => {
+        console.log("info:", data);
+      });
 
-    socket.on("exception", (data: any) => {
-      console.error("exception:", data);
-    });
+      socket.on("exception", (data: any) => {
+        console.error("exception:", data);
+      });
 
-    setSocket(socket);
-  }, []);
+      setSocket(socket);
+    }
+  }, [profile]);
 
   // エラー時
   useEffect(() => {

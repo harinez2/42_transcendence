@@ -15,7 +15,7 @@ const GameUI = () => {
   const profile: ProfileType = useContext(ProfileContext);
 
   useEffect(() => {
-    if (profile) {
+    if (profile && profile.userId) {
       // 継続中のゲームがあればページ遷移
       makeAPIRequest<GameInfoType[]>("get", `/games/user/${profile.userId}`)
         .then((result) => {

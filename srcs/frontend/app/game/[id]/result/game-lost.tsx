@@ -1,18 +1,28 @@
 "use client";
 
-import React from "react";
+import React, { useContext } from "react";
 import type { NextPage } from "next";
 import { useCallback } from "react";
 import { useRouter } from "next/navigation";
+import { SocketContext } from "@/app/layout";
 
 const GameLostPage: NextPage = () => {
   const router = useRouter();
+  const socket: any = useContext(SocketContext);
 
   const onSignInClick = useCallback(() => {
+    // オンラインを申告
+    console.log("sent status-switch_to_online: socketId=", socket.id);
+    socket?.emit("status-switch_to_online");
+
     router.push("/chat");
   }, [router]);
 
   const onSignIn1Click = useCallback(() => {
+    // オンラインを申告
+    console.log("sent status-switch_to_online: socketId=", socket.id);
+    socket?.emit("status-switch_to_online");
+
     router.push("/game");
   }, [router]);
 

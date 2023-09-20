@@ -4,6 +4,7 @@ import {
   ConnectedSocket,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
+import { StatusService } from './status/status.service';
 
 @WebSocketGateway({
   cors: {
@@ -11,24 +12,24 @@ import { Server, Socket } from 'socket.io';
   },
 })
 export class AppGateway {
+  constructor(private readonly statusService: StatusService) {}
+
   @WebSocketServer()
   server: Server;
-  clients: Socket[] = [];
 
   // 接続時
   async handleConnection(@ConnectedSocket() client: Socket) {
     console.log(`socket connected: ${client.id}`);
 
-    // clientsに追加
-    this.clients.push(client);
+    // リスナーの最大数を増やす
+    client.setMaxListeners(20);
   }
 
   // 切断時
   handleDisconnect(@ConnectedSocket() client: Socket) {
     console.log(`socket disconnected: ${client.id}`);
 
-    // clientsから削除
-    const indexToRemove: number = this.clients.indexOf(client);
-    if (indexToRemove !== -1) this.clients.splice(indexToRemove, 1);
+    // statusServiceのclientsから削除
+    this.statusService.switchToOffline(client);
   }
 }

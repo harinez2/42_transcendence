@@ -5,10 +5,11 @@ import { GamesService } from './games.service';
 import { GamesController } from './games.controller';
 import { PrismaModule } from '../prisma/prisma.module';
 import { UsersModule } from '../users/users.module';
+import { StatusModule } from 'src/status/status.module';
 
 @Module({
   providers: [GamesMatchingGateway, GamesPlayGateway, GamesService],
   controllers: [GamesController],
-  imports: [PrismaModule, UsersModule],
+  imports: [PrismaModule, UsersModule, StatusModule],
 })
 export class GamesModule {}

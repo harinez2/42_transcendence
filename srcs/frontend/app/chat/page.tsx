@@ -44,7 +44,7 @@ const ChatUI = () => {
   const error: any = useContext(ErrorContext);
 
   useEffect(() => {
-    if (profile.userId != "") {
+    if (profile && profile.userId) {
       // チャンネル一覧を取得
       makeAPIRequest<ChannelType[]>("get", "/chats")
         .then((result) => {
