@@ -11,17 +11,21 @@ const GameWonPage: NextPage = () => {
   const socket: any = useContext(SocketContext);
 
   const onBackToChatClick = useCallback(() => {
-    // オンラインを申告
-    console.log("sent status-switch_to_online: socketId=", socket.id);
-    socket?.emit("status-switch_to_online");
+    if (socket) {
+      // オンラインを申告
+      console.log("sent status-switch_to_online: socketId=", socket?.id);
+      socket?.emit("status-switch_to_online");
+    }
 
     router.push("/chat");
   }, [router]);
 
   const onPlayWithOtherClick = useCallback(() => {
-    // オンラインを申告
-    console.log("sent status-switch_to_online: socketId=", socket.id);
-    socket?.emit("status-switch_to_online");
+    if (socket) {
+      // オンラインを申告
+      console.log("sent status-switch_to_online: socketId=", socket?.id);
+      socket?.emit("status-switch_to_online");
+    }
 
     router.push("/game");
   }, [router]);
