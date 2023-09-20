@@ -35,6 +35,7 @@ const MCreateChannel: NextPage<MCreateChannelType> = ({
   const [passwordButtonDisabled, setPasswordButtonDisabled] =
     useState<boolean>(true);
   const [passwordDisabled, setPasswordDisabled] = useState<boolean>(true);
+  const [error, setError] = useState("");
 
   // dialog の外側をクリックしたときに閉じるために使用する
   const stopPropagation = useCallback(
@@ -65,22 +66,21 @@ const MCreateChannel: NextPage<MCreateChannelType> = ({
   // channels を更新する
   const createChannelAndSetChannels = useCallback(
     async (createChannelDto: createChannelDTO) => {
-      console.log(createChannelDto);
       await makeAPIRequest<ChannelType>("post", "/chats", createChannelDto)
         .then((result) => {
           if (result.success) {
-            console.log("channel create success:", result.data);
+            setError("");
             setChannels([...channels, result.data]);
             // チャンネル作成後にmodalに使用するデータを初期化する
             clearModal();
             // チャンネル作成後に modal を閉じる
             closeModal();
           } else {
-            console.error(result.error);
+            setError(result.error);
           }
         })
         .catch((err) => {
-          console.error("channel create failed:", err);
+          setError("An unexpected error occured.");
         });
     },
     [channels],
@@ -205,19 +205,24 @@ const MCreateChannel: NextPage<MCreateChannelType> = ({
         inputRef={inputPasswordRef}
         disabled={passwordDisabled}
       />
-      <button
-        className="absolute left-[62px] top-[322px] h-[41px] w-[242px] cursor-pointer bg-[transparent] p-0 [border:none]"
-        onClick={() => createChannelAndSetChannels(channelDTO)}
-      >
-        <img
-          className="absolute left-[0px] top-[0px] h-[41px] w-[242px]"
-          alt=""
-          src="/rectangle-126.svg"
-        />
-        <div className="absolute left-[26.7px] top-[7px] inline-block h-[34px] w-[203.07px] text-left font-body text-5xl tracking-[0.1em] text-base-white">
-          Create channel
-        </div>
-      </button>
+      <span className="relative">
+        <button
+          className="absolute left-[62px] top-[322px] h-[41px] w-[242px] cursor-pointer bg-[transparent] p-0 [border:none]"
+          onClick={() => createChannelAndSetChannels(channelDTO)}
+        >
+          <img
+            className="absolute left-[0px] top-[0px] h-[41px] w-[242px]"
+            alt=""
+            src="/rectangle-126.svg"
+          />
+          <div className="absolute left-[26.7px] top-[7px] inline-block h-[34px] w-[203.07px] text-left font-body text-5xl tracking-[0.1em] text-base-white">
+            Create channel
+          </div>
+        </button>
+        <span className="absolute absolute left-[82px] top-[370px] h-[41px] w-[200px] text-center text-xs normal-case tracking-tighter">
+          {error && <p>error: {error}</p>}
+        </span>
+      </span>
     </div>
   );
 };
