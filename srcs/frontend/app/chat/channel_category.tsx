@@ -1,8 +1,7 @@
-import React, { useCallback, useState } from "react";
+import React from "react";
 import useModal from "../components/useModal";
-import { ChannelType, Publicity, createChannelDTO } from "./types";
+import { ChannelType } from "./types";
 import MCreateChannel from "../components/modal/m-create-channel";
-import { channel } from "diagnostics_channel";
 
 const ChannelCategory = ({
   categoryName,
