@@ -1,37 +1,76 @@
 "use client";
 
 import type { NextPage } from "next";
-import { useMemo } from "react";
+import { useContext, useEffect, useMemo } from "react";
 import CSS, { Property } from "csstype";
 import MUserOps from "../../../components/modal/m-user-ops";
 import ModalPopup from "../../../components/modal/modal-popup";
 import { useState, useCallback } from "react";
-import FriendsMenu from "../../../components/friendsmenu";
+import { ProfileType } from "@/app/types";
+import { ProfileContext } from "@/app/layout";
+import makeAPIRequest from "@/app/api/api";
+import { FriendsType } from "./types";
 
-type FriendsListType = {
-  icon2?: string;
-  icon3?: string;
-  icon4?: string;
+const FriendComponent = ({
+  profile,
+  friend,
+}: {
+  profile: ProfileType;
+  friend: FriendsType;
+  // friends: FriendsType;
+}) => {
+  const user_name = friend.username; //
+  const user_status = friend.status;
 
-  /** Style props */
-  friendsPosition?: Property.Position;
-  friendsTop?: Property.Top;
-  friendsLeft?: Property.Left;
-  iconCursor?: Property.Cursor;
-
-  onBlockedClick?: () => void;
+  return (
+    <>
+      <li>
+        <a
+          href="#"
+          className="group flex items-center rounded-lg p-2 text-white hover:bg-gray-700"
+        >
+          {/* <img
+            // src="http://localhost:3000/favicon.ico"
+            className="h-auto max-w-full rounded-full"
+            width={30}
+            height={30}
+            alt=""
+            onClick={openMUserOps}
+            cursor-pointer
+          /> */}
+          <span className="ml-3 shrink-0 pr-8 text-xl">{user_name}
+          {user_status}
+          </span>
+        </a>
+      </li>
+    </>
+  );
 };
 
-const FriendsList: NextPage<FriendsListType> = ({
-  icon2,
-  icon3,
-  icon4,
-  friendsPosition,
-  friendsTop,
-  friendsLeft,
-  iconCursor,
-  onBlockedClick,
-}) => {
+const FriendsList = () => {
+
+  const profile: ProfileType = useContext(ProfileContext);
+  const [friends, setFriends] = useState<FriendsType[]>([]);
+
+  useEffect(() => {
+    if (profile.userId != "") {
+      // friends一覧を取得
+      makeAPIRequest<FriendsType[]>("get", `/friends/follow/followees/${profile.userId}`)
+        .then((result) => {
+          if (result.success) {
+            setFriends(result.data);
+            console.log("check");
+            console.log(friends);
+          } else {
+            console.error(result.error);
+          }
+        })
+        .catch((error) => {
+          console.error("Error:", error.message);
+        });
+    }
+  }, [profile]);
+
   const [isMUserOpsOpen, setMUserOpsOpen] = useState(false);
   const openMUserOps = useCallback(() => {
     setMUserOpsOpen(true);
@@ -41,42 +80,32 @@ const FriendsList: NextPage<FriendsListType> = ({
     setMUserOpsOpen(false);
   }, []);
 
-  const iconStyle: CSS.Properties = useMemo(() => {
-    return {
-      cursor: iconCursor,
-    };
-  }, [iconCursor]);
-
-  const friendsStyle: CSS.Properties = useMemo(() => {
-    return {
-      position: friendsPosition,
-      top: friendsTop,
-      left: friendsLeft,
-    };
-  }, [friendsPosition, friendsTop, friendsLeft]);
-
   return (
     <>
       <div
-        className="relative h-[370px] w-[500px] text-left font-body text-xl text-white"
-        style={friendsStyle}
+        className="absolute left-[470px] top-[400px] text-left font-body text-xl overflow-y-auto text-white"
       >
-        <FriendsMenu
-          allPosition="absolute"
-          allTop="327px"
-          allLeft="470px"
-          blockedCursor="pointer"
-          blockedBorder="none"
-          blockedPadding="0"
-          blockedBackgroundColor="transparent"
-          addFriendCursor="pointer"
-          addFriendBorder="none"
-          addFriendPadding="0"
-          addFriendBackgroundColor="transparent"
-          onBlockedClick={onBlockedClick}
-        />
 
-        <div className="absolute left-[0px] top-[84px] h-[75px] w-[500px]">
+        {/* className="left-0 top-0 z-40 h-screen w-64 translate-x-0 transition-transform" */}
+        
+        {/* <div className="relative h-full bg-darkslategray-100 px-3 py-4">   */}
+          {/* check color/ */}
+
+      {/* <ul className="divide-y divide-gray-500/30">
+        {friends?.map((c) => (
+          <FriendComponent
+            // key={c.channelId} // ??
+            profile={profile}
+            friend={c}
+            //{openMUserOps}
+            //imageのモーダル
+          />
+        ))}
+          </ul> */}
+        
+
+
+        {/* <div className="absolute left-[0px] top-[84px] h-[75px] w-[500px]">
           <div className="absolute left-[80px] top-[0px] tracking-[0.1em]">
             user2
           </div>
@@ -92,48 +121,10 @@ const FriendsList: NextPage<FriendsListType> = ({
             className="absolute left-[21px] top-[0px] h-[45px] w-[45px]"
             alt=""
             src={icon2}
-            style={iconStyle}
             onClick={openMUserOps}
-          />
+          /> */}
         </div>
-        <div className="absolute left-[0px] top-[189px] h-[75px] w-[500px]">
-          <div className="absolute left-[80px] top-[0px] tracking-[0.1em]">
-            user3
-          </div>
-          <img
-            className="absolute left-[21px] top-[0px] h-[45px] w-[45px]"
-            alt=""
-            src={icon3}
-            style={iconStyle}
-            onClick={openMUserOps}
-          />
-          <img
-            className="absolute left-[0px] top-[73px] h-0.5 w-[500px]"
-            alt=""
-            src="/line-2.svg"
-          />
-        </div>
-        <div className="absolute left-[0px] top-[295px] h-[75px] w-[500px]">
-          <div className="absolute left-[80px] top-[0px] tracking-[0.1em]">
-            user4
-          </div>
-          <div className="absolute left-[80px] top-[23px] tracking-[0.1em] text-darkgray-200">
-            Online
-          </div>
-          <img
-            className="absolute left-[0px] top-[73px] h-0.5 w-[500px]"
-            alt=""
-            src="/line-2.svg"
-          />
-          <img
-            className="absolute left-[21px] top-[1px] h-[45px] w-[45px] overflow-hidden"
-            alt=""
-            src={icon4}
-            style={iconStyle}
-            onClick={openMUserOps}
-          />
-        </div>
-      </div>
+      {/* </div> */}
       {isMUserOpsOpen && (
         <ModalPopup
           overlayColor="rgba(113, 113, 113, 0.3)"
