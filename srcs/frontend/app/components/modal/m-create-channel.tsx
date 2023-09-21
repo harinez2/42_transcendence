@@ -138,88 +138,87 @@ const MCreateChannel: NextPage<MCreateChannelType> = ({
 
   return (
     <div
-      className="relative h-[410px] max-h-full w-[390px] max-w-full overflow-hidden bg-darkslategray-100 text-left font-body text-xl text-base-white"
+      className="flex-col justify-center items-center p-10 overflow-hidden bg-darkslategray-100  font-body text-xl text-base-white"
       onClick={stopPropagation}
     >
-      <div className="absolute left-[29px] top-[36px] text-5xl tracking-[0.1em]">
+      <div className="p-2 text-5xl tracking-widest">
         Create Channel
       </div>
-      <TextField
-        className="absolute left-[63px] top-[85px] bg-[transparent] [border:none]"
-        sx={{ width: 241 }}
-        color="info"
-        variant="filled"
-        type="text"
-        name="Channel name"
-        label="Channel name"
-        size="medium"
-        margin="none"
-        inputRef={inputChannelNameRef}
-        onChange={(e) => setChannelName(e.target.value)}
-      />
-      <div className="absolute left-[63px] top-[156px] tracking-[0.1em]">
-        Private
+      <div className="p-1">
+        <TextField
+          className="bg-[transparent] [border:none]"
+          sx={{ width: 240 }}
+          color="info"
+          variant="filled"
+          type="text"
+          name="Channel name"
+          label="Channel name"
+          size="medium"
+          margin="none"
+          inputRef={inputChannelNameRef}
+          onChange={(e) => setChannelName(e.target.value)}
+        />
       </div>
-      <div className="absolute left-[62px] top-[203px] tracking-[0.1em]">
-        Password
+      {/* チャンネルの公開/非公開を設定する */}
+      <div className="w-6 p-2">
+        <FormControlLabel
+          className=""
+          label="private" // private/public
+          control={
+            <Switch
+              color="info"
+              size="medium"
+              onChange={(e) => onSwitchType(e)}
+            />
+          }
+          disabled={publicityButtonDisabled}
+        />
       </div>
-      <FormControlLabel
-        className="absolute left-[248px] top-[156px]"
-        label="" // private/public
-        control={
-          <Switch
-            color="info"
-            size="medium"
-            onChange={(e) => onSwitchType(e)}
-          />
-        }
-        disabled={publicityButtonDisabled}
-      />
-      <FormControlLabel
-        className="absolute left-[247px] top-[199px]"
-        label="" // password on/off
-        control={
-          <Switch
-            color="info"
-            size="medium"
-            onChange={(e) => {
-              onSwitchPassword(e);
-            }}
-          />
-        }
-        disabled={passwordButtonDisabled}
-      />
-      <TextField
-        className="absolute left-[62px] top-[250px] bg-[transparent] [border:none]"
-        sx={{ width: 241 }}
-        color="info"
-        variant="filled"
-        type="text"
-        name="Password"
-        label="Password"
-        size="medium"
-        margin="none"
-        onChange={(e) => {
-          setChannelPassword(e.target.value);
-        }}
-        inputRef={inputPasswordRef}
-        disabled={passwordDisabled}
-      />
-      <span className="relative">
+
+      {/* チャンネルのパスワードを設定する */}
+      <div className="w-6 p-2">
+        <FormControlLabel
+          className=""
+          label="password" // password on/off
+          control={
+            <Switch
+              color="info"
+              size="medium"
+              onChange={(e) => {
+                onSwitchPassword(e);
+              }}
+            />
+          }
+          disabled={passwordButtonDisabled}
+        />
+      </div>
+
+      <div className="p-2">
+        <TextField
+          className="bg-[transparent] [border:none]"
+          sx={{ width: 241 }}
+          color="info"
+          variant="filled"
+          type="text"
+          name="Password"
+          label="Password"
+          size="medium"
+          margin="none"
+          onChange={(e) => {
+            setChannelPassword(e.target.value);
+          }}
+          inputRef={inputPasswordRef}
+          disabled={passwordDisabled}
+        />
+      </div>
+      <span>
         <button
-          className="absolute left-[62px] top-[322px] h-[41px] w-[242px] cursor-pointer bg-[transparent] p-0 [border:none]"
+          className="justify-self-center cursor-pointer py-2 px-4 [border:none] bg-gray-300 rounded-sm"
           onClick={() => createChannelAndSetChannels(channelDTO)}
         >
-          <img
-            className="absolute left-[0px] top-[0px] h-[41px] w-[242px]"
-            alt=""
-            src="/rectangle-126.svg"
-          />
-          <div className="absolute left-[26.7px] top-[7px] inline-block h-[34px] w-[203.07px] text-left font-body text-5xl tracking-[0.1em] text-base-white">
-            Create channel
-          </div>
+          Create channel
         </button>
-        <span className="absolute absolute left-[82px] top-[370px] h-[41px] w-[200px] text-center text-xs normal-case tracking-tighter">
+        <span className="h-[41px] w-[200px] text-center text-xs normal-case tracking-tighter">
           {error && <p>error: {error}</p>}
         </span>
       </span>
