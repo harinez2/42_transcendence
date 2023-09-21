@@ -138,12 +138,10 @@ const MCreateChannel: NextPage<MCreateChannelType> = ({
 
   return (
     <div
-      className="flex-col justify-center items-center p-10 overflow-hidden bg-darkslategray-100  font-body text-xl text-base-white"
+      className="flex-col items-center justify-center overflow-hidden bg-darkslategray-100 p-10  font-body text-xl text-base-white"
       onClick={stopPropagation}
     >
-      <div className="p-2 text-5xl tracking-widest">
-        Create Channel
-      </div>
+      <div className="p-2 text-5xl tracking-widest">Create Channel</div>
       <div className="p-1">
         <TextField
           className="bg-[transparent] [border:none]"
@@ -213,7 +211,7 @@ const MCreateChannel: NextPage<MCreateChannelType> = ({
       </div>
       <span>
         <button
-          className="justify-self-center cursor-pointer py-2 px-4 [border:none] bg-gray-300 rounded-sm"
+          className="cursor-pointer justify-self-center rounded-sm bg-gray-300 px-4 py-2 [border:none]"
           onClick={() => createChannelAndSetChannels(channelDTO)}
         >
           Create channel
