@@ -1,19 +1,7 @@
-import React, { useCallback, useState } from "react";
+import React from "react";
 import useModal from "../components/useModal";
-import makeAPIRequest from "../api/api";
 import { ChannelType } from "./types";
-
-type createChannelDTO = {
-  channelName: string;
-  ownerId: number;
-  channelType: Publicity;
-  password: string | null;
-};
-
-export enum Publicity {
-  PUBLIC = "PUBLIC",
-  PRIVATE = "PRIVATE",
-}
+import MCreateChannel from "../components/modal/m-create-channel";
 
 const ChannelCategory = ({
   categoryName,
@@ -37,7 +25,7 @@ const ChannelCategory = ({
         style={{ top: "30px" }}
         className="rounded-lg bg-gray-600"
       >
-        <ChannelCreateModal
+        <MCreateChannel
           closeModal={closeModal}
           channels={channels}
           setChannels={setChannels}
@@ -46,7 +34,6 @@ const ChannelCategory = ({
     </span>
   );
 };
-
 const ShowDialogButton = ({ showModal }: { showModal: () => void }) => {
   return (
     <svg
@@ -62,91 +49,6 @@ const ShowDialogButton = ({ showModal }: { showModal: () => void }) => {
         clipRule="evenodd"
       />
     </svg>
-  );
-};
-
-const ChannelCreateModal = ({
-  closeModal,
-  channels,
-  setChannels,
-}: {
-  closeModal: () => void;
-  channels: ChannelType[];
-  setChannels: (channels: ChannelType[]) => void;
-}) => {
-  const [channelName, setChannelName] = useState<string>("");
-  const [channelType, setChannelType] = useState<Publicity>(Publicity.PUBLIC);
-  const [password, setPassword] = useState<string | null>(null);
-
-  // dialog の外側をクリックしたときに閉じるために使用する
-  const stopPropagation = useCallback(
-    (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-      e.stopPropagation();
-    },
-    [],
-  );
-
-  // button を click して channel を作成する
-  // onclick に設定する
-  // channels を更新する
-  const createChannelAndSetChannels = useCallback(
-    async (createChannelDto: createChannelDTO) => {
-      makeAPIRequest<ChannelType>("post", "/chats", createChannelDto)
-        .then((result) => {
-          if (result.success) {
-            console.log("channel create success:", result.data);
-            setChannels([...channels, result.data]);
-            closeModal();
-          } else {
-            console.error(result.error);
-          }
-        })
-        .catch((err) => {
-          console.error("channel create failed:", err);
-        });
-    },
-    [channels],
-  );
-
-  // channelNameが更新されたとき dto を更新する
-  const params: createChannelDTO = {
-    channelName: channelName,
-    ownerId: 1,
-    channelType: channelType,
-    password: password,
-  };
-
-  return (
-    <div
-      onClick={stopPropagation}
-      className="flex flex-col px-6 py-2 text-white"
-    >
-      <div className="text-lg">Create Channel</div>
-      <div className="flex flex-row justify-between">
-        <div className="text-sm">Channel Name: </div>
-        <input
-          className="rounded-md bg-gray-500 px-2 text-white"
-          type="text"
-          placeholder="Channel Name"
-          value={channelName}
-          onChange={(e) => setChannelName(e.target.value)}
-        />
-      </div>
-      <div className="flex flex-row justify-end">
-        <button
-          onClick={() => createChannelAndSetChannels(params)}
-          className="m-2 rounded-md bg-gray-400 px-2 text-white"
-        >
-          Create
-        </button>
-        <button
-          onClick={closeModal}
-          className="m-2 rounded-md bg-gray-500 px-2 text-white"
-        >
-          Cancel
-        </button>
-      </div>
-    </div>
   );
 };
 

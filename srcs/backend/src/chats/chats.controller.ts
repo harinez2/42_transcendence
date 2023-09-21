@@ -1,12 +1,15 @@
 import {
   Controller,
   Get,
+  Request,
   Post,
   Put,
   Delete,
   Param,
   Body,
+  UseGuards,
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { ChatsService } from './chats.service';
 import { CreateChannelDto } from './dto/create-channel.dto';
 import { UpdateChannelDto } from './dto/update-channel.dto';
@@ -32,10 +35,14 @@ export class ChatsController {
     description: '作成したチャンネル情報を返却',
     type: ChannelInfoDto,
   })
+  @UseGuards(AuthGuard('jwt'))
   @Post()
   async createChannel(
+    @Request() req,
     @Body() createChannelDto: CreateChannelDto,
   ): Promise<ChannelInfoDto> {
+    // jwt から userID を取り出す
+    createChannelDto.ownerId = req.user.id;
     return await this.chatsService.createChannel(createChannelDto);
   }
 
