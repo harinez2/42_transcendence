@@ -123,11 +123,25 @@ export class GamesPlayGateway {
 
   // パドルの位置更新
   @SubscribeMessage('game-post_paddle_y')
-  async handleUpdatePaddleY(@MessageBody() data: any) {
-    if (data.user === 1) {
-      this.gameList[data.gameId].play.lPaddlePos.y = data.paddleY;
-    } else if (data.user === 2) {
-      this.gameList[data.gameId].play.rPaddlePos.y = data.paddleY;
+  async handleUpdatePaddleY(
+    @ConnectedSocket() socket: Socket,
+    @MessageBody() data: any,
+  ) {
+    if (this.gameList[data.gameId]) {
+      if (data.user === 1) {
+        this.gameList[data.gameId].play.lPaddlePos.y = data.paddleY;
+      } else if (data.user === 2) {
+        this.gameList[data.gameId].play.rPaddlePos.y = data.paddleY;
+      }
+    } else {
+      // すでにゲームが終わっていた場合、クライアントにemit
+      const sendData = {
+        user1Score: 0,
+        user2Score: 0,
+        isGameFinished: true,
+      };
+      console.log('gameId: ', data.gameId, ', sendData:  ', sendData);
+      socket.emit('game-update_score', sendData);
     }
   }
 
