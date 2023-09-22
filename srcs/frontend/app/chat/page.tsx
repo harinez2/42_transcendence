@@ -52,8 +52,7 @@ const ChatUI = () => {
         return c;
       });
       return newChannels;
-    }
-    )
+    });
   };
 
   useEffect(() => {
@@ -129,8 +128,7 @@ const ChatUI = () => {
     setChannels((prevChannels) => {
       const newChannels = prevChannels.filter((c) => c.channelId !== channelId);
       return newChannels;
-    }
-    )
+    });
   };
 
   return (

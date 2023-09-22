@@ -11,7 +11,12 @@ type MEditChannelType = {
   removeChannel: (channelId: number) => void;
 };
 
-const MEditChannel: NextPage<MEditChannelType> = ({ onClose, channel, setChannel, removeChannel }) => {
+const MEditChannel: NextPage<MEditChannelType> = ({
+  onClose,
+  channel,
+  setChannel,
+  removeChannel,
+}) => {
   const inputPasswordRef = useRef<HTMLInputElement>(null);
   const inputChannelNameRef = useRef<HTMLInputElement>(null);
   const [error, setError] = useState("");
@@ -42,7 +47,6 @@ const MEditChannel: NextPage<MEditChannelType> = ({ onClose, channel, setChannel
   const [passwordButtonDisabled, setPasswordButtonDisabled] =
     useState<boolean>(true);
   const [passwordDisabled, setPasswordDisabled] = useState<boolean>(true);
-
 
   // dialog の外側をクリックしたときに閉じるために使用する
   const stopPropagation = useCallback(
@@ -75,19 +79,21 @@ const MEditChannel: NextPage<MEditChannelType> = ({ onClose, channel, setChannel
   const updateChannelAndSetChannels = useCallback(
     async (channelId: number, updateChannelDto: updateChannelDTO) => {
       console.log(updateChannelDto);
-      await makeAPIRequest<ChannelType>("put", `/chats/${channelId}`, updateChannelDto)
+      await makeAPIRequest<ChannelType>(
+        "put",
+        `/chats/${channelId}`,
+        updateChannelDto,
+      )
         .then((result) => {
           if (result.success) {
             setError("");
             // DTO の値を channel に反映する
-            setChannel(
-              {
-                ...channel,
-                channelName: updateChannelDto.channelName,
-                channelType: updateChannelDto.channelType,
-                isPassword: updateChannelDto.password ? true : false,
-              }
-            );
+            setChannel({
+              ...channel,
+              channelName: updateChannelDto.channelName,
+              channelType: updateChannelDto.channelType,
+              isPassword: updateChannelDto.password ? true : false,
+            });
             // チャンネル作成後にmodalに使用するデータを初期化する
             clearModal();
             // チャンネル作成後に modal を閉じる
@@ -180,17 +186,12 @@ const MEditChannel: NextPage<MEditChannelType> = ({ onClose, channel, setChannel
     });
   };
 
-
-
-
   return (
     <div
-      className="flex-col items-center h-96 w-72 justify-center overflow-hidden bg-darkslategray-100 p-10  font-body text-xl text-base-white"
+      className="h-96 w-72 flex-col items-center justify-center overflow-hidden bg-darkslategray-100 p-10  font-body text-xl text-base-white"
       onClick={stopPropagation}
     >
-      <div className="text-5xl tracking-widest">
-        Edit Channel
-      </div>
+      <div className="text-5xl tracking-widest">Edit Channel</div>
       <TextField
         className="bg-[transparent] [border:none]"
         sx={{ width: 240 }}
@@ -241,7 +242,6 @@ const MEditChannel: NextPage<MEditChannelType> = ({ onClose, channel, setChannel
         />
       </div>
 
-
       <div className="p-2">
         <TextField
           className="bg-[transparent] [border:none]"
@@ -264,8 +264,10 @@ const MEditChannel: NextPage<MEditChannelType> = ({ onClose, channel, setChannel
       <div className="h-4 flex-col justify-between">
         <span>
           <button
-            className="cursor-pointer  rounded-sm bg-gray-300 m-2 px-4 py-2 [border:none]"
-            onClick={() => updateChannelAndSetChannels(channel.channelId, channelDTO)}
+            className="m-2  cursor-pointer rounded-sm bg-gray-300 px-4 py-2 [border:none]"
+            onClick={() =>
+              updateChannelAndSetChannels(channel.channelId, channelDTO)
+            }
           >
             Edit channel
           </button>
@@ -275,7 +277,7 @@ const MEditChannel: NextPage<MEditChannelType> = ({ onClose, channel, setChannel
         </span>
         <span>
           <button
-            className="cursor-pointer rounded-sm bg-red-500 m-2 px-4 py-2 [border:none]"
+            className="m-2 cursor-pointer rounded-sm bg-red-500 px-4 py-2 [border:none]"
             onClick={() => removeChannelAndSetChannels(channel.channelId)}
           >
             Delete channel
@@ -285,7 +287,7 @@ const MEditChannel: NextPage<MEditChannelType> = ({ onClose, channel, setChannel
           </span>
         </span>
       </div>
-    </div >
+    </div>
   );
 };
 

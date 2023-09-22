@@ -23,7 +23,7 @@ const ChannelName = ({
   const onContextMenu = (e: React.MouseEvent) => {
     e.preventDefault();
     showModal();
-  }
+  };
 
   return (
     <li>
