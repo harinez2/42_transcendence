@@ -15,13 +15,15 @@ datasource db {
 // user
 
 model User {
-  id                   Int      @id @default(autoincrement())
-  email                String   @unique
-  username             String   @unique
-  staff                Boolean  @default(false)
+  id       Int      @id @default(autoincrement())
+  username String   @unique
+  avatar   Bytes?
+  profile  Profile?
+
+  email                String  @unique
+  staff                Boolean @default(false)
   password             String?
-  profile              Profile?
-  twoFactorAuthEnabled Boolean  @default(false)
+  twoFactorAuthEnabled Boolean @default(false)
   twoFactorAuthSecret  String?
 
   followee Follow[] @relation("Followee")
@@ -165,22 +167,22 @@ model DmMessages {
 // game
 
 model GameInfo {
-  gameId          Int             @id @default(autoincrement())
-  user1           User            @relation("GameUser1", fields: [user1Id], references: [id])
-  user1Id         Int             // relation scalar field  (used in 'user1')
-  user2           User            @relation("GameUser2", fields: [user2Id], references: [id])
-  user2Id         Int             // relation scalar field  (used in 'user2')
-  gameSettings    GameSettings?
-  user1Score      Int?
-  user2Score      Int?
-  startedAt       DateTime?
-  endedAt         DateTime?
+  gameId       Int           @id @default(autoincrement())
+  user1        User          @relation("GameUser1", fields: [user1Id], references: [id])
+  user1Id      Int // relation scalar field  (used in 'user1')
+  user2        User          @relation("GameUser2", fields: [user2Id], references: [id])
+  user2Id      Int // relation scalar field  (used in 'user2')
+  gameSettings GameSettings?
+  user1Score   Int?
+  user2Score   Int?
+  startedAt    DateTime?
+  endedAt      DateTime?
 }
 
 model GameSettings {
-  id        Int       @id @default(autoincrement())
-  game      GameInfo  @relation(fields: [gameId], references: [gameId])
-  gameId    Int       @unique
+  id        Int      @id @default(autoincrement())
+  game      GameInfo @relation(fields: [gameId], references: [gameId])
+  gameId    Int      @unique
   points    Int
   isSpeedUp Boolean
 }
