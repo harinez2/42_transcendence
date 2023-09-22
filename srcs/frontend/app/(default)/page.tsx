@@ -13,7 +13,7 @@ const LoginButton = () => {
       <div className="m-5 text-center font-mono text-xl">ft_transcendence</div>
       <button
         onClick={login}
-        className="my-3 inline-block rounded bg-black px-4 py-2 text-xl text-white"
+        className="my-3 inline-block cursor-pointer rounded bg-black px-4 py-2 text-xl text-white"
       >
         Login with 42
       </button>
