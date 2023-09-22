@@ -16,12 +16,14 @@ const MEditChannel: NextPage<MEditChannelType> = ({ onClose, channel, setChannel
   const inputChannelNameRef = useRef<HTMLInputElement>(null);
   const [error, setError] = useState("");
 
+  // パスワードボタンが ON か OFF かを管理する
+  const [passwordEnabled, setPasswordEnabled] = useState<boolean>(false);
+
   const [channelDTO, setChannelDTO] = useState<updateChannelDTO>({
     channelName: channel.channelName,
     channelType: channel.channelType as Publicity,
     password: null,
   });
-
   useEffect(() => {
     // channelDTO を channel の値で更新する
     setChannelDTO({
@@ -29,10 +31,14 @@ const MEditChannel: NextPage<MEditChannelType> = ({ onClose, channel, setChannel
       channelType: channel.channelType as Publicity,
       password: null,
     });
+    setPublicityButtonDisabled(channel.isPassword);
+    setPasswordEnabled(channel.isPassword);
+    setPasswordButtonDisabled(channel.channelType === "PRIVATE" ? false : true);
   }, [channel]);
 
   const [publicityButtonDisabled, setPublicityButtonDisabled] =
     useState<boolean>(false); // [true: private, false: public
+  // パスワードボタンが disabled かどうかを管理する
   const [passwordButtonDisabled, setPasswordButtonDisabled] =
     useState<boolean>(true);
   const [passwordDisabled, setPasswordDisabled] = useState<boolean>(true);
@@ -49,15 +55,15 @@ const MEditChannel: NextPage<MEditChannelType> = ({ onClose, channel, setChannel
   // channelDTO の channelType を変更する
   const onSwitchType = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
+      setPasswordButtonDisabled(false);
       setChannelDTO((c) => {
         c.channelType = Publicity.PRIVATE;
-        setPasswordButtonDisabled(false);
         return { ...c };
       });
     } else {
+      setPasswordButtonDisabled(true);
       setChannelDTO((c) => {
         c.channelType = Publicity.PUBLIC;
-        setPasswordButtonDisabled(true);
         return { ...c };
       });
     }
@@ -79,6 +85,7 @@ const MEditChannel: NextPage<MEditChannelType> = ({ onClose, channel, setChannel
                 ...channel,
                 channelName: updateChannelDto.channelName,
                 channelType: updateChannelDto.channelType,
+                isPassword: updateChannelDto.password ? true : false,
               }
             );
             // チャンネル作成後にmodalに使用するデータを初期化する
@@ -142,9 +149,11 @@ const MEditChannel: NextPage<MEditChannelType> = ({ onClose, channel, setChannel
   const onSwitchPassword = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
       setPublicityButtonDisabled(true);
+      setPasswordEnabled(true);
       setPasswordDisabled(false);
     } else {
       setPasswordDisabled(true);
+      setPasswordEnabled(false);
       setPublicityButtonDisabled(false);
       // チェックボックスを off にしたときに password を空にする
       if (inputPasswordRef.current) {
@@ -207,7 +216,6 @@ const MEditChannel: NextPage<MEditChannelType> = ({ onClose, channel, setChannel
               color="info"
               size="medium"
               onChange={(e) => onSwitchType(e)}
-              checked={channel.channelType === "PRIVATE" ? true : false}
             />
           }
           disabled={publicityButtonDisabled}
@@ -223,10 +231,10 @@ const MEditChannel: NextPage<MEditChannelType> = ({ onClose, channel, setChannel
             <Switch
               color="info"
               size="medium"
-              checked={channel.isPassword}
               onChange={(e) => {
                 onSwitchPassword(e);
               }}
+              checked={passwordEnabled}
             />
           }
           disabled={passwordButtonDisabled}
@@ -245,7 +253,7 @@ const MEditChannel: NextPage<MEditChannelType> = ({ onClose, channel, setChannel
           label="Password"
           size="medium"
           margin="none"
-          value=""
+          value={channelDTO.password ? channelDTO.password : ""}
           onChange={(e) => {
             setChannelPassword(e.target.value);
           }}
