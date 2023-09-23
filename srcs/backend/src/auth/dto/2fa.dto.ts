@@ -1,8 +1,8 @@
-import { IsInt, IsNumberString, Length } from 'class-validator';
+import { IsNotEmpty, IsNumberString, Length } from 'class-validator';
 
 export class Login2faDto {
-  @IsInt()
-  userId: number;
+  @IsNotEmpty()
+  token: string;
 
   @IsNumberString({ no_symbols: true })
   @Length(6, 6)

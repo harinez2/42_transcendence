@@ -7,6 +7,7 @@ import { AuthController } from './auth.controller';
 import { UsersModule } from '../users/users.module';
 import { JwtStrategy } from './jwt.strategy';
 import { LoggerMiddleware } from 'src/logger.middleware';
+import { CryptoService } from './crypto.service';
 import { JWT_SECRET } from 'config';
 
 @Module({
@@ -19,7 +20,7 @@ import { JWT_SECRET } from 'config';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, FortyTwoStrategy, JwtStrategy],
+  providers: [AuthService, FortyTwoStrategy, JwtStrategy, CryptoService],
   exports: [AuthService],
 })
 export class AuthModule {
