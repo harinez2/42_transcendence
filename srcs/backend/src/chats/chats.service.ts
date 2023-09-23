@@ -26,11 +26,6 @@ export class ChatsService {
       : null;
 
     try {
-      if (!this.validChannelName(createChannelDto.channelName)) {
-        throw new BadRequestException(
-          'Channel name must be 1 to 16 characters long and can only contain alphanumeric characters, hyphens, and underscores.',
-        );
-      }
       // ChatChannelsテーブルとChatChannelUsersテーブルを同時に更新
       const createdPost = await this.prisma.chatChannelUsers.create({
         data: {
@@ -100,11 +95,6 @@ export class ChatsService {
       : null;
 
     try {
-      if (!this.validChannelName(updateChannelDto.channelName)) {
-        throw new BadRequestException(
-          'Channel name must be 1 to 16 characters long and can only contain alphanumeric characters, hyphens, and underscores.',
-        );
-      }
       const post = await this.prisma.chatChannels.update({
         where: { channelId: channelId },
         data: {
@@ -430,15 +420,6 @@ export class ChatsService {
     if (query) return true;
     else return false;
   }
-
-  private validChannelName: (channelName: string) => boolean = (
-    channelName,
-  ) => {
-    // 1文字以上16文字以下で、英数字とハイフン、アンダースコアのみを許可
-    const reg = /^[a-zA-Z0-9_-]{1,16}$/;
-
-    return reg.test(channelName);
-  };
 
   private async createChannelInfoDto(post: any): Promise<ChannelInfoDto> {
     const owner = await this.prisma.chatChannelUsers.findFirst({
