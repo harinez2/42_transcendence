@@ -1,7 +1,9 @@
-export type FriendsType = {
-    id: number;
-    username: string;
-    status: string;
-    // image: ?;
-};
-
+export type FolloweeType = {
+  id: number;
+  email: string;
+  username: string;
+  staff: boolean;
+  password: string;
+  twoFactorAuthEnabled: boolean;
+  twoFactorAuthSecret: string;
+}
