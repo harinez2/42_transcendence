@@ -7,7 +7,7 @@ import FriendsMenu from "@/app/components/friendsmenu";
 
 const FriendsPage = () => {
   return (
-    <div className="relative h-screen w-full overflow-auto bg-darkslategray-100">
+    <div className="relative h-screen w-full overflow-y-auto bg-darkslategray-100">
       <HeaderMenu />
         <FriendsMenu />
         <FriendsList />
