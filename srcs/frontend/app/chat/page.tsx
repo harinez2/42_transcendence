@@ -13,6 +13,7 @@ import { ProfileType } from "../types";
 import ChannelCategory from "./channel_category";
 import UserStatusCategory from "./user_status_category";
 import HeaderMenu from "../components/headermenu";
+import MessageList from "./messages";
 
 const ChatUI = () => {
   const Users: Array<User> = [
@@ -124,6 +125,15 @@ const ChatUI = () => {
     socket?.emit("chat-getPastMessages", { channelId: channel.channelId });
   };
 
+  // メッセージ発言ハンドラ
+  const handleSendMessage = (channel: ChannelType, message: string) => {
+    socket?.emit("chat-message", {
+      channelId: channel.channelId,
+      senderId: profile?.userId,
+      content: message,
+    });
+  };
+
   const removeChannel = (channelId: number) => {
     setChannels((prevChannels) => {
       const newChannels = prevChannels.filter((c) => c.channelId !== channelId);
@@ -135,11 +145,6 @@ const ChatUI = () => {
     <>
       <div className="relative h-screen w-full bg-darkslategray-100 text-left font-body text-xl text-base-white">
         <HeaderMenu />
-        {/* <aside
-          id="separator-sidebar"
-          // className="left-0 top-0 z-40 h-screen w-64 translate-x-0 transition-transform"
-          aria-label="Sidebar"
-        > */}
         <div className="absolute left-[0px] top-[100px] h-[calc(100%_-_131px)] w-64 shrink-0 bg-darkslategray-200 px-3 py-4 ">
           <ChannelCategory
             categoryName="Channels"
@@ -158,19 +163,12 @@ const ChatUI = () => {
             ))}
           </ul>
         </div>
-        {/* </aside> */}
-        <div className="container bg-darkslategray-100">
-          <div className="grow flex-col-reverse divide-y divide-gray-500/30 px-4">
-            {messages?.map((message: MessageType) => (
-              <MessageComponent key={message.channelId} message={message} />
-            ))}
-          </div>
-        </div>
-        {/* <aside
-          id="separator-sidebar"
-          // className="w-64 shrink-0 translate-x-0 transition-transform "
-          aria-label="Sidebar"
-        > */}
+        <MessageList
+          channel={selectedChannel}
+          messages={messages}
+          onSendMessage={handleSendMessage}
+        />
+        {error != null && <p>{error}</p>}
         <div className="absolute right-[0px] top-[100px] h-[calc(100%_-_131px)] w-64 shrink-0 bg-darkslategray-200 px-3 py-4">
           <UserStatusCategory categoryName="online" />
           <ul className="space-y-2 font-medium">
@@ -185,7 +183,6 @@ const ChatUI = () => {
             ))}
           </ul>
         </div>
-        {/* </aside> */}
       </div>
     </>
   );
