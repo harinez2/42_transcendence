@@ -11,7 +11,6 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { UserType } from './chats.interface';
 // import { Publicity, UserType } from './chats.interface';
 import { hash } from 'bcrypt';
-import { channel } from 'diagnostics_channel';
 
 @Injectable()
 export class ChatsService {
