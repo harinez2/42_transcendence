@@ -26,22 +26,20 @@ const FriendComponent = ({ followee }: {
     <>
       <div>
         <a
-          href="#"
-          className="group flex items-center rounded-lg p-2 text-white"
+          className="flex items-center rounded-lg p-4 text-white"
         >
           <img
             src="http://localhost:3000/favicon.ico"
-            className="h-auto max-w-full rounded-full"
+            className="h-auto max-w-full rounded-full cursor-pointer"
             width={45}
             height={45}
             alt=""
             onClick={openMUserOps}
-            cursor-pointer
           /> 
-          <div className="ml-3 shrink-0 pr-8 text-xl">
+          <div className="ml-3 flex-shrink-0 pr-8 text-xl">
             {followee.username}
               <div className="tracking-[0.1em] text-darkgray-200">
-            offline
+            offline 
           </div>
           </div>
         </a>
@@ -92,7 +90,7 @@ const FriendsList = () => {
             followee={followee}
           />
         ))}
-        </ul> 
+        </ul>
         </div>
     </>
   );
