@@ -7,8 +7,9 @@ CREATE TYPE "UserType" AS ENUM ('OWNER', 'ADMIN', 'USER');
 -- CreateTable
 CREATE TABLE "User" (
     "id" SERIAL NOT NULL,
-    "email" TEXT NOT NULL,
     "username" TEXT NOT NULL,
+    "avatar" BYTEA,
+    "email" TEXT NOT NULL,
     "staff" BOOLEAN NOT NULL DEFAULT false,
     "password" TEXT,
     "twoFactorAuthEnabled" BOOLEAN NOT NULL DEFAULT false,
@@ -139,10 +140,10 @@ CREATE TABLE "GameSettings" (
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
+CREATE UNIQUE INDEX "User_username_key" ON "User"("username");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "User_username_key" ON "User"("username");
+CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Profile_userId_key" ON "Profile"("userId");
