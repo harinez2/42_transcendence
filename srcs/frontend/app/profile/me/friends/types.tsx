@@ -13,3 +13,9 @@ export type StatusType = {
   socketId: string;
   status: string;
 }
+
+export type ProfileType = {
+  id: number;
+  bio: string;
+  userId: number;
+};

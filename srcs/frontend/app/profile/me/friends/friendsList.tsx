@@ -9,8 +9,8 @@ import { ProfileContext } from "@/app/layout";
 import makeAPIRequest from "@/app/api/api";
 import { FolloweeType, StatusType } from "./types";
 
-const FriendComponent = ({ profile, followee }: {
-  profile: ProfileType;
+const FriendComponent = ({ followee }: {
+  // profile: ProfileType;
   followee: FolloweeType;
 }
   ) => {
@@ -24,6 +24,8 @@ const FriendComponent = ({ profile, followee }: {
   }, []);
 
   const [status_variable, setStatus] = useState<StatusType>();
+
+  const [profile, setProfile] = useState<ProfileType>();
 
    useEffect(() => {
     if (followee.id) {
@@ -40,13 +42,39 @@ const FriendComponent = ({ profile, followee }: {
           console.error("Error:", error.message);
         });
     }
-  }, [followee]); 
+   }, [followee]); 
+   
+  useEffect(() => {
+    if (status_variable) {
+      // アイコン画像を取得
+      makeAPIRequest<ProfileType>("get", `/profiles/${status_variable.userId}`)
+        .then((result) => {
+          if (result.success) {
+            setProfile(result.data);;
+          } else {
+            console.error(result.error);
+          }
+        })
+        .catch((error) => {
+          console.error("Error:", error.message);
+        });
+    }
+  }, [status_variable]); 
 
+  //ダミーユーザーはstatusが反映されていなので、初期設定をofflineにする
   const status1 = () => {
     if (status_variable && status_variable.status !== "") {
       return status_variable.status;
     } else {
-      return "Offline";
+      return "offline";
+    }
+  }
+  
+  const icon = () => {
+    if (profile && profile.bio !== "") {
+      return profile.bio;
+    } else {
+      return "http://localhost:3000/favicon.ico";
     }
   }
 
@@ -57,7 +85,7 @@ const FriendComponent = ({ profile, followee }: {
           className="flex items-center rounded-lg p-4 text-white"
         >
           <img
-            src="http://localhost:3000/favicon.ico"
+            src={icon()}
             className="h-auto max-w-full rounded-full cursor-pointer"
             width={45}
             height={45}
@@ -115,7 +143,7 @@ const FriendsList = () => {
         {followees?.map((followee) => (
           <FriendComponent
             key={followee.id}
-            profile={profile}
+            // profile={profile}
             followee={followee}
           />
         ))}
