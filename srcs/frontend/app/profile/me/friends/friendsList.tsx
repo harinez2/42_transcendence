@@ -7,9 +7,10 @@ import { useState, useCallback } from "react";
 import { ProfileType } from "@/app/types";
 import { ProfileContext } from "@/app/layout";
 import makeAPIRequest from "@/app/api/api";
-import { FolloweeType } from "./types";
+import { FolloweeType, StatusType } from "./types";
 
-const FriendComponent = ({ followee }: {
+const FriendComponent = ({ profile, followee }: {
+  profile: ProfileType;
   followee: FolloweeType;
 }
   ) => {
@@ -21,6 +22,32 @@ const FriendComponent = ({ followee }: {
   const closeMUserOps = useCallback(() => {
     setMUserOpsOpen(false);
   }, []);
+
+  const [status, setStatus] = useState<StatusType>();
+
+   useEffect(() => {
+    if (profile.userId != "") {
+      // status一覧を取得
+      makeAPIRequest<StatusType>("get", `/status`)
+        .then((result) => {
+          if (result.success) {
+            setStatus(result.data);;
+          } else {
+            console.error(result.error);
+          }
+        })
+        .catch((error) => {
+          console.error("Error:", error.message);
+        });
+    }
+  }, [profile]); 
+
+  // const status1 = () => {
+  //   if (status?.status != "")
+  //     return status?.status;
+  //   else
+  //     return "Offline";
+  // }
 
   return (
     <>
@@ -37,9 +64,9 @@ const FriendComponent = ({ followee }: {
             onClick={openMUserOps}
           /> 
           <div className="ml-3 flex-shrink-0 pr-8 text-xl">
-            {followee.username}
+            {followee?.username}
               <div className="tracking-[0.1em] text-darkgray-200">
-            offline 
+              {/* {status1} */}
           </div>
           </div>
         </a>
@@ -87,6 +114,7 @@ const FriendsList = () => {
         {followees?.map((followee) => (
           <FriendComponent
             key={followee.id}
+            profile={profile}
             followee={followee}
           />
         ))}

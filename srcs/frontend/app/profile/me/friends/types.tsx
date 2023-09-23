@@ -7,3 +7,9 @@ export type FolloweeType = {
   twoFactorAuthEnabled: boolean;
   twoFactorAuthSecret: string;
 }
+
+export type StatusType = {
+  userId: number;
+  socketId: string;
+  status: string;
+}
