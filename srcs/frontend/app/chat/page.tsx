@@ -143,45 +143,50 @@ const ChatUI = () => {
 
   return (
     <>
-      <div className="relative h-screen w-full bg-darkslategray-100 text-left font-body text-xl text-base-white">
+      <div className="h-screen w-full bg-darkslategray-100 text-left font-body text-xl text-base-white">
         <HeaderMenu />
-        <div className="absolute left-[0px] top-[100px] h-[calc(100%_-_131px)] w-64 shrink-0 bg-darkslategray-200 px-3 py-4 ">
-          <ChannelCategory
-            categoryName="Channels"
-            channels={channels}
-            setChannels={setChannels}
+        {/* // 3つのdivを横に並べる */}
+        <div className="relative top-[100px] flex h-[calc(100%_-_132px)] w-full flex-row">
+          {/* header の高さ 132px 分だけずらす */}
+          <div className="fixed h-[calc(100%_-_132px)] w-64 shrink-0 overflow-scroll bg-darkslategray-200 px-3 py-4">
+            {/* divの幅は64 */}
+            <ChannelCategory
+              categoryName="Channels"
+              channels={channels}
+              setChannels={setChannels}
+            />
+            <ul className="space-y-2 font-medium">
+              {channels?.map((channel: ChannelType) => (
+                <ChannelName
+                  key={channel.channelId}
+                  channel={channel}
+                  setChannel={updateChannel}
+                  onSelectChannel={handleChannelSelect}
+                  removeChannel={removeChannel}
+                />
+              ))}
+            </ul>
+          </div>
+          <MessageList
+            channel={selectedChannel}
+            messages={messages}
+            onSendMessage={handleSendMessage}
           />
-          <ul className="space-y-2 font-medium">
-            {channels?.map((channel: ChannelType) => (
-              <ChannelName
-                key={channel.channelId}
-                channel={channel}
-                setChannel={updateChannel}
-                onSelectChannel={handleChannelSelect}
-                removeChannel={removeChannel}
-              />
-            ))}
-          </ul>
-        </div>
-        <MessageList
-          channel={selectedChannel}
-          messages={messages}
-          onSendMessage={handleSendMessage}
-        />
-        {error != null && <p>{error}</p>}
-        <div className="absolute right-[0px] top-[100px] h-[calc(100%_-_131px)] w-64 shrink-0 bg-darkslategray-200 px-3 py-4">
-          <UserStatusCategory categoryName="online" />
-          <ul className="space-y-2 font-medium">
-            {Users.map((u) => (
-              <UserComponent key={u.id} user={u} />
-            ))}
-          </ul>
-          <ul className="mt-4 space-y-2 border-t border-gray-700 pt-4 font-medium">
-            <UserStatusCategory categoryName="offline" />
-            {Users.map((u) => (
-              <UserComponent key={u.id} user={u} />
-            ))}
-          </ul>
+          {error != null && <p>{error}</p>}
+          <div className="h-full w-48 flex-none bg-darkslategray-200 px-3 py-4">
+            <UserStatusCategory categoryName="online" />
+            <ul className="space-y-2 font-medium">
+              {Users.map((u) => (
+                <UserComponent key={u.id} user={u} />
+              ))}
+            </ul>
+            <ul className="mt-4 space-y-2 border-t border-gray-700 pt-4 font-medium">
+              <UserStatusCategory categoryName="offline" />
+              {Users.map((u) => (
+                <UserComponent key={u.id} user={u} />
+              ))}
+            </ul>
+          </div>
         </div>
       </div>
     </>
