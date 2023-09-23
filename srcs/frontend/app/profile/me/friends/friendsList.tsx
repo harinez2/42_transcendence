@@ -23,12 +23,12 @@ const FriendComponent = ({ profile, followee }: {
     setMUserOpsOpen(false);
   }, []);
 
-  const [status, setStatus] = useState<StatusType>();
+  const [status_variable, setStatus] = useState<StatusType>();
 
    useEffect(() => {
-    if (profile.userId != "") {
-      // status一覧を取得
-      makeAPIRequest<StatusType>("get", `/status`)
+    if (followee.id) {
+      // statusを取得
+      makeAPIRequest<StatusType>("get", `/status/${followee.id}`)
         .then((result) => {
           if (result.success) {
             setStatus(result.data);;
@@ -40,14 +40,15 @@ const FriendComponent = ({ profile, followee }: {
           console.error("Error:", error.message);
         });
     }
-  }, [profile]); 
+  }, [followee]); 
 
-  // const status1 = () => {
-  //   if (status?.status != "")
-  //     return status?.status;
-  //   else
-  //     return "Offline";
-  // }
+  const status1 = () => {
+    if (status_variable && status_variable.status !== "") {
+      return status_variable.status;
+    } else {
+      return "Offline";
+    }
+  }
 
   return (
     <>
@@ -66,7 +67,7 @@ const FriendComponent = ({ profile, followee }: {
           <div className="ml-3 flex-shrink-0 pr-8 text-xl">
             {followee?.username}
               <div className="tracking-[0.1em] text-darkgray-200">
-              {/* {status1} */}
+              {status1()}
           </div>
           </div>
         </a>
@@ -125,3 +126,5 @@ const FriendsList = () => {
 };
 
 export default FriendsList;
+
+
