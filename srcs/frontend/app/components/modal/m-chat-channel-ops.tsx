@@ -5,32 +5,52 @@ import type { NextPage } from "next";
 import { useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { UserProps } from "@/app/chat/user";
+import { ChannelType } from "@/app/chat/types";
+import makeAPIRequest from "@/app/api/api";
+import { userAgent } from "next/server";
 
 type MChatChannelOpsType = {
   onClose?: () => void;
   user: UserProps['user'];
+  channel: ChannelType | null;
 };
 
-export const MChatChannelOps: NextPage<MChatChannelOpsType> = (params) => {
+export const MChatChannelOps: NextPage<MChatChannelOpsType> = (props) => {
   const router = useRouter();
 
-  const onChannelOpsSetClick = useCallback(() => {
+  const onClickKick = useCallback(() => {
+    // makeAPIRequest<ChannelType>("delete", `/chats/${props.channel?.channelId}/users`, {"userId": props.user.id})
+    //   .then((result) => {
+    //     if (!result.success) {
+    //       console.error(result.error);
+    //     }
+    //   })
+    //   .catch((error) => {
+    //     console.error("Error:", error.message);
+    //   });
+  }, [router]);
+
+  const onClickBan = useCallback(() => {
     router.push("/chat");
   }, [router]);
 
-  const onAddAdminClick = useCallback(() => {
+  const onClickMute = useCallback(() => {
+    router.push("/chat");
+  }, [router]);
+
+  const onClickAddAdmin = useCallback(() => {
     router.push("/chat");
   }, [router]);
 
   return (
     <div className="relative h-[485px] max-h-full w-[390px] max-w-full overflow-hidden bg-darkslategray-100 text-left font-body text-5xl text-base-white">
       <div className="absolute left-[41px] top-[38px] tracking-[0.1em]">
-        Channel ops for {params.user.nickname}
+        Channel ops for {props.user.nickname}
       </div>
 
       <button
         className="absolute left-[59px] top-[102px] h-[41px] w-[241px] cursor-pointer bg-[transparent] p-0 [border:none]"
-        onClick={onAddAdminClick}
+        onClick={onClickKick}
       >
         <img
           className="absolute left-[0px] top-[0px] h-[41px] w-[241px]"
@@ -44,7 +64,7 @@ export const MChatChannelOps: NextPage<MChatChannelOpsType> = (params) => {
 
       <button
         className="absolute left-[59px] top-[202px] h-[41px] w-[241px] cursor-pointer bg-[transparent] p-0 [border:none]"
-        onClick={onAddAdminClick}
+        onClick={onClickBan}
       >
         <img
           className="absolute left-[0px] top-[0px] h-[41px] w-[241px]"
@@ -58,7 +78,7 @@ export const MChatChannelOps: NextPage<MChatChannelOpsType> = (params) => {
 
       <button
         className="absolute left-[59px] top-[302px] h-[41px] w-[241px] cursor-pointer bg-[transparent] p-0 [border:none]"
-        onClick={onAddAdminClick}
+        onClick={onClickMute}
       >
         <img
           className="absolute left-[0px] top-[0px] h-[41px] w-[241px]"
@@ -72,7 +92,7 @@ export const MChatChannelOps: NextPage<MChatChannelOpsType> = (params) => {
 
       <button
         className="absolute left-[59px] top-[400px] h-[41px] w-[241px] cursor-pointer bg-[transparent] p-0 [border:none]"
-        onClick={onAddAdminClick}
+        onClick={onClickAddAdmin}
       >
         <img
           className="absolute left-[0px] top-[0px] h-[41px] w-[241px]"

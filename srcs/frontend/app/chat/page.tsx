@@ -152,13 +152,13 @@ const ChatUI = () => {
           <UserStatusCategory categoryName="online" />
           <ul className="space-y-2 font-medium">
             {Users.map((u) => (
-              <UserComponent key={u.id} user={u} />
+              <UserComponent key={u.id} user={u} channel={selectedChannel} />
             ))}
           </ul>
           <ul className="mt-4 space-y-2 border-t border-gray-700 pt-4 font-medium">
             <UserStatusCategory categoryName="offline" />
             {Users.map((u) => (
-              <UserComponent key={u.id} user={u} />
+              <UserComponent key={u.id} user={u} channel={selectedChannel} />
             ))}
           </ul>
         </div>

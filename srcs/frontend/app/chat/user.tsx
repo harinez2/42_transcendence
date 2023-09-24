@@ -4,6 +4,7 @@ import React, { useCallback } from "react";
 import useModal from "../components/useModal";
 import Link from "next/link";
 import MChatChannelOps from "../components/modal/m-chat-channel-ops";
+import { ChannelType } from "./types";
 
 export type User = {
   id: number;
@@ -12,9 +13,10 @@ export type User = {
 };
 export interface UserProps {
   user: User;
+  channel: ChannelType | null;
 }
 
-const UserComponent = ({ user }: UserProps) => {
+const UserComponent = (props: UserProps) => {
   const { ref, showModal, closeModal } = useModal();
 
   const stopPropagation = useCallback(
@@ -37,7 +39,7 @@ const UserComponent = ({ user }: UserProps) => {
           height={30}
           alt=""
         />
-        <span className="ml-3 shrink-0 pr-8 text-black">{user.nickname}</span>
+        <span className="ml-3 shrink-0 pr-8 text-black">{props.user.nickname}</span>
       </button>
       <dialog
         onClick={closeModal}
@@ -48,7 +50,7 @@ const UserComponent = ({ user }: UserProps) => {
         <UserDialog closeModal={closeModal} stopPropagation={stopPropagation} />
       </dialog>
 
-      <ShowSettingComponent user={user} />
+      <ShowSettingComponent user={props.user} channel={props.channel} />
 
     </div>
   );
@@ -93,7 +95,7 @@ const UserDialog = ({ closeModal, stopPropagation }: any) => {
   );
 };
 
-const ShowSettingComponent = ({ user }: UserProps) => {
+const ShowSettingComponent = (props: UserProps) => {
   const { ref, showModal, closeModal } = useModal();
   return (
     <>
@@ -109,7 +111,7 @@ const ShowSettingComponent = ({ user }: UserProps) => {
         style={{ top: "30px" }}
         className="rounded-lg bg-darkslategray-100 px-6 py-2"
       >
-        <MChatChannelOps onClose={closeModal} user={user}/>
+        <MChatChannelOps onClose={closeModal} user={props.user} channel={props.channel} />
       </dialog>
     </>
   );
