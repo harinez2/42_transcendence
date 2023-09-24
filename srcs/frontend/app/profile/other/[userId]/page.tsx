@@ -1,7 +1,10 @@
+"use client";
+
 import ProfileOtherPage from "./profile-other-page";
-import React from "react";
+import React, { useContext, useEffect } from "react";
 import { ProfileType } from "../../../types";
 import { getAllProfile } from "@/app/api/api";
+import { SocketContext } from "@/app/layout";
 
 export const dynamicParams = false;
 
@@ -14,6 +17,16 @@ export const dynamicParams = false;
 
 const ProfileOther = async ({ params }: any) => {
   const { userId } = params;
+  const socket: any = useContext(SocketContext);
+
+  useEffect(() => {
+    if (socket) {
+      // オンラインを申告
+      console.log("sent status-switch_to_online: socketId=", socket?.id);
+      socket?.emit("status-switch_to_online");
+    }
+  }, [socket]);
+
   return <ProfileOtherPage userId={userId} />;
 };
 
