@@ -24,11 +24,6 @@ const ChannelName = ({
     onSelectChannel(channel);
   };
 
-  const onContextMenu = (e: React.MouseEvent) => {
-    e.preventDefault();
-    showModal();
-  };
-
   return (
     <li className="h-12 rounded-lg hover:bg-gray-700">
       <a href="#" className="text-white" onClick={handleClick}>
@@ -49,7 +44,7 @@ const ChannelName = ({
                 width={24}
                 height={24}
                 alt=""
-                onClick={onContextMenu}
+                onClick={showModal}
               />
             </Tooltip>
           )}
