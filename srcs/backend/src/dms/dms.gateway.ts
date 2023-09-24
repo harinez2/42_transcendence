@@ -8,8 +8,7 @@ import {
 import { Socket } from 'socket.io';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { AddMessageDto } from '../chats/dto/add-message.dto';
-import { MessageDto } from '../chats/dto/message.dto';
-import { NotFoundException } from '@nestjs/common';
+import { DmsService } from './dms.service';
 
 @WebSocketGateway({
   cors: {
@@ -17,7 +16,10 @@ import { NotFoundException } from '@nestjs/common';
   },
 })
 export class DmsGateway {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private readonly dmsService: DmsService,
+  ) {}
 
   // 入室
   @SubscribeMessage('dm-join')
@@ -78,30 +80,15 @@ export class DmsGateway {
         },
       });
       // MessageDtoを作成
-      const addedMessage = await this.findMessageById(createdMessage.messageId);
+      const addedMessage = await this.dmsService.findMessageById(
+        createdMessage.messageId,
+      );
       // メッセージをブロードキャスト(自分以外)
       socket.to('dm_' + data.channelId).emit('dm-message', addedMessage);
       // メッセージを自分にも送信
       socket.emit('dm-message', addedMessage);
     } catch (e) {
       throw new WsException(e.message);
-    }
-  }
-
-  //-------------------------------------------------------------------------
-
-  private async findMessageById(messageId: number): Promise<MessageDto> {
-    try {
-      const message: MessageDto = await this.prisma.dmMessages.findUnique({
-        where: { messageId: messageId },
-        include: { sender: true },
-      });
-      if (!message) {
-        throw new NotFoundException();
-      }
-      return message;
-    } catch (e) {
-      throw this.prisma.handleError(e);
     }
   }
 }

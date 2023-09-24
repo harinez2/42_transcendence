@@ -8,6 +8,12 @@ export enum OnlineStatus {
   GAMING = 'gaming',
 }
 
+export type StatusType = {
+  userId: number;
+  socketId: string;
+  status: string;
+};
+
 @Injectable()
 @ApiTags('status')
 export class StatusService {
@@ -82,5 +88,11 @@ export class StatusService {
           `socket.id: ${s.socket.id}, status: ${s.status}`,
       );
     });
+  }
+
+  findById(userId: number): StatusType | null {
+    const list: StatusType[] = this.getStatusList();
+    const found = list.find((element) => element.userId === Number(userId));
+    return found || null;
   }
 }

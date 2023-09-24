@@ -1,73 +1,148 @@
 "use client";
 
 import React from "react";
-import type { NextPage } from "next";
 
-const FriendsBlockedList: NextPage = () => {
+import { useContext, useEffect } from "react";
+import MUserOps from "../../../components/modal/m-user-ops";
+import ModalPopup from "../../../components/modal/modal-popup";
+import { useState, useCallback } from "react";
+import { ProfileType } from "@/app/types";
+import { ProfileContext } from "@/app/layout";
+import makeAPIRequest from "@/app/api/api";
+import { StatusType, UserType } from "./types";
+
+const BlockedComponent = ({ blocked }: { blocked: UserType }) => {
+  const [isMUserOpsOpen, setMUserOpsOpen] = useState(false);
+  const openMUserOps = useCallback(() => {
+    setMUserOpsOpen(true);
+  }, []);
+
+  const closeMUserOps = useCallback(() => {
+    setMUserOpsOpen(false);
+  }, []);
+
+  const [status_variable, setStatus] = useState<StatusType>();
+  const [user, setUser] = useState<UserType>();
+
+  useEffect(() => {
+    if (blocked.id) {
+      // statusを取得
+      makeAPIRequest<StatusType>("get", `/status/${blocked.id}`)
+        .then((result) => {
+          if (result.success) {
+            setStatus(result.data);
+          } else {
+            console.error(result.error);
+          }
+        })
+        .catch((error) => {
+          console.error("Error:", error.message);
+        });
+    }
+  }, [blocked]);
+
+  useEffect(() => {
+    if (status_variable) {
+      // アイコン画像を取得
+      makeAPIRequest<UserType>("get", `/users/${status_variable.userId}`)
+        .then((result) => {
+          if (result.success) {
+            setUser(result.data);
+          } else {
+            console.error(result.error);
+          }
+        })
+        .catch((error) => {
+          console.error("Error:", error.message);
+        });
+    }
+  }, [status_variable]);
+
+  //offlineの場合はstatusが反映されていなのでステータスをofflineに設定
+  const status1 = () => {
+    if (status_variable && status_variable.status !== "") {
+      return status_variable.status;
+    } else {
+      return "offline";
+    }
+  };
+
+  const icon = () => {
+    if (user && user.avatar) {
+      return `http://localhost:3000/api/users/avatar/${status_variable?.userId}`;
+    } else {
+      return "http://localhost:3000/favicon.ico";
+    }
+  };
+
   return (
     <>
-      <div className="absolute left-[5px] top-[50px] flex h-[219px] flex-col items-center justify-center gap-[5px]">
-        <div className="relative h-[107px] w-[505px] shrink-0 overflow-hidden">
-          <div className="absolute bottom-[0%] left-[0.2%] right-[0.79%] top-[29.25%] h-[70.76%] w-[99.01%]">
-            <div className="absolute left-[15.45%] top-[0%] inline-block h-[30.67%] w-[11.79%] tracking-[0.1em]">
-              user5
+      <div>
+        <a className="flex items-center rounded-lg p-4 text-white">
+          <img
+            src={icon()}
+            className="h-auto max-w-full cursor-pointer rounded-full"
+            width={45}
+            height={45}
+            alt=""
+            onClick={openMUserOps}
+          />
+          <div className="ml-3 shrink-0 pr-8 text-xl">
+            {blocked?.username}
+            <div className="tracking-[0.1em] text-darkgray-200">
+              {status1()}
             </div>
-            <div className="absolute left-[15.45%] top-[30.67%] inline-block h-[30.67%] w-[13.62%] tracking-[0.1em] text-darkgray-200">
-              Online
-            </div>
-            <img
-              className="absolute bottom-[40%] left-[3.46%] right-[87.4%] top-[0%] h-3/5 max-h-full w-[9.14%] max-w-full overflow-hidden"
-              alt=""
-              src="/icon3.svg"
-            />
-            <img
-              className="absolute bottom-[0.01%] left-[calc(50%_-_250px)] top-[97.34%] h-[2.65%] max-h-full w-[500px]"
-              alt=""
-              src="/line-22.svg"
-            />
+          </div>
+        </a>
+      </div>
+      {isMUserOpsOpen && (
+        <ModalPopup
+          overlayColor="rgba(113, 113, 113, 0.3)"
+          placement="Centered"
+          onOutsideClick={closeMUserOps}
+        >
+          <MUserOps onClose={closeMUserOps} />
+        </ModalPopup>
+      )}
+    </>
+  );
+};
 
-            <button className="absolute right-[10px] top-[1.71px] h-[41px] w-[185px] cursor-pointer bg-[transparent] p-0 [border:none]">
-              <img
-                className="absolute right-[0px] top-[0px] h-[41px] w-[185px]"
-                alt=""
-                src="/rectangle-125.svg"
-              />
-              <div className="absolute right-[6px] top-[11px] inline-block h-[25px] w-[161px] text-left font-body text-base tracking-[0.1em] text-base-white">
-                Unblock this user
-              </div>
-            </button>
-          </div>
-        </div>
-        <div className="relative h-[107px] w-[504px] shrink-0 overflow-hidden">
-          <div className="absolute bottom-[0%] left-[0%] right-[0.79%] top-[29.91%] h-[70.1%] w-[99.21%]">
-            <div className="absolute left-[15.62%] top-[0%] inline-block w-[11.76%] tracking-[0.1em]">
-              user6
-            </div>
-            <img
-              className="absolute bottom-[40%] left-[18px] top-[0%] h-3/5 max-h-full w-[45px]"
-              alt=""
-              src="/icon4.svg"
-            />
-            <img
-              className="absolute bottom-[0.01%] left-[calc(50%_-_250px)] top-[97.33%] h-[2.67%] max-h-full w-[500px]"
-              alt=""
-              src="/line-22.svg"
-            />
-            <button className="absolute right-[10px] top-[2px] h-[41px] w-[185px] cursor-pointer bg-[transparent] p-0 [border:none]">
-              <img
-                className="absolute right-[0px] top-[0px] h-[41px] w-[185px]"
-                alt=""
-                src="/rectangle-1211.svg"
-              />
-              <div className="absolute right-[6px] top-[11px] inline-block h-[25px] w-[161px] text-left font-body text-base tracking-[0.1em] text-base-white">
-                Unblock this user
-              </div>
-            </button>
-          </div>
-        </div>
+const BlockedList = () => {
+  const profile: ProfileType = useContext(ProfileContext);
+  const [blockeds, setBlockeds] = useState<UserType[]>([]);
+
+  useEffect(() => {
+    if (profile.userId != "") {
+      // Blockeds一覧を取得
+      makeAPIRequest<UserType[]>(
+        "get",
+        `/friends/block/blockeds/${profile.userId}`,
+      )
+        .then((result) => {
+          if (result.success) {
+            setBlockeds(result.data);
+          } else {
+            console.error(result.error);
+          }
+        })
+        .catch((error) => {
+          console.error("Error:", error.message);
+        });
+    }
+  }, [profile]);
+
+  return (
+    <>
+      <div className="absolute left-[470px] top-[400px] text-left text-xl ">
+        <ul className="border-b-8">
+          {blockeds?.map((blocked) => (
+            <BlockedComponent key={blocked.id} blocked={blocked} />
+          ))}
+        </ul>
       </div>
     </>
   );
 };
 
-export default FriendsBlockedList;
+export default BlockedList;

@@ -6,11 +6,12 @@ import { GamesController } from './games.controller';
 import { PrismaModule } from '../prisma/prisma.module';
 import { UsersModule } from '../users/users.module';
 import { StatusModule } from 'src/status/status.module';
+import { DmsModule } from 'src/dms/dms.module';
 
 @Module({
   providers: [GamesMatchingGateway, GamesPlayGateway, GamesService],
   controllers: [GamesController],
-  imports: [PrismaModule, UsersModule, StatusModule],
+  imports: [PrismaModule, UsersModule, StatusModule, DmsModule],
   exports: [GamesMatchingGateway],
 })
 export class GamesModule {}

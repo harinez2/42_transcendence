@@ -8,5 +8,6 @@ import { PrismaModule } from '../prisma/prisma.module';
   providers: [DmsGateway, DmsService],
   controllers: [DmsController],
   imports: [PrismaModule],
+  exports: [DmsService],
 })
 export class DmsModule {}
