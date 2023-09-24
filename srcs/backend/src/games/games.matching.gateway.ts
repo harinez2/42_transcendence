@@ -6,10 +6,14 @@ import {
 } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { GameAllType, GameInfoType } from './games.interface';
+import { GameAllType, GameInfoType, WaitStatus } from './games.interface';
 import { GameSettings } from '@prisma/client';
-import { InternalServerErrorException } from '@nestjs/common';
+import {
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { StatusService } from 'src/status/status.service';
+import { DmsService } from 'src/dms/dms.service';
 
 @WebSocketGateway({
   cors: {
@@ -20,10 +24,90 @@ export class GamesMatchingGateway {
   constructor(
     private prisma: PrismaService,
     private readonly statusService: StatusService,
+    private readonly dmsService: DmsService,
   ) {}
 
   private waitList: { userId: number; socket: Socket }[] = [];
   private gameList: GameAllType = {};
+
+  // waitlistから削除する
+  removeFromWaitlist(socket: Socket) {
+    console.log(`removeFromWaitlist: socket.id=${socket.id}`);
+    this.waitList = this.waitList.filter(
+      (item) => item.socket.id !== socket.id,
+    );
+    this.printWaitList();
+  }
+
+  // 途中で画面を閉じて再度開いた際、前の状態を調べて返す
+  @SubscribeMessage('game-getstatus')
+  async handleGetStatus(
+    @ConnectedSocket() socket: Socket,
+    @MessageBody() data: any,
+  ) {
+    const query = await this.getNotStartedGameInfo(data.userId);
+    if (query) {
+      if (query.gameSettings) {
+        socket.emit('game-status', WaitStatus.Gaming, query.gameId);
+        console.log(
+          `[game-status] userId=${data.userId}, Resuming to ${WaitStatus.Gaming}`,
+        );
+      } else {
+        if (!this.gameList[query.gameId]) {
+          // ゲーム情報をgameListに保存
+          this.gameList[query.gameId] = {
+            info: query,
+            socket: {
+              user1Socket: undefined,
+              user2Socket: undefined,
+            },
+            play: undefined,
+          };
+        }
+
+        if (query.user1Id === data.userId) {
+          this.gameList[query.gameId].socket.user1Socket = socket;
+          socket.emit(
+            'game-status',
+            WaitStatus.WaitingForSetting,
+            query.gameId,
+          );
+          console.log(
+            `[game-status] userId=${data.userId}, Resuming to ${WaitStatus.WaitingForSetting}`,
+          );
+        } else {
+          this.gameList[query.gameId].socket.user2Socket = socket;
+          socket.emit(
+            'game-status',
+            WaitStatus.WaitingForOpponentSetting,
+            query.gameId,
+          );
+          console.log(
+            `[game-status] userId=${data.userId}, Resuming to ${WaitStatus.WaitingForOpponentSetting}`,
+          );
+        }
+      }
+    } else {
+      if (this.waitList.some((c) => c.userId === data.userId)) {
+        // waitlistから削除
+        this.removeFromWaitlist(socket);
+        // 改めてwaitListに登録
+        this.handleAddWaitList(socket, data);
+
+        socket.emit('game-status', WaitStatus.NotMatched);
+        console.log(
+          `[game-status] userId=${data.userId}, Resuming to ${WaitStatus.NotMatched}`,
+        );
+      } else {
+        socket.emit('game-status', WaitStatus.NotStarted);
+        console.log(
+          `[game-status] userId=${data.userId}, Resuming to ${WaitStatus.NotStarted}`,
+        );
+      }
+    }
+    // ステータスを「ゲーム中」に変更
+    this.statusService.switchToGaming(socket);
+  }
 
   // 待ち行列に並ぶ
   @SubscribeMessage('game-addwaitlist')
@@ -35,12 +119,7 @@ export class GamesMatchingGateway {
     console.log(
       `added to waitList: userId=${data.userId}, socket.id=${socket.id}`,
     );
-    this.waitList.forEach((s) => {
-      console.log(`  userId: ${s.userId}, socket.id: ${s.socket.id}`);
-    });
-
-    // ステータスを「ゲーム中」に変更
-    this.statusService.switchToGaming(socket);
+    this.printWaitList();
 
     const uniqueUserIds: number[] = Array.from(
       new Set(this.waitList.map((i) => i.userId)),
@@ -100,12 +179,12 @@ export class GamesMatchingGateway {
     @ConnectedSocket() socket: Socket,
     @MessageBody() data: any,
   ) {
-    this.waitList = this.waitList.filter(
-      (item) => item.socket.id !== socket.id,
-    );
     console.log(
-      `leaved from waitList: userId=${data.userId}, socket id=${socket.id}`,
+      `game-removefromwaitlist: userId=${data.userId}, socket id=${socket.id}`,
     );
+
+    // waitListから削除
+    this.removeFromWaitlist(socket);
 
     // ステータスを「オンライン」に変更
     this.statusService.switchToOnline(socket);
@@ -145,6 +224,75 @@ export class GamesMatchingGateway {
     delete this.gameList[gameSettings.gameId];
   }
 
+  // ゲームに招待
+  @SubscribeMessage('game-invite')
+  async inviteToGame(
+    @ConnectedSocket() socket: Socket,
+    @MessageBody() data: any,
+  ): Promise<number> {
+    console.log(
+      `game-invite: myUserId=${data.myUserId}, invitingUserId=${data.invitingUserId}`,
+    );
+
+    let channel;
+    try {
+      // DMルーム情報を(なければルーム作成したうえで)取得
+      channel = await this.dmsService.findBTwoUserId(
+        data.myUserId,
+        data.invitingUserId,
+      );
+    } catch (e) {
+      if (e instanceof NotFoundException) {
+        this.dmsService.createChannel({
+          user1Id: data.myUserId,
+          user2Id: data.invitingUserId,
+        });
+        channel = await this.dmsService.findBTwoUserId(
+          data.myUserId,
+          data.invitingUserId,
+        );
+      }
+    }
+
+    try {
+      // すでに該当ペアのゲームがないか検索
+      let storedGameInfo = await this.getNotStartedGameInfoPair(
+        data.myUserId,
+        data.invitingUserId,
+      );
+      if (!storedGameInfo) {
+        // ゲーム情報をDBに保存
+        storedGameInfo = await this.storeGameInfo(
+          data.myUserId,
+          data.invitingUserId,
+        );
+      }
+
+      // メッセージを投稿
+      const content =
+        `${channel.user1.username}さんがあなたをゲームに招待しています！` +
+        `http://localhost:3000/game/preparing`;
+      const createdMessage = await this.prisma.dmMessages.create({
+        data: {
+          channelId: channel.channelId,
+          senderId: data.myUserId,
+          content: content,
+          createdAt: new Date(),
+        },
+      });
+      const addedMessage = await this.dmsService.findMessageById(
+        createdMessage.messageId,
+      );
+      // メッセージをブロードキャスト(自分以外、すなわち相手)
+      socket.to('dm_' + channel.channelId).emit('dm-message', addedMessage);
+      // メッセージを自分にも送信
+      socket.emit('dm-message', addedMessage);
+      return storedGameInfo.gameId;
+    } catch (e) {
+      throw this.prisma.handleError(e);
+    }
+  }
+
   //-------------------------------------------------------------------------
 
   private async storeGameInfo(
@@ -174,6 +322,50 @@ export class GamesMatchingGateway {
     }
   }
 
+  private async getNotStartedGameInfo(userId: number): Promise<GameInfoType> {
+    try {
+      const query: GameInfoType = await this.prisma.gameInfo.findFirst({
+        where: {
+          startedAt: null,
+          OR: [{ user1Id: userId }, { user2Id: userId }],
+        },
+        include: {
+          user1: true,
+          user2: true,
+          gameSettings: true,
+        },
+      });
+      return query;
+    } catch (e) {
+      throw this.prisma.handleError(e);
+    }
+  }
+
+  private async getNotStartedGameInfoPair(
+    user1Id: number,
+    user2Id: number,
+  ): Promise<GameInfoType> {
+    try {
+      const query: GameInfoType = await this.prisma.gameInfo.findFirst({
+        where: {
+          startedAt: null,
+          OR: [
+            { user1Id: user1Id, user2Id: user2Id },
+            { user1Id: user2Id, user2Id: user1Id },
+          ],
+        },
+        include: {
+          user1: true,
+          user2: true,
+          gameSettings: true,
+        },
+      });
+      return query;
+    } catch (e) {
+      throw this.prisma.handleError(e);
+    }
+  }
+
   private async storeGameSettings(
     gameSettings: GameSettings,
   ): Promise<GameSettings> {
@@ -190,5 +382,11 @@ export class GamesMatchingGateway {
     } catch (e) {
       throw this.prisma.handleError(e);
     }
+  }
+
+  private printWaitList() {
+    this.waitList.forEach((s) => {
+      console.log(`  userId: ${s.userId}, socket.id: ${s.socket.id}`);
+    });
   }
 }

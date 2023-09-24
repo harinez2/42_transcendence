@@ -1,8 +1,12 @@
 "use client";
+
 import Image from "next/image";
 import React, { useCallback } from "react";
 import useModal from "../components/useModal";
 import Link from "next/link";
+import { AppRouterInstance } from "next/dist/shared/lib/app-router-context";
+import { Socket } from "socket.io-client";
+import { ProfileType } from "../types";
 import MChatChannelOps from "../components/modal/m-chat-channel-ops";
 import { ChannelType } from "./types";
 
@@ -13,10 +17,13 @@ export type User = {
 };
 export interface UserProps {
   user: User;
+  router: AppRouterInstance;
+  socket: Socket;
+  profile: ProfileType;
   channel: ChannelType | null;
 }
 
-const UserComponent = (props: UserProps) => {
+const UserComponent = ({ user, router, socket, profile, channel }: UserProps) => {
   const { ref, showModal, closeModal } = useModal();
 
   const stopPropagation = useCallback(
@@ -39,7 +46,7 @@ const UserComponent = (props: UserProps) => {
           height={30}
           alt=""
         />
-        <span className="ml-3 shrink-0 pr-8 text-black">{props.user.nickname}</span>
+        <span className="ml-3 shrink-0 pr-8 text-black">{user.nickname}</span>
       </button>
       <dialog
         onClick={closeModal}
@@ -47,39 +54,69 @@ const UserComponent = (props: UserProps) => {
         style={{ top: "30px" }}
         className="rounded-lg bg-gray-600 px-6 py-2"
       >
-        <UserDialog closeModal={closeModal} stopPropagation={stopPropagation} />
+        <UserDialog
+          closeModal={closeModal}
+          stopPropagation={stopPropagation}
+          user={user}
+          router={router}
+          socket={socket}
+          profile={profile}
+        />
       </dialog>
 
-      <ShowSettingComponent user={props.user} channel={props.channel} />
+      <ShowSettingComponent
+        user={user}
+        router={router}
+        socket={socket}
+        profile={profile}
+        channel={channel}
+      />
 
     </div>
   );
 };
 
+const onClickInviteToGame = (
+  invitingUserId: number,
+  router: AppRouterInstance,
+  socket: Socket,
+  profile: ProfileType,
+) => {
+  socket?.emit("game-invite", {
+    myUserId: profile.userId,
+    invitingUserId: invitingUserId,
+  });
+  router.push("/game/preparing");
+};
+
 // NOTE: User をクリックしたときに表示される dialog
-const UserDialog = ({ closeModal, stopPropagation }: any) => {
+const UserDialog = ({
+  closeModal,
+  stopPropagation,
+  user,
+  router,
+  socket,
+  profile,
+}: any) => {
   return (
     // NOTE: dialog の中身
     <div onClick={stopPropagation} className="flex w-40 flex-col text-white">
       User ops
-      <Link
-        href="/profile"
-        className="m-2 rounded-md bg-gray-500 px-2 text-white"
-      >
+      <Link href="#" className="m-2 rounded-md bg-gray-500 px-2 text-white">
         See Profile
       </Link>
       <Link href="/dm" className="m-2 rounded-md bg-gray-500 px-2 text-white">
         Send DM
       </Link>
-      <Link
-        href="/friend"
-        className="m-2 rounded-md bg-gray-500 px-2 text-white"
-      >
+      <Link href="#" className="m-2 rounded-md bg-gray-500 px-2 text-white">
         Add Friend
       </Link>
-      <Link href="/chat" className="m-2 rounded-md bg-gray-500 px-2 text-white">
-        Invide to Game
-      </Link>
+      <button
+        onClick={() => onClickInviteToGame(user.id, router, socket, profile)}
+        className="m-2 rounded-md bg-gray-500 px-2 text-white"
+      >
+        <span className="x1 text-left">Invite to Game</span>
+      </button>
       <Link href="/chat" className="m-2 rounded-md bg-gray-500 px-2 text-white">
         Block this user
       </Link>
@@ -95,7 +132,7 @@ const UserDialog = ({ closeModal, stopPropagation }: any) => {
   );
 };
 
-const ShowSettingComponent = (props: UserProps) => {
+const ShowSettingComponent = ({ user, router, socket, profile, channel }: UserProps) => {
   const { ref, showModal, closeModal } = useModal();
   return (
     <>
@@ -111,7 +148,14 @@ const ShowSettingComponent = (props: UserProps) => {
         style={{ top: "30px" }}
         className="rounded-lg bg-darkslategray-100 px-6 py-2"
       >
-        <MChatChannelOps onClose={closeModal} user={props.user} channel={props.channel} />
+        <MChatChannelOps
+          onClose={closeModal}
+          user={user}
+          router={router}
+          socket={socket}
+          profile={profile}
+          channel={channel}
+         />
       </dialog>
     </>
   );

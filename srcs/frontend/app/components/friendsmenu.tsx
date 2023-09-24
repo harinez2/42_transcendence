@@ -1,45 +1,20 @@
 "use client";
 
 import React from "react";
-import type { NextPage } from "next";
 import { useMemo } from "react";
 import CSS, { Property } from "csstype";
 import MAddFriend from "./modal/m-add-friend";
 import ModalPopup from "./modal/modal-popup";
 import { useState, useCallback } from "react";
+import { useRouter } from "next/navigation";
 
-type FriendsMenuType = {
-  /** Style props */
-  allPosition?: Property.Position;
-  allTop?: Property.Top;
-  allLeft?: Property.Left;
-  blockedCursor?: Property.Cursor;
-  blockedBorder?: Property.Border;
-  blockedPadding?: Property.Padding;
-  blockedBackgroundColor?: Property.BackgroundColor;
-  addFriendCursor?: Property.Cursor;
-  addFriendBorder?: Property.Border;
-  addFriendPadding?: Property.Padding;
-  addFriendBackgroundColor?: Property.BackgroundColor;
+const FriendsMenu = () => {
+  const router = useRouter();
 
-  /** Action props */
-  onBlockedClick?: () => void;
-};
+  const onBlockedClick = useCallback(() => {
+    router.push("/profile/me/blocked");
+  }, [router]);
 
-const FriendsMenu: NextPage<FriendsMenuType> = ({
-  allPosition,
-  allTop,
-  allLeft,
-  blockedCursor,
-  blockedBorder,
-  blockedPadding,
-  blockedBackgroundColor,
-  addFriendCursor,
-  addFriendBorder,
-  addFriendPadding,
-  addFriendBackgroundColor,
-  onBlockedClick,
-}) => {
   const [isMAddFriendOpen, setMAddFriendOpen] = useState(false);
 
   const openMAddFriend = useCallback(() => {
@@ -50,40 +25,27 @@ const FriendsMenu: NextPage<FriendsMenuType> = ({
     setMAddFriendOpen(false);
   }, []);
 
-  const friendsStyle: CSS.Properties = useMemo(() => {
-    return {
-      position: allPosition,
-      top: allTop,
-      left: allLeft,
-    };
-  }, [allPosition, allTop, allLeft]);
-
   const blockedStyle: CSS.Properties = useMemo(() => {
     return {
-      cursor: blockedCursor,
-      border: blockedBorder,
-      padding: blockedPadding,
-      backgroundColor: blockedBackgroundColor,
+      cursor: "pointer",
+      border: "none",
+      padding: "0",
+      backgroundColor: "transparent",
     };
-  }, [blockedCursor, blockedBorder, blockedPadding, blockedBackgroundColor]);
+  }, ["pointer", "none", "0", "transparent"]);
 
   const addFriendStyle: CSS.Properties = useMemo(() => {
     return {
-      cursor: addFriendCursor,
-      border: addFriendBorder,
-      padding: addFriendPadding,
-      backgroundColor: addFriendBackgroundColor,
+      cursor: "pointer",
+      border: "none",
+      padding: "0",
+      backgroundColor: "transparent",
     };
-  }, [
-    addFriendCursor,
-    addFriendBorder,
-    addFriendPadding,
-    addFriendBackgroundColor,
-  ]);
+  }, ["pointer", "none", "0", "transparent"]);
 
   return (
     <>
-      <div className="absolute left-[0px] top-[0px] h-[47px] w-[500px] text-darkgray-300">
+      <div className="absolute left-[470px] top-[327px] h-[47px] w-[500px] font-body text-xl text-darkgray-300">
         <img
           className="absolute left-[0px] top-[44.5px] h-[5px] w-[500px]"
           alt=""

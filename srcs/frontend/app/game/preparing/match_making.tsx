@@ -1,3 +1,5 @@
+import { WaitStatus } from "../types";
+
 const LeaveTheQueueButton = ({
   closeModal,
   isDisabled,
@@ -40,7 +42,7 @@ const MatchMakingDialog = ({
       <div className="absolute left-[57px] top-[104px] inline-block w-[390px] tracking-[0.1em]">
         looking for a opponent...
       </div>
-      {settingStatus === 2 && (
+      {settingStatus === WaitStatus.WaitingForOpponentSetting && (
         <>
           <div className="absolute left-[57px] top-[154px] inline-block w-[390px] tracking-[0.1em]">
             waiting for the opponent setting up the game...
@@ -49,7 +51,7 @@ const MatchMakingDialog = ({
           <LeaveTheQueueButton closeModal={closeModal} isDisabled={true} />
         </>
       )}
-      {settingStatus !== 2 && (
+      {settingStatus !== WaitStatus.WaitingForOpponentSetting && (
         <LeaveTheQueueButton closeModal={closeModal} isDisabled={false} />
       )}
     </div>

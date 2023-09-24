@@ -3,20 +3,23 @@
 import React from "react";
 import type { NextPage } from "next";
 import { useCallback } from "react";
-import { useRouter } from "next/navigation";
-import { UserProps } from "@/app/chat/user";
+import { User, UserProps } from "@/app/chat/user";
 import { ChannelType } from "@/app/chat/types";
 import makeAPIRequest from "@/app/api/api";
-import { userAgent } from "next/server";
+import { AppRouterInstance } from "next/dist/shared/lib/app-router-context";
+import { Socket } from "socket.io-client";
+import { ProfileType } from "@/app/types";
 
 type MChatChannelOpsType = {
   onClose?: () => void;
-  user: UserProps['user'];
+  user: User;
+  router: AppRouterInstance;
+  socket: Socket;
+  profile: ProfileType;
   channel: ChannelType | null;
 };
 
-export const MChatChannelOps: NextPage<MChatChannelOpsType> = (props) => {
-  const router = useRouter();
+export const MChatChannelOps: NextPage<MChatChannelOpsType> = ({ onClose, user, router, socket, profile, channel }: MChatChannelOpsType) => {
 
   const onClickKick = useCallback(() => {
     // makeAPIRequest<ChannelType>("delete", `/chats/${props.channel?.channelId}/users`, {"userId": props.user.id})
@@ -45,7 +48,7 @@ export const MChatChannelOps: NextPage<MChatChannelOpsType> = (props) => {
   return (
     <div className="relative h-[485px] max-h-full w-[390px] max-w-full overflow-hidden bg-darkslategray-100 text-left font-body text-5xl text-base-white">
       <div className="absolute left-[41px] top-[38px] tracking-[0.1em]">
-        Channel ops for {props.user.nickname}
+        Channel ops for {user.nickname}
       </div>
 
       <button

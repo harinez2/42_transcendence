@@ -38,10 +38,16 @@ const DirectMessageUI = () => {
   }, [profile]);
 
   useEffect(() => {
-    // socketのイベントハンドラを登録
-    socket?.on("dm-message", (message: any) => {
-      setMessages((prevMessages) => [...prevMessages, message]);
-    });
+    if (socket) {
+      // オンラインを申告
+      console.log("sent status-switch_to_online: socketId=", socket?.id);
+      socket?.emit("status-switch_to_online");
+
+      // socketのイベントハンドラを登録
+      socket?.on("dm-message", (message: any) => {
+        setMessages((prevMessages) => [...prevMessages, message]);
+      });
+    }
   }, [socket]);
 
   useEffect(() => {

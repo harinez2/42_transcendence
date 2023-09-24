@@ -10,10 +10,11 @@ export FORTY_TWO_CLIENT_ID=u-******
 export FORTY_TWO_CLIENT_SECRET=s-*****
 export FORTY_TWO_CALLBACK_URL=http://localhost:3000/api/auth/42/callback
 
-# JWT
-#   JWT_SECRET is a random value.
+# Secrets
+#   Random values are expected here.
 #   It is recommended to generate by executing `openssl rand -base64 32`.
 export JWT_SECRET=*****
+export AUTH2FA_SECRET=*****
 
 # Database
 export POSTGRES_USER=*****
