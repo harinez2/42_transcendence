@@ -1,10 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import type { NextPage } from "next";
 import { TextField } from "@mui/material";
 import makeAPIRequest from "@/app/api/api";
+import { ProfileContext } from "@/app/layout";
 
 type MAddFriendType = {
   onClose?: () => void;
+};
+
+export type ProfileType = {
+  id: number;
+  bio: string;
+  userId: number;
 };
 
 export type UserType = {
@@ -19,6 +26,8 @@ export type UserType = {
 };
 
 const MAddFriend: NextPage<MAddFriendType> = ({ onClose }) => {
+  const profile: ProfileType = useContext(ProfileContext);
+  const [blockeds, setBlockeds] = useState<UserType[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [msg, setMsg] = useState("");
   const [users, setUsers] = useState<UserType[]>();
@@ -39,6 +48,26 @@ const MAddFriend: NextPage<MAddFriendType> = ({ onClose }) => {
       });
   }, []);
 
+  useEffect(() => {
+    if (profile.userId != 0) {
+      // Blockeds一覧を取得
+      makeAPIRequest<UserType[]>(
+        "get",
+        `/friends/block/blockeds/${profile.userId}`,
+      )
+        .then((result) => {
+          if (result.success) {
+            setBlockeds(result.data);
+          } else {
+            console.error(result.error);
+          }
+        })
+        .catch((error) => {
+          console.error("Error:", error.message);
+        });
+    }
+  }, [profile]);
+
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.target.value);
   };
@@ -58,8 +87,17 @@ const MAddFriend: NextPage<MAddFriendType> = ({ onClose }) => {
           if (result.success) {
             setMsg("Added!");
           } else {
-            console.error(result.error);
-            setMsg("Cannot add Blocked user");
+            const found2: UserType | undefined = blockeds?.find((element) => {
+              return element.username === input;
+            });
+            if (found2) {
+                console.error(result.error);
+                setMsg("Cannot add Blocked user");
+              }
+              else {
+                console.error(result.error);
+                setMsg("Already followed");
+             }
           }
         })
         .catch((error) => {
