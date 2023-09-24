@@ -112,7 +112,7 @@ const FriendsList = () => {
   const [followees, setFollowees] = useState<FolloweeType[]>([]);
 
   useEffect(() => {
-    if (profile.userId != "") {
+    if (profile.userId != 0) {
       // followees一覧を取得
       makeAPIRequest<FolloweeType[]>(
         "get",

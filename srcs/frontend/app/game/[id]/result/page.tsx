@@ -21,9 +21,9 @@ const GameResultUI = ({ params }: { params: { id: string } }) => {
           if (result.success) {
             if (result.data.endedAt != null) {
               if (
-                (result.data.user1.id === Number(profile.userId) &&
+                (result.data.user1.id === profile.userId &&
                   result.data.user1Score > result.data.user2Score) ||
-                (result.data.user2.id === Number(profile.userId) &&
+                (result.data.user2.id === profile.userId &&
                   result.data.user1Score < result.data.user2Score)
               ) {
                 setIsWon(true);

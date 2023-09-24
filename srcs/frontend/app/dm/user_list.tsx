@@ -16,7 +16,7 @@ const UserComponent = ({
   };
 
   const user_name =
-    channel.user1.id === Number(profile.userId)
+    channel.user1.id === profile.userId
       ? channel.user2.username
       : channel.user1.username;
 
