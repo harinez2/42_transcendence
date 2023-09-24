@@ -68,3 +68,12 @@ export type PositionType = {
   x: number;
   y: number;
 };
+
+export const WaitStatus = {
+  Initial: 0, // 初期状態
+  NotStarted: 1, // waitlistに未登録
+  NotMatched: 2, // waitlist登録済み、相手探し中
+  WaitingForSetting: 3, // マッチした、設定中
+  WaitingForOpponentSetting: 4, // マッチした、設定中
+  Gaming: 5, // 設定完了、ゲーム開始可能
+} as const;

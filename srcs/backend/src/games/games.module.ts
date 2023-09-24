@@ -11,5 +11,6 @@ import { StatusModule } from 'src/status/status.module';
   providers: [GamesMatchingGateway, GamesPlayGateway, GamesService],
   controllers: [GamesController],
   imports: [PrismaModule, UsersModule, StatusModule],
+  exports: [GamesMatchingGateway],
 })
 export class GamesModule {}

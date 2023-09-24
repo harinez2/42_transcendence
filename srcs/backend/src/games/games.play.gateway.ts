@@ -28,6 +28,7 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
+import { StatusService } from 'src/status/status.service';
 
 @WebSocketGateway({
   cors: {
@@ -35,7 +36,10 @@ import {
   },
 })
 export class GamesPlayGateway {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private readonly statusService: StatusService,
+  ) {}
 
   private gameList: GameAllType = {};
 
@@ -45,7 +49,9 @@ export class GamesPlayGateway {
     @ConnectedSocket() socket: Socket,
     @MessageBody() data: any,
   ) {
-    console.log(`game-join event happened: gameId=${data.gameId}`);
+    console.log(
+      `game-join event happened: gameId=${data.gameId}, userId=${data.userId}`,
+    );
     const gameId = Number(data.gameId);
     let isFetchedFromDb = false;
 
@@ -99,6 +105,10 @@ export class GamesPlayGateway {
       return;
     }
 
+    // 念のためステータスを「ゲーム中」に変更
+    this.statusService.switchToGaming(this.gameList[gameId].socket.user1Socket);
+    this.statusService.switchToGaming(this.gameList[gameId].socket.user2Socket);
+
     // ゲームを開始
     // 開始時刻をDBに保存
     this.storeGameStartTime(gameId);
@@ -113,11 +123,25 @@ export class GamesPlayGateway {
 
   // パドルの位置更新
   @SubscribeMessage('game-post_paddle_y')
-  async handleUpdatePaddleY(@MessageBody() data: any) {
-    if (data.user === 1) {
-      this.gameList[data.gameId].play.lPaddlePos.y = data.paddleY;
-    } else if (data.user === 2) {
-      this.gameList[data.gameId].play.rPaddlePos.y = data.paddleY;
+  async handleUpdatePaddleY(
+    @ConnectedSocket() socket: Socket,
+    @MessageBody() data: any,
+  ) {
+    if (this.gameList[data.gameId]) {
+      if (data.user === 1) {
+        this.gameList[data.gameId].play.lPaddlePos.y = data.paddleY;
+      } else if (data.user === 2) {
+        this.gameList[data.gameId].play.rPaddlePos.y = data.paddleY;
+      }
+    } else {
+      // すでにゲームが終わっていた場合、クライアントにemit
+      const sendData = {
+        user1Score: 0,
+        user2Score: 0,
+        isGameFinished: true,
+      };
+      console.log('gameId: ', data.gameId, ', sendData:  ', sendData);
+      socket.emit('game-update_score', sendData);
     }
   }
 
