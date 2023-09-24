@@ -7,12 +7,11 @@ import { useState, useCallback } from "react";
 import { ProfileType } from "@/app/types";
 import { ProfileContext } from "@/app/layout";
 import makeAPIRequest from "@/app/api/api";
-import { FolloweeType, StatusType } from "./types";
+import { FolloweeType, StatusType, UserType } from "./types";
 
 const FriendComponent = ({
   followee,
 }: {
-  // profile: ProfileType;
   followee: FolloweeType;
 }) => {
   const [isMUserOpsOpen, setMUserOpsOpen] = useState(false);
@@ -26,7 +25,7 @@ const FriendComponent = ({
 
   const [status_variable, setStatus] = useState<StatusType>();
 
-  const [profile, setProfile] = useState<ProfileType>();
+  const [user, setUser] = useState<UserType>();
 
   useEffect(() => {
     if (followee.id) {
@@ -48,10 +47,10 @@ const FriendComponent = ({
   useEffect(() => {
     if (status_variable) {
       // アイコン画像を取得
-      makeAPIRequest<ProfileType>("get", `/profiles/${status_variable.userId}`)
+      makeAPIRequest<UserType>("get", `/users/${status_variable.userId}`)
         .then((result) => {
           if (result.success) {
-            setProfile(result.data);
+            setUser(result.data);
           } else {
             console.error(result.error);
           }
@@ -62,7 +61,7 @@ const FriendComponent = ({
     }
   }, [status_variable]);
 
-  //ダミーユーザーはstatusが反映されていなので、初期設定をofflineにする
+  //offlineの場合はstatusが反映されていなのでステータスをofflineに設定
   const status1 = () => {
     if (status_variable && status_variable.status !== "") {
       return status_variable.status;
@@ -72,8 +71,8 @@ const FriendComponent = ({
   };
 
   const icon = () => {
-    if (profile && profile.bio !== "") {
-      return profile.bio;
+    if (user && user.avatar) {
+      return `http://localhost:3000/api/users/avatar/${status_variable?.userId}`
     } else {
       return "http://localhost:3000/favicon.ico";
     }
@@ -85,6 +84,7 @@ const FriendComponent = ({
         <a className="flex items-center rounded-lg p-4 text-white">
           <img
             src={icon()}
+            
             className="h-auto max-w-full cursor-pointer rounded-full"
             width={45}
             height={45}
