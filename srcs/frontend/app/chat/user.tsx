@@ -146,12 +146,14 @@ const ShowSettingComponent = ({
   const { ref, showModal, closeModal } = useModal();
   return (
     <>
-      <button
-        onClick={showModal}
-        className="group flex items-center rounded-lg p-2 text-white hover:bg-gray-700"
-      >
-        <SettingIcon />
-      </button>
+      {user?.id !== profile.userId && (
+        <button
+          onClick={showModal}
+          className="group flex items-center rounded-lg p-2 text-white hover:bg-gray-700"
+        >
+          <SettingIcon />
+        </button>
+      )}
       <dialog
         onClick={closeModal}
         ref={ref}
