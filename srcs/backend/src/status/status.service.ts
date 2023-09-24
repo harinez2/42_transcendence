@@ -89,10 +89,4 @@ export class StatusService {
       );
     });
   }
-
-  findById(userId: number): StatusType | null {
-    const list: StatusType[] = this.getStatusList();
-    const found = list.find((element) => element.userId === Number(userId));
-    return found || null;
-  }
 }
