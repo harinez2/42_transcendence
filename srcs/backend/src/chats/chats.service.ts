@@ -11,6 +11,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { UserType } from './chats.interface';
 // import { Publicity, UserType } from './chats.interface';
 import { hash } from 'bcrypt';
+import { Publicity } from '@prisma/client';
 
 @Injectable()
 export class ChatsService {
@@ -60,9 +61,31 @@ export class ChatsService {
     }
   }
 
-  async findAllChannel(): Promise<ChannelInfoDto[]> {
+  async findAllChannelByUserId(userId: number): Promise<ChannelInfoDto[]> {
     try {
-      const posts = await this.prisma.chatChannels.findMany();
+      const posts = await this.prisma.chatChannels.findMany({
+        where: {
+          users: {
+            some: {
+              userId: userId,
+            },
+          },
+        },
+      });
+      const channelInfoPromises = posts.map(
+        async (post) => await this.createChannelInfoDto(post),
+      );
+      return await Promise.all(channelInfoPromises);
+    } catch (e) {
+      throw this.prisma.handleError(e);
+    }
+  }
+
+  async findAllPublicChannel(): Promise<ChannelInfoDto[]> {
+    try {
+      const posts = await this.prisma.chatChannels.findMany({
+        where: { channelType: Publicity.PUBLIC },
+      });
       const channelInfoPromises = posts.map(
         async (post) => await this.createChannelInfoDto(post),
       );
@@ -453,7 +476,7 @@ export class ChatsService {
     return {
       channelId: post.channelId,
       channelName: post.channelName,
-      createdAt: post.createdAt.toISOString(),
+      createdAt: post.createdAt?.toISOString(),
       channelType: post.channelType,
       isPassword: post.hashedPassword ? true : false,
       users: {
