@@ -19,5 +19,6 @@ export const FORTY_TWO_CALLBACK_URL: string = getEnvVariable(
 );
 
 export const JWT_SECRET: string = getEnvVariable('JWT_SECRET');
+export const AUTH2FA_SECRET: string = getEnvVariable('AUTH2FA_SECRET');
 
 export const DATABASE_URL: string = getEnvVariable('DATABASE_URL');

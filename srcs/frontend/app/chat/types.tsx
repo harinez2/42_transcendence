@@ -32,7 +32,14 @@ export type createChannelDTO = {
   channelType: Publicity;
   password: string | null;
 };
+
 export enum Publicity {
   PUBLIC = "PUBLIC",
   PRIVATE = "PRIVATE",
 }
+
+export type updateChannelDTO = {
+  channelName: string;
+  channelType: Publicity;
+  password: string | null;
+};

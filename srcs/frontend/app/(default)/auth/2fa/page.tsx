@@ -2,8 +2,9 @@
 
 import React, { useState } from "react";
 import makeAPIRequest from "@/app/api/api";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
+import Link from "next/link";
 
 const OtpInput = dynamic(() => import("react-otp-input"), {
   loading: () => <p>Loading...</p>,
@@ -12,10 +13,20 @@ const OtpInput = dynamic(() => import("react-otp-input"), {
 
 export default function TwoFactorAuthPage() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const [otp, setOtp] = useState("");
   const [error, setError] = useState("");
 
-  const userId = parseInt(searchParams.get("userId") || "", 10);
+  const token = searchParams.get("token");
+  if (!token) {
+    /* token not set */
+    return (
+      <>
+        <p className="my-0 text-red-600">Error: Could not generate 2FA token</p>
+        <Link href="/">Go back</Link>
+      </>
+    );
+  }
 
   const clearOtp = () => {
     setOtp("");
@@ -24,10 +35,10 @@ export default function TwoFactorAuthPage() {
   const handleCodeSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    makeAPIRequest("post", "/auth/2fa", { userId: userId, code: otp })
+    makeAPIRequest("post", "/auth/2fa", { token: token, code: otp })
       .then((result) => {
         if (result.success) {
-          window.location.href = "/test";
+          router.push("/test");
         } else {
           setError(result.error);
         }
