@@ -45,7 +45,8 @@ export class AuthController {
     }
 
     if (user.twoFactorAuthEnabled) {
-      res.redirect(`${FRONT_URL}/auth/2fa?userId=${user.id}`);
+      const query = await this.authService.challenge2FA(user);
+      res.redirect(`${FRONT_URL}/auth/2fa?${query}`);
       return;
     }
 
@@ -93,21 +94,9 @@ export class AuthController {
   @ApiResponse({ status: 401, description: 'Invalid 2FA code.' })
   @ApiBody({ type: Login2faDto })
   @HttpCode(302)
-  async login2FA(@Req() req, @Body() login2fa: Login2faDto, @Res() res) {
-    const { userId, code } = login2fa;
-    const user = await this.authService.findUser(+userId);
-    if (!user) {
-      res.status(404).send('User not found');
-      return;
-    }
-
-    const isValid = this.authService.validate2FACode(user, code);
-    if (!isValid) {
-      res.status(401).send('Invalid 2FA code');
-      return;
-    }
-
-    const jwt = await this.authService.accessToken(user.id);
+  async login2FA(@Body() login2fa: Login2faDto, @Res() res) {
+    const { token, code } = login2fa;
+    const jwt = await this.authService.response2FA(token, code);
     res.cookie('jwt', jwt, { httpOnly: true });
     res.redirect(`${FRONT_URL}/test`);
   }
@@ -117,24 +106,18 @@ export class AuthController {
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'))
   async request2faUrl(@Req() req, @Res() res) {
-    const user = req.user;
+    const otpauth_url = this.authService.generate2FASecret(req.user);
 
-    const otpauth_url = this.authService.generate2FASecret(user);
-
-    res.json({ otpauth_url });
+    return res.json({ otpauth_url });
   }
 
   @Post('enable2fa')
   @ApiOperation({ summary: 'Enable 2FA' })
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'))
-  async enable2fa(@Req() req, @Body() enable2fa: Enable2faDto, @Res() res) {
-    const user = req.user;
-    const { code } = enable2fa;
-
-    this.authService.enable2FA(user, code);
-
-    return res.sendStatus(200);
+  async enable2fa(@Req() req, @Body() enable2fa: Enable2faDto) {
+    this.authService.enable2FA(req.user, enable2fa.code);
+    return;
   }
 
   @UseGuards(AuthGuard('jwt'))
@@ -142,9 +125,7 @@ export class AuthController {
   @ApiBearerAuth()
   @Get('refresh')
   async refresh(@Req() req, @Res() res) {
-    const user = req.user;
-    const newToken = this.authService.accessToken(user.id);
-    res.cookie('jwt', newToken, { httpOnly: true });
-    return res.sendStatus(200);
+    const newToken = await this.authService.accessToken(req.user.id);
+    return res.cookie('jwt', newToken, { httpOnly: true });
   }
 }
