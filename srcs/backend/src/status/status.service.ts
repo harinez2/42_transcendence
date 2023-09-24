@@ -12,7 +12,7 @@ export type StatusType = {
   userId: number;
   socketId: string;
   status: string;
-}
+};
 
 @Injectable()
 @ApiTags('status')
@@ -89,10 +89,10 @@ export class StatusService {
       );
     });
   }
-  
+
   findById(userId: number): StatusType | null {
     const list: StatusType[] = this.getStatusList();
     const found = list.find((element) => element.userId === Number(userId));
-     return found || null;
+    return found || null;
   }
 }

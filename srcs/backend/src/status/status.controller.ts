@@ -1,4 +1,4 @@
-import { Controller, Get, Param} from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 import { StatusService } from './status.service';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
