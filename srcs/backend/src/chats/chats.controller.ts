@@ -217,14 +217,16 @@ export class ChatsController {
     description: '指定したチャンネルIDの情報を返却',
     type: ChannelInfoDto,
   })
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
   @Put(':channelid/users')
   async joinChannel(
     @Param('channelid') channelId: string,
-    @Body() joinRequest: { userId: string },
+    @Request() req,
   ): Promise<ChannelInfoDto> {
     return await this.chatsService.addChannelUsers(
       Number(channelId),
-      Number(joinRequest.userId),
+      req.user.id,
       UserType.USER,
     );
   }

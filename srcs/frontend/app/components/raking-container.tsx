@@ -1,7 +1,8 @@
+"use client";
 import React from "react";
 
 // eslint-disable-next-line no-unused-vars
-async function RankingContainer({ userId }: any) {
+function RankingContainer({ userId }: any) {
   // const prof: ProfileType = await getProfileByUserId(userId); //unused yet.
 
   return (

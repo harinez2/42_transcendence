@@ -181,6 +181,7 @@ export class ChatsService {
   ): Promise<ChannelInfoDto> {
     try {
       // Banされているユーザでないかをチェック
+      console.log(channelId, userId);
       const ban = await this.prisma.chatBan.findUnique({
         where: {
           channelId_bannedUserId: {
