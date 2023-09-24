@@ -164,6 +164,7 @@ const ChatUI = () => {
                   <ChannelName
                     key={channel.channelId}
                     channel={channel}
+                    userId={profile?.userId}
                     setChannel={updateChannel}
                     onSelectChannel={handleChannelSelect}
                     removeChannel={removeChannel}
