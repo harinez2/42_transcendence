@@ -137,10 +137,7 @@ const BlockedList = () => {
       <div className="absolute left-[470px] top-[400px] text-left text-xl ">
         <ul className="border-b-8">
           {blockeds?.map((blocked) => (
-            <BlockedComponent
-              key={blocked.id}
-              blocked={blocked}
-            />
+            <BlockedComponent key={blocked.id} blocked={blocked} />
           ))}
         </ul>
       </div>
