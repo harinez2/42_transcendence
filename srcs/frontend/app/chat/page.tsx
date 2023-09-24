@@ -14,8 +14,11 @@ import ChannelCategory from "./channel_category";
 import UserStatusCategory from "./user_status_category";
 import HeaderMenu from "../components/headermenu";
 import MessageList from "./messages";
+import { useRouter } from "next/navigation";
 
 const ChatUI = () => {
+  const router = useRouter();
+
   const Users: Array<User> = [
     {
       id: 1,
@@ -148,24 +151,36 @@ const ChatUI = () => {
         {/* // 3つのdivを横に並べる */}
         <div className="relative top-[100px] flex h-[calc(100%_-_132px)] w-full flex-row">
           {/* header の高さ 132px 分だけずらす */}
-          <div className="fixed h-[calc(100%_-_132px)] w-64 shrink-0 overflow-scroll bg-darkslategray-200 px-3 py-4">
-            {/* divの幅は64 */}
-            <ChannelCategory
-              categoryName="Channels"
-              channels={channels}
-              setChannels={setChannels}
-            />
-            <ul className="space-y-2 font-medium">
-              {channels?.map((channel: ChannelType) => (
-                <ChannelName
-                  key={channel.channelId}
-                  channel={channel}
-                  setChannel={updateChannel}
-                  onSelectChannel={handleChannelSelect}
-                  removeChannel={removeChannel}
-                />
-              ))}
-            </ul>
+          <div className="fixed h-[calc(100%_-_132px)] w-64 shrink-0 bg-darkslategray-200 px-3 py-4">
+            <div className="fixed h-[calc(100%_-_132px-64px)] w-64 shrink-0 overflow-y-scroll bg-darkslategray-200">
+              {/* divの幅は64 */}
+              <ChannelCategory
+                categoryName="Channels"
+                channels={channels}
+                setChannels={setChannels}
+              />
+              <ul className="space-y-2 font-medium">
+                {channels?.map((channel: ChannelType) => (
+                  <ChannelName
+                    key={channel.channelId}
+                    channel={channel}
+                    setChannel={updateChannel}
+                    onSelectChannel={handleChannelSelect}
+                    removeChannel={removeChannel}
+                  />
+                ))}
+              </ul>
+              <button
+                className="fixed bottom-5 ml-6 h-[38px] w-[160px] cursor-pointer items-center justify-center  rounded-[5px] bg-neutral-400"
+                onClick={() => {
+                  router.push("/chat/channel-list");
+                }}
+              >
+                <div className="text-center text-xl font-normal tracking-widest text-white">
+                  Join channel
+                </div>
+              </button>
+            </div>
           </div>
           <MessageList
             channel={selectedChannel}
@@ -180,8 +195,8 @@ const ChatUI = () => {
                 <UserComponent key={u.id} user={u} />
               ))}
             </ul>
+            <UserStatusCategory categoryName="offline" />
             <ul className="mt-4 space-y-2 border-t border-gray-700 pt-4 font-medium">
-              <UserStatusCategory categoryName="offline" />
               {Users.map((u) => (
                 <UserComponent key={u.id} user={u} />
               ))}
