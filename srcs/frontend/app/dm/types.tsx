@@ -15,6 +15,7 @@ export type DmChannelType = {
 };
 
 export type DmMessageType = {
+  messasgeId: number;
   channelId: number;
   sender: {
     id: number;

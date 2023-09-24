@@ -14,6 +14,7 @@ export type ChannelType = {
 };
 
 export type MessageType = {
+  messasgeId: number;
   channelId: number;
   sender: {
     id: number;

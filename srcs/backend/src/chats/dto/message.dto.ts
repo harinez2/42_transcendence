@@ -2,6 +2,9 @@ import { ApiProperty } from '@nestjs/swagger';
 import { User } from '@prisma/client';
 
 export class MessageDto {
+  @ApiProperty({ example: 1 })
+  messageId: number;
+
   @ApiProperty({ example: '1' })
   channelId: number;
 
