@@ -9,7 +9,6 @@ import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 
 const FriendsMenu = () => {
-  
   const router = useRouter();
 
   const onBlockedClick = useCallback(() => {
@@ -42,16 +41,11 @@ const FriendsMenu = () => {
       padding: "0",
       backgroundColor: "transparent",
     };
-  }, [
-    "pointer",
-    "none",
-    "0",
-    "transparent",
-  ]);
+  }, ["pointer", "none", "0", "transparent"]);
 
   return (
     <>
-      <div className="absolute left-[470px] top-[327px] h-[47px] w-[500px] text-darkgray-300 font-body text-xl">
+      <div className="absolute left-[470px] top-[327px] h-[47px] w-[500px] font-body text-xl text-darkgray-300">
         <img
           className="absolute left-[0px] top-[44.5px] h-[5px] w-[500px]"
           alt=""

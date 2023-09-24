@@ -9,11 +9,12 @@ import { ProfileContext } from "@/app/layout";
 import makeAPIRequest from "@/app/api/api";
 import { FolloweeType, StatusType } from "./types";
 
-const FriendComponent = ({ followee }: {
+const FriendComponent = ({
+  followee,
+}: {
   // profile: ProfileType;
   followee: FolloweeType;
-}
-  ) => {
+}) => {
   const [isMUserOpsOpen, setMUserOpsOpen] = useState(false);
   const openMUserOps = useCallback(() => {
     setMUserOpsOpen(true);
@@ -27,13 +28,13 @@ const FriendComponent = ({ followee }: {
 
   const [profile, setProfile] = useState<ProfileType>();
 
-   useEffect(() => {
+  useEffect(() => {
     if (followee.id) {
       // statusを取得
       makeAPIRequest<StatusType>("get", `/status/${followee.id}`)
         .then((result) => {
           if (result.success) {
-            setStatus(result.data);;
+            setStatus(result.data);
           } else {
             console.error(result.error);
           }
@@ -42,15 +43,15 @@ const FriendComponent = ({ followee }: {
           console.error("Error:", error.message);
         });
     }
-   }, [followee]); 
-   
+  }, [followee]);
+
   useEffect(() => {
     if (status_variable) {
       // アイコン画像を取得
       makeAPIRequest<ProfileType>("get", `/profiles/${status_variable.userId}`)
         .then((result) => {
           if (result.success) {
-            setProfile(result.data);;
+            setProfile(result.data);
           } else {
             console.error(result.error);
           }
@@ -59,7 +60,7 @@ const FriendComponent = ({ followee }: {
           console.error("Error:", error.message);
         });
     }
-  }, [status_variable]); 
+  }, [status_variable]);
 
   //ダミーユーザーはstatusが反映されていなので、初期設定をofflineにする
   const status1 = () => {
@@ -68,35 +69,33 @@ const FriendComponent = ({ followee }: {
     } else {
       return "offline";
     }
-  }
-  
+  };
+
   const icon = () => {
     if (profile && profile.bio !== "") {
       return profile.bio;
     } else {
       return "http://localhost:3000/favicon.ico";
     }
-  }
+  };
 
   return (
     <>
       <div>
-        <a
-          className="flex items-center rounded-lg p-4 text-white"
-        >
+        <a className="flex items-center rounded-lg p-4 text-white">
           <img
             src={icon()}
-            className="h-auto max-w-full rounded-full cursor-pointer"
+            className="h-auto max-w-full cursor-pointer rounded-full"
             width={45}
             height={45}
             alt=""
             onClick={openMUserOps}
-          /> 
-          <div className="ml-3 flex-shrink-0 pr-8 text-xl">
+          />
+          <div className="ml-3 shrink-0 pr-8 text-xl">
             {followee?.username}
-              <div className="tracking-[0.1em] text-darkgray-200">
+            <div className="tracking-[0.1em] text-darkgray-200">
               {status1()}
-          </div>
+            </div>
           </div>
         </a>
       </div>
@@ -120,10 +119,13 @@ const FriendsList = () => {
   useEffect(() => {
     if (profile.userId != "") {
       // followees一覧を取得
-      makeAPIRequest<FolloweeType[]>("get", `/friends/follow/followees/${profile.userId}`)
+      makeAPIRequest<FolloweeType[]>(
+        "get",
+        `/friends/follow/followees/${profile.userId}`,
+      )
         .then((result) => {
           if (result.success) {
-            setFollowees(result.data);;
+            setFollowees(result.data);
           } else {
             console.error(result.error);
           }
@@ -132,27 +134,23 @@ const FriendsList = () => {
           console.error("Error:", error.message);
         });
     }
-  }, [profile]); 
+  }, [profile]);
 
   return (
     <>
-      <div
-        className="absolute left-[470px] top-[400px] text-left text-xl "
-      >
-      <ul className="border-b-8">
-        {followees?.map((followee) => (
-          <FriendComponent
-            key={followee.id}
-            // profile={profile}
-            followee={followee}
-          />
-        ))}
+      <div className="absolute left-[470px] top-[400px] text-left text-xl ">
+        <ul className="border-b-8">
+          {followees?.map((followee) => (
+            <FriendComponent
+              key={followee.id}
+              // profile={profile}
+              followee={followee}
+            />
+          ))}
         </ul>
-        </div>
+      </div>
     </>
   );
 };
 
 export default FriendsList;
-
-
