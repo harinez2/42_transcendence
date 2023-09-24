@@ -2,7 +2,6 @@
 
 import { useContext, useEffect, useState } from "react";
 import ChannelName from "./channel_name";
-import MessageComponent from "./message";
 import { User } from "./user";
 
 import UserComponent from "./user";
@@ -198,6 +197,7 @@ const ChatUI = () => {
                   router={router}
                   socket={socket}
                   profile={profile}
+                  channel={selectedChannel}
                 />
               ))}
             </ul>
@@ -210,6 +210,7 @@ const ChatUI = () => {
                   router={router}
                   socket={socket}
                   profile={profile}
+                  channel={selectedChannel}
                 />
               ))}
             </ul>
