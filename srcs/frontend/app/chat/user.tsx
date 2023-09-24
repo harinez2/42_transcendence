@@ -12,11 +12,10 @@ import { ChannelType } from "./types";
 
 export type User = {
   id: number;
-  nickname: string;
-  status: string;
+  username: string;
 };
 export interface UserProps {
-  user: User;
+  user: User | undefined;
   router: AppRouterInstance;
   socket: Socket;
   profile: ProfileType;
@@ -52,7 +51,7 @@ const UserComponent = ({
           height={30}
           alt=""
         />
-        <span className="ml-3 shrink-0 pr-8 text-black">{user.nickname}</span>
+        <span className="ml-3 shrink-0 pr-8 text-black">{user?.username}</span>
       </button>
       <dialog
         onClick={closeModal}

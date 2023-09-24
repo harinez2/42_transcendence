@@ -2,9 +2,8 @@
 
 import { useContext, useEffect, useState } from "react";
 import ChannelName from "./channel_name";
-import { User } from "./user";
 
-import UserComponent from "./user";
+import UserComponent, { User } from "./user";
 import makeAPIRequest from "@/app/api/api";
 import type { ChannelType, MessageType } from "./types";
 import { ProfileContext, SocketContext, ErrorContext } from "../layout";
@@ -15,30 +14,30 @@ import HeaderMenu from "../components/headermenu";
 import MessageList from "./messages";
 import { useRouter } from "next/navigation";
 
-const ChatUI = () => {
-  const Users: Array<User> = [
-    {
-      id: 1,
-      nickname: "hoge-on",
-      status: "online",
-    },
-    {
-      id: 2,
-      nickname: "fuga-on",
-      status: "online",
-    },
-    {
-      id: 3,
-      nickname: "foo-off",
-      status: "offline",
-    },
-  ];
+enum OnlineStatus { // eslint-disable-line no-unused-vars
+  OFFLINE = "offline", // eslint-disable-line no-unused-vars
+  ONLINE = "online", // eslint-disable-line no-unused-vars
+  GAMING = "gaming", // eslint-disable-line no-unused-vars
+}
 
+type StatusType = {
+  userId: number;
+  user: User;
+  socketId: string;
+  status: OnlineStatus;
+};
+
+const ChatUI = () => {
   const [channels, setChannels] = useState<ChannelType[]>([]);
   const [selectedChannel, setSelectedChannel] = useState<ChannelType | null>(
     null,
   );
   const [messages, setMessages] = useState<MessageType[]>([]);
+  const [status, setStatus] = useState<StatusType[]>([]);
+  const [timer, setTimer] = useState<number>(0);
+
+  // 1分おきにAPIをたたいてtimer変数を書き換える=useEffect()でオンライン状態を取得する
+  setInterval(() => setTimer(timer + 1), 60 * 1000);
 
   const profile: ProfileType = useContext(ProfileContext);
   const socket: any = useContext(SocketContext);
@@ -56,6 +55,26 @@ const ChatUI = () => {
       return newChannels;
     });
   };
+
+  useEffect(() => {
+    if (profile && profile.userId && selectedChannel) {
+      // 選択したチャンネルのステータス一覧を取得
+      makeAPIRequest<StatusType[]>(
+        "get",
+        `/status/channel/${selectedChannel.channelId}`,
+      )
+        .then((result) => {
+          if (result.success) {
+            setStatus(result.data);
+          } else {
+            console.error(result.error);
+          }
+        })
+        .catch((error) => {
+          console.error("Error:", error.message);
+        });
+    }
+  }, [selectedChannel, timer]);
 
   useEffect(() => {
     if (profile && profile.userId) {
@@ -188,31 +207,65 @@ const ChatUI = () => {
           />
           {error != null && <p>{error}</p>}
           <div className="z-50 h-full w-48 flex-none bg-darkslategray-200 px-3 py-4">
+            <UserStatusCategory categoryName="gaming" />
+            <ul className="space-y-2 font-medium">
+              {selectedChannel?.users.user.map(
+                (userId) =>
+                  status.some(
+                    (data) =>
+                      data.userId === userId &&
+                      data.status === OnlineStatus.GAMING,
+                  ) && (
+                    <UserComponent
+                      key={userId}
+                      user={status.find((e) => e.userId === userId)?.user}
+                      router={router}
+                      socket={socket}
+                      profile={profile}
+                      channel={selectedChannel}
+                    />
+                  ),
+              )}
+            </ul>
             <UserStatusCategory categoryName="online" />
             <ul className="space-y-2 font-medium">
-              {Users.map((u) => (
-                <UserComponent
-                  key={u.id}
-                  user={u}
-                  router={router}
-                  socket={socket}
-                  profile={profile}
-                  channel={selectedChannel}
-                />
-              ))}
+              {selectedChannel?.users.user.map(
+                (userId) =>
+                  status.some(
+                    (data) =>
+                      data.userId === userId &&
+                      data.status === OnlineStatus.ONLINE,
+                  ) && (
+                    <UserComponent
+                      key={userId}
+                      user={status.find((e) => e.userId === userId)?.user}
+                      router={router}
+                      socket={socket}
+                      profile={profile}
+                      channel={selectedChannel}
+                    />
+                  ),
+              )}
             </ul>
             <UserStatusCategory categoryName="offline" />
             <ul className="mt-4 space-y-2 border-t border-gray-700 pt-4 font-medium">
-              {Users.map((u) => (
-                <UserComponent
-                  key={u.id}
-                  user={u}
-                  router={router}
-                  socket={socket}
-                  profile={profile}
-                  channel={selectedChannel}
-                />
-              ))}
+              {selectedChannel?.users.user.map(
+                (userId) =>
+                  status.some(
+                    (data) =>
+                      data.userId === userId &&
+                      data.status === OnlineStatus.OFFLINE,
+                  ) && (
+                    <UserComponent
+                      key={userId}
+                      user={status.find((e) => e.userId === userId)?.user}
+                      router={router}
+                      socket={socket}
+                      profile={profile}
+                      channel={selectedChannel}
+                    />
+                  ),
+              )}
             </ul>
           </div>
         </div>
