@@ -52,7 +52,7 @@ export class AuthController {
 
     const jwt = await this.authService.accessToken(user.id);
     res.cookie('jwt', jwt, { httpOnly: true });
-    res.redirect(`${FRONT_URL}/test`);
+    res.redirect(`${FRONT_URL}/chat`);
   }
 
   @Get('validate')
@@ -75,7 +75,7 @@ export class AuthController {
       loginDto.password,
     );
     res.cookie('jwt', jwt, { httpOnly: true });
-    res.redirect(`${FRONT_URL}/test`);
+    res.redirect(`${FRONT_URL}/chat`);
   }
 
   @Post('staff/curl')
@@ -98,7 +98,7 @@ export class AuthController {
     const { token, code } = login2fa;
     const jwt = await this.authService.response2FA(token, code);
     res.cookie('jwt', jwt, { httpOnly: true });
-    res.redirect(`${FRONT_URL}/test`);
+    res.redirect(`${FRONT_URL}/chat`);
   }
 
   @Get('request2faurl')
