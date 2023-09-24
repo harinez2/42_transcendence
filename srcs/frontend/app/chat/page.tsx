@@ -13,6 +13,7 @@ import { ProfileType } from "../types";
 import ChannelCategory from "./channel_category";
 import UserStatusCategory from "./user_status_category";
 import HeaderMenu from "../components/headermenu";
+import MessageList from "./messages";
 import { useRouter } from "next/navigation";
 
 const ChatUI = () => {
@@ -126,6 +127,15 @@ const ChatUI = () => {
     socket?.emit("chat-getPastMessages", { channelId: channel.channelId });
   };
 
+  // メッセージ発言ハンドラ
+  const handleSendMessage = (channel: ChannelType, message: string) => {
+    socket?.emit("chat-message", {
+      channelId: channel.channelId,
+      senderId: profile?.userId,
+      content: message,
+    });
+  };
+
   const removeChannel = (channelId: number) => {
     setChannels((prevChannels) => {
       const newChannels = prevChannels.filter((c) => c.channelId !== channelId);
@@ -135,71 +145,76 @@ const ChatUI = () => {
 
   return (
     <>
-      <div className="relative h-screen w-full bg-darkslategray-100 text-left font-body text-xl text-base-white">
+      <div className="h-screen w-full bg-darkslategray-100 text-left font-body text-xl text-base-white">
         <HeaderMenu />
-        {/* <aside
-          id="separator-sidebar"
-          // className="left-0 top-0 z-40 h-screen w-64 translate-x-0 transition-transform"
-          aria-label="Sidebar"
-        > */}
-        <div className="absolute left-[0px] top-[100px] h-[calc(100%_-_131px)] w-64 shrink-0 bg-darkslategray-200 px-3 py-4 ">
-          <ChannelCategory
-            categoryName="Channels"
-            channels={channels}
-            setChannels={setChannels}
-          />
-          <ul className="space-y-2 font-medium">
-            {channels?.map((channel: ChannelType) => (
-              <ChannelName
-                key={channel.channelId}
-                channel={channel}
-                setChannel={updateChannel}
-                onSelectChannel={handleChannelSelect}
-                removeChannel={removeChannel}
+        {/* // 3つのdivを横に並べる */}
+        <div className="relative top-[100px] flex h-[calc(100%_-_132px)] w-full flex-row">
+          {/* header の高さ 132px 分だけずらす */}
+          <div className="fixed h-[calc(100%_-_132px)] w-64 shrink-0 bg-darkslategray-200 px-3 py-4">
+            <div className="fixed h-[calc(100%_-_132px-64px)] w-64 shrink-0 overflow-y-scroll bg-darkslategray-200">
+              {/* divの幅は64 */}
+              <ChannelCategory
+                categoryName="Channels"
+                channels={channels}
+                setChannels={setChannels}
               />
-            ))}
-          </ul>
-        </div>
-        {/* </aside> */}
-        <div className="container bg-darkslategray-100">
-          <div className="grow flex-col-reverse divide-y divide-gray-500/30 px-4">
-            {messages?.map((message: MessageType) => (
-              <MessageComponent key={message.channelId} message={message} />
-            ))}
+              <ul className="space-y-2 font-medium">
+                {channels?.map((channel: ChannelType) => (
+                  <ChannelName
+                    key={channel.channelId}
+                    channel={channel}
+                    userId={profile?.userId}
+                    setChannel={updateChannel}
+                    onSelectChannel={handleChannelSelect}
+                    removeChannel={removeChannel}
+                  />
+                ))}
+              </ul>
+              <button
+                className="fixed bottom-5 ml-6 h-[38px] w-[160px] cursor-pointer items-center justify-center  rounded-[5px] bg-neutral-400"
+                onClick={() => {
+                  router.push("/chat/channel-list");
+                }}
+              >
+                <div className="text-center text-xl font-normal tracking-widest text-white">
+                  Join channel
+                </div>
+              </button>
+            </div>
+          </div>
+          <MessageList
+            channel={selectedChannel}
+            messages={messages}
+            onSendMessage={handleSendMessage}
+          />
+          {error != null && <p>{error}</p>}
+          <div className="z-50 h-full w-48 flex-none bg-darkslategray-200 px-3 py-4">
+            <UserStatusCategory categoryName="online" />
+            <ul className="space-y-2 font-medium">
+              {Users.map((u) => (
+                <UserComponent
+                  key={u.id}
+                  user={u}
+                  router={router}
+                  socket={socket}
+                  profile={profile}
+                />
+              ))}
+            </ul>
+            <UserStatusCategory categoryName="offline" />
+            <ul className="mt-4 space-y-2 border-t border-gray-700 pt-4 font-medium">
+              {Users.map((u) => (
+                <UserComponent
+                  key={u.id}
+                  user={u}
+                  router={router}
+                  socket={socket}
+                  profile={profile}
+                />
+              ))}
+            </ul>
           </div>
         </div>
-        {/* <aside
-          id="separator-sidebar"
-          // className="w-64 shrink-0 translate-x-0 transition-transform "
-          aria-label="Sidebar"
-        > */}
-        <div className="absolute right-[0px] top-[100px] h-[calc(100%_-_131px)] w-64 shrink-0 bg-darkslategray-200 px-3 py-4">
-          <UserStatusCategory categoryName="online" />
-          <ul className="space-y-2 font-medium">
-            {Users.map((u) => (
-              <UserComponent
-                key={u.id}
-                user={u}
-                router={router}
-                socket={socket}
-                profile={profile}
-              />
-            ))}
-          </ul>
-          <ul className="mt-4 space-y-2 border-t border-gray-700 pt-4 font-medium">
-            <UserStatusCategory categoryName="offline" />
-            {Users.map((u) => (
-              <UserComponent
-                key={u.id}
-                user={u}
-                router={router}
-                socket={socket}
-                profile={profile}
-              />
-            ))}
-          </ul>
-        </div>
-        {/* </aside> */}
       </div>
     </>
   );

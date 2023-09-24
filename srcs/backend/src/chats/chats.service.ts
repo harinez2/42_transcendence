@@ -451,7 +451,7 @@ export class ChatsService {
       },
     });
     return {
-      channelId: post.channelId.toString(),
+      channelId: post.channelId,
       channelName: post.channelName,
       createdAt: post.createdAt.toISOString(),
       channelType: post.channelType,
