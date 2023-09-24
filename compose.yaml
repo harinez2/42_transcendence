@@ -1,22 +1,22 @@
 version: "3"
 
 services:
-  # frontend:
-  #   depends_on:
-  #     - backend
-  #     - db
-  #   container_name: frontend
-  #   hostname: frontend
-  #   build: ./srcs/frontend
-  #   image: frontend:${TAG}
-  #   ports:
-  #     - "3000:3000"
-  #   restart: always
-  #   environment:
-  #     - NEXT_PUBLIC_FRONT_URL=${NEXT_PUBLIC_FRONT_URL}
-  #     - NEXT_PUBLIC_API_URL=http://backend:5000
-  #   networks:
-  #     - docker-network
+  frontend:
+    depends_on:
+      - backend
+      - db
+    container_name: frontend
+    hostname: frontend
+    build: ./srcs/frontend
+    image: frontend:${TAG}
+    ports:
+      - "3000:3000"
+    restart: always
+    environment:
+      - NEXT_PUBLIC_FRONT_URL=${NEXT_PUBLIC_FRONT_URL}
+      - NEXT_PUBLIC_API_URL=http://backend:5000
+    networks:
+      - docker-network
 
   backend:
     depends_on:
