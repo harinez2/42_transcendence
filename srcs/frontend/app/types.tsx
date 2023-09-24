@@ -1,7 +1,7 @@
 import React from "react";
 
 export type ProfileType = {
-  userId: string;
+  userId: number;
   bio: string;
 };
 
