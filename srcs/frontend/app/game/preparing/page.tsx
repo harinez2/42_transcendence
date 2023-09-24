@@ -31,8 +31,8 @@ const GamePreparingUI = () => {
     WaitStatus.Initial,
   );
   const [gameId, setGameId] = useState(-1);
+  // eslint-disable-next-line no-unused-vars
   let gameSettings: GameSettingsType = {
-    // eslint-disable-line no-unused-vars
     points: 3,
     isSpeedUp: false,
   };

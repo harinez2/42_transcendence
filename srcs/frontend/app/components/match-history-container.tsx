@@ -2,8 +2,8 @@
 
 import React from "react";
 // import { useState, useCallback } from "react";
+// eslint-disable-next-line no-unused-vars
 async function MatchHistoryContainer({ userId }: any) {
-  // eslint-disable-line no-unused-vars
   // const prof: ProfileType = await getProfileByUserId(userId);
 
   // const [isMUserOpsDMOpen, setMUserOpsDMOpen] = useState(false);

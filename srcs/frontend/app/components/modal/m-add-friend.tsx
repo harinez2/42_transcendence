@@ -6,8 +6,8 @@ type MAddFriendType = {
   onClose?: () => void;
 };
 
+// eslint-disable-next-line no-unused-vars
 const MAddFriend: NextPage<MAddFriendType> = ({ onClose }) => {
-  // eslint-disable-line no-unused-vars
   return (
     <div className="relative h-[280px] max-h-full w-[390px] max-w-full overflow-hidden bg-darkslategray-100 text-left font-body text-5xl text-white">
       <div className="absolute left-[32px] top-[50px] tracking-[0.1em]">
