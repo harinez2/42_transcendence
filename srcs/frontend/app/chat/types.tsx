@@ -35,8 +35,8 @@ export type createChannelDTO = {
 };
 
 export enum Publicity {
-  PUBLIC = "PUBLIC",
-  PRIVATE = "PRIVATE",
+  PUBLIC = "PUBLIC", // eslint-disable-line no-unused-vars
+  PRIVATE = "PRIVATE", // eslint-disable-line no-unused-vars
 }
 
 export type updateChannelDTO = {

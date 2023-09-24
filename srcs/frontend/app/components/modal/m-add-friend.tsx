@@ -3,28 +3,13 @@ import type { NextPage } from "next";
 import { TextField } from "@mui/material";
 import makeAPIRequest from "@/app/api/api";
 import { ProfileContext } from "@/app/layout";
+import { ProfileType, UserType } from "./types";
 
 type MAddFriendType = {
   onClose?: () => void;
 };
 
-export type ProfileType = {
-  id: number;
-  bio: string;
-  userId: number;
-};
-
-export type UserType = {
-  id: number;
-  username: string;
-  avatar: Uint8Array;
-  email: string;
-  staff: boolean;
-  password: string;
-  twoFactorAuthEnabled: boolean;
-  twoFactorAuthSecret: string;
-};
-
+// eslint-disable-next-line no-unused-vars
 const MAddFriend: NextPage<MAddFriendType> = ({ onClose }) => {
   const profile: ProfileType = useContext(ProfileContext);
   const [blockeds, setBlockeds] = useState<UserType[]>([]);

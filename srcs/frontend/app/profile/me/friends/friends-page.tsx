@@ -1,6 +1,5 @@
 "use client";
 
-import type { NextPage } from "next";
 import HeaderMenu from "../../../components/headermenu";
 import FriendsList from "./friendsList";
 import FriendsMenu from "@/app/components/friendsmenu";

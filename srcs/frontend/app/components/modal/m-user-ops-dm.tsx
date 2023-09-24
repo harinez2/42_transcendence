@@ -9,6 +9,7 @@ type MUserOpsDMType = {
   onClose?: () => void;
 };
 
+// eslint-disable-next-line no-unused-vars
 const MUserOpsDM: NextPage<MUserOpsDMType> = ({ onClose }) => {
   const router = useRouter();
 

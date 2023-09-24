@@ -21,6 +21,7 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { ApiBearerAuth } from '@nestjs/swagger';
 import { UserType } from './chats.interface';
 
 @Controller('chats')
@@ -35,6 +36,7 @@ export class ChatsController {
     description: '作成したチャンネル情報を返却',
     type: ChannelInfoDto,
   })
+  @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'))
   @Post()
   async createChannel(
@@ -46,15 +48,29 @@ export class ChatsController {
     return await this.chatsService.createChannel(createChannelDto);
   }
 
-  @ApiOperation({ summary: 'チャンネル一覧を取得する' })
+  @ApiOperation({ summary: 'userが所属するチャンネル一覧を取得する' })
   @ApiResponse({
     status: 200,
-    description: 'チャンネル一覧を返却',
+    description: 'userが所属するチャンネル一覧を返却',
     type: [ChannelInfoDto],
   })
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
   @Get()
-  async findAllChannel() {
-    return await this.chatsService.findAllChannel();
+  async findAllChannel(@Request() req) {
+    const userId = req.user.id;
+    return await this.chatsService.findAllChannelByUserId(userId);
+  }
+
+  @ApiOperation({ summary: 'public なチャンネル一覧を取得する' })
+  @ApiResponse({
+    status: 200,
+    description: 'public なチャンネル一覧を返却',
+    type: [ChannelInfoDto],
+  })
+  @Get('public')
+  async findAllPublicChannel() {
+    return await this.chatsService.findAllPublicChannel();
   }
 
   @ApiOperation({ summary: '指定したチャンネルの情報を取得する' })

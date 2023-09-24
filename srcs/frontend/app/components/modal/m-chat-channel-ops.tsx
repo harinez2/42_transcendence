@@ -3,9 +3,8 @@
 import React from "react";
 import type { NextPage } from "next";
 import { useCallback } from "react";
-import { User, UserProps } from "@/app/chat/user";
+import { User } from "@/app/chat/user";
 import { ChannelType } from "@/app/chat/types";
-import makeAPIRequest from "@/app/api/api";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context";
 import { Socket } from "socket.io-client";
 import { ProfileType } from "@/app/types";
@@ -20,12 +19,12 @@ type MChatChannelOpsType = {
 };
 
 export const MChatChannelOps: NextPage<MChatChannelOpsType> = ({
-  onClose,
+  onClose, // eslint-disable-line no-unused-vars
   user,
   router,
-  socket,
-  profile,
-  channel,
+  socket, // eslint-disable-line no-unused-vars
+  profile, // eslint-disable-line no-unused-vars
+  channel, // eslint-disable-line no-unused-vars
 }: MChatChannelOpsType) => {
   const onClickKick = useCallback(() => {
     // makeAPIRequest<ChannelType>("delete", `/chats/${props.channel?.channelId}/users`, {"userId": props.user.id})

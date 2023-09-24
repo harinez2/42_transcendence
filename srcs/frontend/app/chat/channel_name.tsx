@@ -14,9 +14,9 @@ const ChannelName = ({
 }: {
   channel: ChannelType;
   userId: number;
-  setChannel: (c: ChannelType) => void;
+  setChannel: (c: ChannelType) => void; // eslint-disable-line no-unused-vars
   onSelectChannel: (c: ChannelType) => void; // eslint-disable-line no-unused-vars
-  removeChannel: (channelId: number) => void;
+  removeChannel: (channelId: number) => void; // eslint-disable-line no-unused-vars
 }) => {
   const { ref, showModal, closeModal } = useModal();
 

@@ -11,7 +11,7 @@ type MJoinChannelPasswordType = {
 };
 
 const MJoinChannelPassword: NextPage<MJoinChannelPasswordType> = ({
-  onClose,
+  onClose, // eslint-disable-line no-unused-vars
 }) => {
   const router = useRouter();
 
