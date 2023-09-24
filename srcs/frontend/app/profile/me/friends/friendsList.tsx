@@ -9,11 +9,7 @@ import { ProfileContext } from "@/app/layout";
 import makeAPIRequest from "@/app/api/api";
 import { FolloweeType, StatusType, UserType } from "./types";
 
-const FriendComponent = ({
-  followee,
-}: {
-  followee: FolloweeType;
-}) => {
+const FriendComponent = ({ followee }: { followee: FolloweeType }) => {
   const [isMUserOpsOpen, setMUserOpsOpen] = useState(false);
   const openMUserOps = useCallback(() => {
     setMUserOpsOpen(true);
@@ -72,7 +68,7 @@ const FriendComponent = ({
 
   const icon = () => {
     if (user && user.avatar) {
-      return `http://localhost:3000/api/users/avatar/${status_variable?.userId}`
+      return `http://localhost:3000/api/users/avatar/${status_variable?.userId}`;
     } else {
       return "http://localhost:3000/favicon.ico";
     }
@@ -84,7 +80,6 @@ const FriendComponent = ({
         <a className="flex items-center rounded-lg p-4 text-white">
           <img
             src={icon()}
-            
             className="h-auto max-w-full cursor-pointer rounded-full"
             width={45}
             height={45}
