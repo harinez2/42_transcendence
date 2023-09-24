@@ -57,9 +57,9 @@ const MAddFriend: NextPage<MAddFriendType> = ({ onClose }) => {
         .then((result) => {
           if (result.success) {
             setMsg("Added!");
-            console.log("added!");
           } else {
             console.error(result.error);
+            setMsg("Cannot add Blocked user");
           }
         })
         .catch((error) => {
@@ -103,7 +103,7 @@ const MAddFriend: NextPage<MAddFriendType> = ({ onClose }) => {
           Add friend
         </div>
       </button>
-      <div className="absolute left-[100px] top-[230px] text-darkgray-200">
+      <div className="absolute left-[75px] top-[230px] text-darkgray-200">
         {msg}
       </div>
     </div>
