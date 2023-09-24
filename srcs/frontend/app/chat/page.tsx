@@ -43,6 +43,18 @@ const ChatUI = () => {
   const socket: any = useContext(SocketContext);
   const error: any = useContext(ErrorContext);
 
+  const updateChannel = (channel: ChannelType) => {
+    setChannels((prevChannels) => {
+      const newChannels = prevChannels.map((c) => {
+        if (c.channelId === channel.channelId) {
+          return channel;
+        }
+        return c;
+      });
+      return newChannels;
+    });
+  };
+
   useEffect(() => {
     if (profile && profile.userId) {
       // チャンネル一覧を取得
@@ -112,6 +124,13 @@ const ChatUI = () => {
     socket?.emit("chat-getPastMessages", { channelId: channel.channelId });
   };
 
+  const removeChannel = (channelId: number) => {
+    setChannels((prevChannels) => {
+      const newChannels = prevChannels.filter((c) => c.channelId !== channelId);
+      return newChannels;
+    });
+  };
+
   return (
     <>
       <div className="relative h-screen w-full bg-darkslategray-100 text-left font-body text-xl text-base-white">
@@ -132,13 +151,11 @@ const ChatUI = () => {
               <ChannelName
                 key={channel.channelId}
                 channel={channel}
+                setChannel={updateChannel}
                 onSelectChannel={handleChannelSelect}
+                removeChannel={removeChannel}
               />
             ))}
-          </ul>
-          <ul className="mt-4 space-y-2 border-t border-gray-700 pt-4 font-medium">
-            {/* <ChannelName channel={{ id: 1, name: "general" }} />
-              <ChannelName channel={{ id: 2, name: "random" }} /> */}
           </ul>
         </div>
         {/* </aside> */}
