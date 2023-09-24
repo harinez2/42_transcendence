@@ -3,6 +3,7 @@ import useModal from "../components/useModal";
 import Image from "next/image";
 import type { ChannelType } from "./types";
 import MEditChannel from "../components/modal/m-edit-channel";
+import { Tooltip } from "@mui/material";
 
 const ChannelName = ({
   channel,
@@ -30,12 +31,7 @@ const ChannelName = ({
 
   return (
     <li className="h-12 rounded-lg hover:bg-gray-700">
-      <a
-        href="#"
-        className="text-white"
-        onClick={handleClick}
-        onContextMenu={onContextMenu}
-      >
+      <a href="#" className="text-white" onClick={handleClick}>
         <span className="ml-3 flex flex-row items-center justify-between">
           <div className="flex flex-initial shrink-0 flex-row text-2xl text-gray-300">
             <div>{channel.channelName}</div>
@@ -46,13 +42,16 @@ const ChannelName = ({
           </div>
 
           {channel.users.owner === userId && (
-            <Image
-              src="/crown@2x.png"
-              className="z-10 m-0 h-auto max-w-full rounded-full"
-              width={24}
-              height={24}
-              alt=""
-            />
+            <Tooltip title="Edit channel" arrow placement="right">
+              <Image
+                src="/crown@2x.png"
+                className="z-10 h-auto max-w-full rounded-full bg-black p-1"
+                width={24}
+                height={24}
+                alt=""
+                onClick={onContextMenu}
+              />
+            </Tooltip>
           )}
           <dialog
             onClick={closeModal}
