@@ -76,13 +76,12 @@ const MAddFriend: NextPage<MAddFriendType> = ({ onClose }) => {
               return element.username === input;
             });
             if (found2) {
-                console.error(result.error);
-                setMsg("Cannot add Blocked user");
-              }
-              else {
-                console.error(result.error);
-                setMsg("Already followed");
-             }
+              console.error(result.error);
+              setMsg("Cannot add Blocked user");
+            } else {
+              console.error(result.error);
+              setMsg("Already followed");
+            }
           }
         })
         .catch((error) => {
