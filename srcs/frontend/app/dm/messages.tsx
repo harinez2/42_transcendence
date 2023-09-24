@@ -47,7 +47,7 @@ const MessageList = ({
     <div className="container relative left-[310px] w-full bg-darkslategray-100">
       <div className="grow flex-col-reverse divide-y divide-gray-500/30 px-4">
         {messages?.map((message) => (
-          <MessageComponent key={message.channelId} message={message} />
+          <MessageComponent key={message.messasgeId} message={message} />
         ))}
       </div>
       <div className="fixed bottom-0 mx-4 mb-4 w-full">

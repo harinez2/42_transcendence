@@ -52,7 +52,7 @@ const MessageList = ({
                   */}
         <div className="w-[calc(100%-288px*2)] flex-col-reverse divide-y divide-gray-500/30 hyphens-auto whitespace-normal break-all px-4">
           {messages?.map((message) => (
-            <MessageComponent key={message.channelId} message={message} />
+            <MessageComponent key={message.messasgeId} message={message} />
           ))}
         </div>
       </div>
