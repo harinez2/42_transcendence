@@ -1,4 +1,4 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, ParseIntPipe } from '@nestjs/common';
 import { StatusService } from './status.service';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
@@ -17,8 +17,9 @@ export class StatusController {
   getAllStatus(): any {
     return this.statusService.getStatusList();
   }
+
   @Get(':userId')
-  findById(@Param('userId') userId: number): any {
-    return this.statusService.findById(userId);
+  findById(@Param('userId', ParseIntPipe) userId: number) {
+    return this.statusService.getStatus(userId);
   }
 }
