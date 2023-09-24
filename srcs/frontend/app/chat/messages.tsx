@@ -56,7 +56,7 @@ const MessageList = ({
           ))}
         </div>
       </div>
-      <div className="fixed bottom-0 mx-4 mb-4">
+      <div className="fixed bottom-0 mx-4 mb-4 w-[calc(100%-288px*2)]">
         <input
           type="text"
           className="h-[51px] w-full rounded-[5px] bg-zinc-600 px-[17.75px] text-xl font-normal tracking-widest text-zinc-500"

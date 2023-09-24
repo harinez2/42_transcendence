@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Socket } from 'socket.io';
+import { UserType } from 'src/chats/chats.interface';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 export enum OnlineStatus {
   OFFLINE = 'offline',
@@ -8,15 +10,11 @@ export enum OnlineStatus {
   GAMING = 'gaming',
 }
 
-export type StatusType = {
-  userId: number;
-  socketId: string;
-  status: string;
-};
-
 @Injectable()
 @ApiTags('status')
 export class StatusService {
+  constructor(private readonly prisma: PrismaService) {}
+
   private statusList: {
     userId: number;
     socket: Socket;
@@ -73,10 +71,36 @@ export class StatusService {
     return this.statusList.map((c) => {
       return {
         userId: c.userId,
+        user: this.getUserInfo(c.userId),
         socketId: c.socket.id,
         status: c.status,
       };
     });
+  }
+
+  async getChatChannelUserStatus(channelId: number) {
+    const users = await this.getChannelUserList(channelId);
+
+    const userStatusPromises = users.map(async (c) => {
+      const user = await this.getUserInfo(c.userId);
+
+      let socketId = '';
+      let status = OnlineStatus.OFFLINE;
+      const statusData = this.statusList.find((s) => c.userId === s.userId);
+      if (statusData) {
+        socketId = statusData.socket.id;
+        status = statusData.status;
+      }
+
+      return {
+        userId: c.userId,
+        user: user,
+        socketId: socketId,
+        status: status,
+      };
+    });
+
+    return await Promise.all(userStatusPromises);
   }
 
   //---------------------------------------------------------------------------
@@ -88,5 +112,30 @@ export class StatusService {
           `socket.id: ${s.socket.id}, status: ${s.status}`,
       );
     });
+  }
+
+  private async getChannelUserList(channelId: number) {
+    try {
+      const channelUsers = await this.prisma.chatChannelUsers.findMany({
+        where: {
+          channelId: channelId,
+          type: UserType.USER,
+        },
+      });
+      return channelUsers;
+    } catch (e) {
+      throw this.prisma.handleError(e);
+    }
+  }
+
+  private async getUserInfo(userId: number) {
+    try {
+      const user = await this.prisma.user.findUnique({
+        where: { id: userId },
+      });
+      return user;
+    } catch (e) {
+      throw this.prisma.handleError(e);
+    }
   }
 }

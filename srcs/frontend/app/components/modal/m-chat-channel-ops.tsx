@@ -11,7 +11,7 @@ import { ProfileType } from "@/app/types";
 
 type MChatChannelOpsType = {
   onClose?: () => void;
-  user: User;
+  user: User | undefined;
   router: AppRouterInstance;
   socket: Socket;
   profile: ProfileType;
@@ -53,7 +53,7 @@ export const MChatChannelOps: NextPage<MChatChannelOpsType> = ({
   return (
     <div className="relative h-[485px] max-h-full w-[390px] max-w-full overflow-hidden bg-darkslategray-100 text-left font-body text-5xl text-base-white">
       <div className="absolute left-[41px] top-[38px] tracking-[0.1em]">
-        Channel ops for {user.nickname}
+        Channel ops for {user?.username}
       </div>
 
       <button
