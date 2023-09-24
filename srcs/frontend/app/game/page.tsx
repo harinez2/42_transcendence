@@ -3,7 +3,6 @@
 import React, { useContext, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import GameBackground from "../components/game-background";
-import Header from "../components/header";
 import makeAPIRequest from "../api/api";
 import { ProfileType } from "../types";
 import { ProfileContext } from "../layout";

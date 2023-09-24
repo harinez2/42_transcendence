@@ -2,12 +2,8 @@
 
 import React from "react";
 // import { useState, useCallback } from "react";
-import MUserOpsDM from "./modal/m-user-ops-dm";
-import ModalPopup from "./modal/modal-popup";
-import { ProfileType } from "../types";
-import { getProfileByUserId } from "../api/api";
-
 async function MatchHistoryContainer({ userId }: any) {
+  // eslint-disable-line no-unused-vars
   // const prof: ProfileType = await getProfileByUserId(userId);
 
   // const [isMUserOpsDMOpen, setMUserOpsDMOpen] = useState(false);

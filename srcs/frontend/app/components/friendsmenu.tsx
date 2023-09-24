@@ -2,7 +2,7 @@
 
 import React from "react";
 import { useMemo } from "react";
-import CSS, { Property } from "csstype";
+import CSS from "csstype";
 import MAddFriend from "./modal/m-add-friend";
 import ModalPopup from "./modal/modal-popup";
 import { useState, useCallback } from "react";

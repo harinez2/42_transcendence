@@ -8,6 +8,7 @@ type MUserOpsType = {
 };
 
 const MUserOps: NextPage<MUserOpsType> = ({ onClose }) => {
+  // eslint-disable-line no-unused-vars
   const router = useRouter();
 
   const onSeeProfileClick = useCallback(() => {

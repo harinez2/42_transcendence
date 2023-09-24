@@ -1,9 +1,7 @@
 import React from "react";
-import type { NextPage } from "next";
-import { getProfileByUserId } from "../api/api";
-import { ProfileType } from "../types";
 
 async function RankingContainer({ userId }: any) {
+  // eslint-disable-line no-unused-vars
   // const prof: ProfileType = await getProfileByUserId(userId); //unused yet.
 
   return (
