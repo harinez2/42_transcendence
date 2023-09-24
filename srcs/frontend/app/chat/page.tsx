@@ -13,6 +13,7 @@ import { ProfileType } from "../types";
 import ChannelCategory from "./channel_category";
 import UserStatusCategory from "./user_status_category";
 import HeaderMenu from "../components/headermenu";
+import { useRouter } from "next/navigation";
 
 const ChatUI = () => {
   const Users: Array<User> = [
@@ -42,6 +43,7 @@ const ChatUI = () => {
   const profile: ProfileType = useContext(ProfileContext);
   const socket: any = useContext(SocketContext);
   const error: any = useContext(ErrorContext);
+  const router = useRouter();
 
   const updateChannel = (channel: ChannelType) => {
     setChannels((prevChannels) => {
@@ -175,13 +177,25 @@ const ChatUI = () => {
           <UserStatusCategory categoryName="online" />
           <ul className="space-y-2 font-medium">
             {Users.map((u) => (
-              <UserComponent key={u.id} user={u} />
+              <UserComponent
+                key={u.id}
+                user={u}
+                router={router}
+                socket={socket}
+                profile={profile}
+              />
             ))}
           </ul>
           <ul className="mt-4 space-y-2 border-t border-gray-700 pt-4 font-medium">
             <UserStatusCategory categoryName="offline" />
             {Users.map((u) => (
-              <UserComponent key={u.id} user={u} />
+              <UserComponent
+                key={u.id}
+                user={u}
+                router={router}
+                socket={socket}
+                profile={profile}
+              />
             ))}
           </ul>
         </div>
