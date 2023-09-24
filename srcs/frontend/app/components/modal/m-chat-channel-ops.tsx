@@ -19,8 +19,14 @@ type MChatChannelOpsType = {
   channel: ChannelType | null;
 };
 
-export const MChatChannelOps: NextPage<MChatChannelOpsType> = ({ onClose, user, router, socket, profile, channel }: MChatChannelOpsType) => {
-
+export const MChatChannelOps: NextPage<MChatChannelOpsType> = ({
+  onClose,
+  user,
+  router,
+  socket,
+  profile,
+  channel,
+}: MChatChannelOpsType) => {
   const onClickKick = useCallback(() => {
     // makeAPIRequest<ChannelType>("delete", `/chats/${props.channel?.channelId}/users`, {"userId": props.user.id})
     //   .then((result) => {
