@@ -113,7 +113,7 @@ const BlockedList = () => {
   const [blockeds, setBlockeds] = useState<UserType[]>([]);
 
   useEffect(() => {
-    if (profile.userId != "") {
+    if (profile.userId != 0) {
       // Blockeds一覧を取得
       makeAPIRequest<UserType[]>(
         "get",

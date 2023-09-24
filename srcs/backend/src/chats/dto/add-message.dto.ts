@@ -1,6 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 export class AddMessageDto {
+  @ApiProperty({ example: 1 })
+  messageId: number;
+
   @ApiProperty({ example: '1' })
   channelId: number;
 
