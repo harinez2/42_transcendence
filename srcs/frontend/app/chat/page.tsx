@@ -215,7 +215,7 @@ const ChatUI = () => {
             </ul>
           </div>
         </div>
-      </div >
+      </div>
     </>
   );
 };
