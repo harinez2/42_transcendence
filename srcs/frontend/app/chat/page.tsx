@@ -173,7 +173,7 @@ const ChatUI = () => {
             onSendMessage={handleSendMessage}
           />
           {error != null && <p>{error}</p>}
-          <div className="h-full w-48 flex-none bg-darkslategray-200 px-3 py-4">
+          <div className="h-full w-48 flex-none bg-darkslategray-200 px-3 py-4 z-50">
             <UserStatusCategory categoryName="online" />
             <ul className="space-y-2 font-medium">
               {Users.map((u) => (
