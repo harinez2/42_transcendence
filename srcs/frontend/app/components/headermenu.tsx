@@ -1,7 +1,7 @@
 import React from "react";
 import type { NextPage } from "next";
 import { useMemo } from "react";
-import CSS, { Property } from "csstype";
+import CSS from "csstype";
 import { useCallback } from "react";
 import { useRouter } from "next/navigation";
 

@@ -16,8 +16,8 @@
     "react-hooks/exhaustive-deps": "off",
     "@next/next/no-img-element": "off",
     "tailwindcss/no-custom-classname": "off",
-    "tailwindcss/classnames-order": "off",
+    "tailwindcss/classnames-order": "off"
     // "no-undef": "off",
-    "no-unused-vars": "off"
+    // "no-unused-vars": "off"
   }
 }

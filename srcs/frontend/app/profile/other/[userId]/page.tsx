@@ -2,8 +2,6 @@
 
 import ProfileOtherPage from "./profile-other-page";
 import React, { useContext, useEffect } from "react";
-import { ProfileType } from "../../../types";
-import { getAllProfile } from "@/app/api/api";
 import { SocketContext } from "@/app/layout";
 
 export const dynamicParams = false;
@@ -15,7 +13,7 @@ export const dynamicParams = false;
 //     ))
 // }
 
-const ProfileOther = async ({ params }: any) => {
+const ProfileOther = ({ params }: any) => {
   const { userId } = params;
   const socket: any = useContext(SocketContext);
 

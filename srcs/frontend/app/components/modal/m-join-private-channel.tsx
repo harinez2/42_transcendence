@@ -10,7 +10,7 @@ type MJoinPrivateChannelType = {
 };
 
 const MJoinPrivateChannel: NextPage<MJoinPrivateChannelType> = ({
-  onClose,
+  onClose, // eslint-disable-line no-unused-vars
 }) => {
   const [isMJoinChannelPasswordPopupOpen, setMJoinChannelPasswordPopupOpen] =
     useState(false);

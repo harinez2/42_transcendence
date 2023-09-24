@@ -1,18 +1,13 @@
 import React, { useCallback, useRef, useState } from "react";
 import makeAPIRequest from "../..//api/api";
 import type { NextPage } from "next";
-import {
-  TextField,
-  FormControlLabel,
-  Switch,
-  createChainedFunction,
-} from "@mui/material";
+import { TextField, FormControlLabel, Switch } from "@mui/material";
 import { ChannelType, Publicity, createChannelDTO } from "../../chat/types";
 
 type MCreateChannelType = {
   closeModal: () => void;
   channels: ChannelType[];
-  setChannels: (channels: ChannelType[]) => void;
+  setChannels: (channels: ChannelType[]) => void; // eslint-disable-line no-unused-vars
 };
 
 const MCreateChannel: NextPage<MCreateChannelType> = ({
@@ -80,7 +75,7 @@ const MCreateChannel: NextPage<MCreateChannelType> = ({
           }
         })
         .catch((err) => {
-          setError("An unexpected error occured.");
+          setError("An unexpected error occured." + err.message);
         });
     },
     [channels],

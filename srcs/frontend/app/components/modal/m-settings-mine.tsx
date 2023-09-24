@@ -6,6 +6,7 @@ type MSettingsMineType = {
   onClose?: () => void;
 };
 
+// eslint-disable-next-line no-unused-vars
 const MSettingsMine: NextPage<MSettingsMineType> = ({ onClose }) => {
   return (
     <div className="relative h-[448px] max-h-full w-[390px] max-w-full overflow-hidden bg-darkslategray-100 text-left font-body text-5xl text-base-white">

@@ -7,8 +7,8 @@ import { ChannelType, Publicity, updateChannelDTO } from "../../chat/types";
 type MEditChannelType = {
   onClose: () => void;
   channel: ChannelType;
-  setChannel: (c: ChannelType) => void;
-  removeChannel: (channelId: number) => void;
+  setChannel: (c: ChannelType) => void; // eslint-disable-line no-unused-vars
+  removeChannel: (channelId: number) => void; // eslint-disable-line no-unused-vars
 };
 
 const MEditChannel: NextPage<MEditChannelType> = ({
@@ -103,7 +103,7 @@ const MEditChannel: NextPage<MEditChannelType> = ({
           }
         })
         .catch((err) => {
-          setError("An unexpected error occured.");
+          setError("An unexpected error occured." + err.message);
         });
     },
     [channel], // TODO:  channel？じゃないほうが適切かも？
@@ -129,7 +129,7 @@ const MEditChannel: NextPage<MEditChannelType> = ({
           }
         })
         .catch((err) => {
-          setError("An unexpected error occured.");
+          setError("An unexpected error occured." + err.message);
         });
     },
     [channel], // TODO:  channel？じゃないほうが適切かも？

@@ -1,6 +1,5 @@
 "use client";
 
-import type { NextPage } from "next";
 import { useCallback } from "react";
 import { useRouter } from "next/navigation";
 import HeaderMenu from "../../../components/headermenu";

@@ -10,7 +10,7 @@ const ChannelCategory = ({
 }: {
   categoryName: string;
   channels: ChannelType[];
-  setChannels: (channels: ChannelType[]) => void;
+  setChannels: (channels: ChannelType[]) => void; // eslint-disable-line no-unused-vars
 }) => {
   const { ref, showModal, closeModal } = useModal();
 

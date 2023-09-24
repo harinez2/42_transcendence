@@ -7,12 +7,7 @@ import MatchMakingDialog from "./match_making";
 import GameSettingsDialog from "./game_settings";
 import { ProfileContext, SocketContext } from "../../layout";
 import { ModalWindowType, ProfileType } from "../../types";
-import {
-  GameUserType,
-  GameSettingsType,
-  WaitStatus,
-  WaitStatusType,
-} from "../types";
+import { GameSettingsType, WaitStatus, WaitStatusType } from "../types";
 import GameBackground from "../../components/game-background";
 import { useRouter } from "next/navigation";
 
@@ -36,6 +31,7 @@ const GamePreparingUI = () => {
     WaitStatus.Initial,
   );
   const [gameId, setGameId] = useState(-1);
+  // eslint-disable-next-line no-unused-vars
   let gameSettings: GameSettingsType = {
     points: 3,
     isSpeedUp: false,
