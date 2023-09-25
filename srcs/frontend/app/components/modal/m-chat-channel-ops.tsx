@@ -81,11 +81,11 @@ export const MChatChannelOps: NextPage<MChatChannelOpsType> = ({
             setError("");
             onClose();
           } else {
-            setError(result.error);
+            setError("Mute: " + result.error);
           }
         })
         .catch(() => {
-          setError("An unexpected error occured.");
+          setError("Mute: An unexpected error occured.");
         });
     }
   }, [router]);
