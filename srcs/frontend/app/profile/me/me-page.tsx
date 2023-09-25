@@ -8,7 +8,7 @@ import { useCallback, useContext, useEffect, useState } from "react";
 import { ProfileContext } from "@/app/layout";
 import makeAPIRequest from "@/app/api/api";
 import { UserType } from "./blocked/types";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 const MePage = () => {
    const router = useRouter();
