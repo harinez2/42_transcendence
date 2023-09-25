@@ -250,14 +250,14 @@ export class ChatsController {
     description: '指定したチャンネルIDの情報を返却',
     type: ChannelInfoDto,
   })
-  @Delete(':channelid/users')
+  @Delete(':channelid/users/:userid')
   async leaveChannel(
     @Param('channelid') channelId: string,
-    @Body() leaveRequest: { userId: string },
+    @Param('userid') userId: string,
   ): Promise<ChannelInfoDto> {
     return await this.chatsService.removeChannelUsers(
       Number(channelId),
-      Number(leaveRequest.userId),
+      Number(userId),
       UserType.USER,
     );
   }

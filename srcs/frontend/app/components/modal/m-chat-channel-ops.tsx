@@ -33,19 +33,18 @@ export const MChatChannelOps: NextPage<MChatChannelOpsType> = ({
     if (channel && user) {
       await makeAPIRequest<ChannelType>(
         "delete",
-        `/chats/${channel.channelId}/users`,
-        { userId: user.id },
+        `/chats/${channel.channelId}/users/${user.id}`,
       )
         .then((result) => {
           if (result.success) {
             setError("");
             onClose();
           } else {
-            setError(result.error);
+            setError("Kick: " + result.error);
           }
         })
         .catch(() => {
-          setError("An unexpected error occured.");
+          setError("Kick: An unexpected error occured.");
         });
     }
   }, [router]);
@@ -111,7 +110,9 @@ export const MChatChannelOps: NextPage<MChatChannelOpsType> = ({
   }, [router]);
 
   return (
-    <div className="relative h-[485px] max-h-full w-[390px] max-w-full overflow-hidden bg-darkslategray-100 text-left font-body text-5xl text-base-white">
+    <div
+      className="relative h-[485px] max-h-full w-[390px] max-w-full overflow-hidden bg-darkslategray-100 text-left font-body text-5xl text-base-white"
+    >
       <div className="absolute left-[41px] top-[38px] tracking-[0.1em]">
         Channel ops for {user?.username}
       </div>
@@ -171,9 +172,11 @@ export const MChatChannelOps: NextPage<MChatChannelOpsType> = ({
           Add admin
         </div>
       </button>
-      <span className="h-[41px] w-[200px] text-center text-xs normal-case tracking-tighter">
-        {error && <p>error: {error}</p>}
-      </span>
+      <div className="absolute left-[59px] top-[420px]">
+        <span className="h-[41px] w-[200px] text-center text-xl normal-case tracking-tighter text-red-600">
+          {error && <p>{error}</p>}
+        </span>
+      </div>
     </div>
   );
 };

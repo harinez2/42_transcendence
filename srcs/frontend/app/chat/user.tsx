@@ -155,7 +155,6 @@ const ShowSettingComponent = ({
         </button>
       )}
       <dialog
-        onClick={closeModal}
         ref={ref}
         style={{ top: "30px" }}
         className="rounded-lg bg-darkslategray-100 px-6 py-2"

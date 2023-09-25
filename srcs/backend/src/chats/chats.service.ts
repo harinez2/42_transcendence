@@ -252,7 +252,7 @@ export class ChatsService {
           ...(type === UserType.ADMIN ? { type: UserType.ADMIN } : {}),
         },
       });
-      if (!query) {
+      if (query.count === 0) {
         throw new NotFoundException();
       }
       return this.findById(channelId);
