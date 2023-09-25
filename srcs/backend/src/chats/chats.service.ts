@@ -289,6 +289,12 @@ export class ChatsService {
         throw new ForbiddenException('The owner cannot be banned.');
       }
 
+      // すでにBanにいれば400エラー
+      const bans = await this.getBans(channelId);
+      if (bans.bannedUsers.includes(bannedUserId)) {
+        throw new BadRequestException('The specified user is already banned.');
+      }
+
       // Banに追加
       const query = await this.prisma.chatBan.create({
         data: {

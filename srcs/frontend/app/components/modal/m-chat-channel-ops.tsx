@@ -59,11 +59,11 @@ export const MChatChannelOps: NextPage<MChatChannelOpsType> = ({
             setError("");
             onClose();
           } else {
-            setError(result.error);
+            setError("Ban: " + result.error);
           }
         })
         .catch(() => {
-          setError("An unexpected error occured.");
+          setError("Ban: An unexpected error occured.");
         });
     }
   }, [router]);
