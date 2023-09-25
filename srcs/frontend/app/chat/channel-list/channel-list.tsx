@@ -9,7 +9,7 @@ import ModalPopup from "../../components/modal/modal-popup";
 import HeaderMenu from "../../components/headermenu";
 import type { ProfileType } from "../../types";
 import type { ChannelType } from "../types";
-import { ProfileContext, SocketContext, ErrorContext } from "../../layout";
+import { ProfileContext } from "../../layout";
 import { useRouter } from "next/navigation";
 import { Tooltip } from "@mui/material";
 
@@ -26,8 +26,6 @@ const ChannelListPage: NextPage = () => {
   }, []);
 
   const profile: ProfileType = useContext(ProfileContext);
-  const socket: any = useContext(SocketContext);
-  const error: any = useContext(ErrorContext);
 
   const router = useRouter();
 
@@ -76,6 +74,7 @@ const ChannelListPage: NextPage = () => {
             channels={channels}
             joinChannel={joinChannel}
             router={router}
+            openModalPopup={openMJoinPrivateChannelPopup}
           />
         </div>
       </div>
@@ -97,14 +96,16 @@ const ChannelList = ({
   channels,
   joinChannel,
   router,
+  openModalPopup,
 }: {
   channels: ChannelType[];
   joinChannel: (channel: ChannelType) => void; // eslint-disable-line no-unused-vars
   router: any;
+  openModalPopup: () => void; // eslint-disable-line no-unused-vars
 }) => {
   return (
     <>
-      <ChannelHeader />
+      <ChannelHeader openModalPopup={openModalPopup} />
       <div className="grid w-2/5 grid-cols-1 divide-y divide-solid divide-gray-300">
         {channels.map((channel) => {
           return (
@@ -121,13 +122,20 @@ const ChannelList = ({
   );
 };
 
-const ChannelHeader = () => {
+const ChannelHeader = ({
+  openModalPopup,
+}: {
+  openModalPopup: () => void; // eslint-disable-line no-unused-vars
+}) => {
   return (
     <div className="top flex w-2/4 flex-row justify-evenly rounded border-b-4 border-solid border-gray-200 p-1">
       <div className="w-1/3 whitespace-nowrap  text-center text-base">
         All channels
       </div>
-      <div className="w-1/3 whitespace-nowrap  text-center text-base text-gray-400">
+      <div
+        className="w-1/3 cursor-pointer  whitespace-nowrap text-center text-base text-gray-400"
+        onClick={openModalPopup}
+      >
         Join private channel
       </div>
     </div>
