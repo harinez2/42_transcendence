@@ -144,6 +144,17 @@ const ChatUI = () => {
     socket?.emit("chat-getPastMessages", { channelId: channel.channelId });
   };
 
+  // チャンネルから退出するハンドラ
+  // eslint-disable-next-line no-unused-vars
+  const handleChannelLeave = (channel: ChannelType) => {
+    if (selectedChannel) {
+      console.log("退室:", selectedChannel);
+      socket?.emit("chat-leave", selectedChannel);
+      // 表示しているログをクリア
+      setMessages([]);
+    }
+  };
+
   // メッセージ発言ハンドラ
   const handleSendMessage = (channel: ChannelType, message: string) => {
     socket?.emit("chat-message", {
@@ -184,6 +195,7 @@ const ChatUI = () => {
                     setChannel={updateChannel}
                     onSelectChannel={handleChannelSelect}
                     removeChannel={removeChannel}
+                    handleChannelLeave={handleChannelLeave}
                   />
                 ))}
               </ul>

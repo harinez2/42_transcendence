@@ -10,7 +10,7 @@ import { ChannelInfoDto } from './dto/channel-info.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UserType } from './chats.interface';
 // import { Publicity, UserType } from './chats.interface';
-import { hash } from 'bcrypt';
+import { compare, hash } from 'bcrypt';
 import { Publicity } from '@prisma/client';
 
 @Injectable()
@@ -49,6 +49,7 @@ export class ChatsService {
         createdPost.channelId,
         createChannelDto.ownerId,
         UserType.USER,
+        createChannelDto.password,
       );
       await this.addChannelUsers(
         createdPost.channelId,
@@ -99,6 +100,20 @@ export class ChatsService {
     try {
       const post = await this.prisma.chatChannels.findUnique({
         where: { channelId: channelId },
+      });
+      if (!post) {
+        throw new NotFoundException();
+      }
+      return await this.createChannelInfoDto(post);
+    } catch (e) {
+      throw this.prisma.handleError(e);
+    }
+  }
+
+  async findByChannelName(channelName: string): Promise<ChannelInfoDto> {
+    try {
+      const post = await this.prisma.chatChannels.findUnique({
+        where: { channelName: channelName },
       });
       if (!post) {
         throw new NotFoundException();
@@ -178,6 +193,7 @@ export class ChatsService {
     channelId: number,
     userId: number,
     type: UserType,
+    password?: string,
   ): Promise<ChannelInfoDto> {
     try {
       // Banされているユーザでないかをチェック
@@ -192,6 +208,7 @@ export class ChatsService {
       if (ban) {
         throw new ForbiddenException('The specified user is banned.');
       }
+
       // Admin付与時、Userであること
       if (
         type === UserType.ADMIN &&
@@ -213,6 +230,20 @@ export class ChatsService {
           throw new BadRequestException(
             'The specified user is already in the channel.',
           );
+        }
+      }
+
+      // パスワード付きのチャンネルの場合、パスワードが正しいかチェック
+      const channel = await this.findById(channelId);
+      if (
+        type === UserType.USER &&
+        channel.channelType === Publicity.PRIVATE &&
+        channel.isPassword
+      ) {
+        if (
+          !(password && (await this.isPasswordCorrect(channelId, password)))
+        ) {
+          throw new ForbiddenException('The password is incorrect.');
         }
       }
 
@@ -457,6 +488,7 @@ export class ChatsService {
     userId: number,
     type: UserType,
   ): Promise<boolean> {
+    console.log(channelId, userId, type);
     const query = await this.prisma.chatChannelUsers.findFirst({
       where: {
         channelId: channelId,
@@ -466,6 +498,23 @@ export class ChatsService {
     });
     if (query) return true;
     else return false;
+  }
+
+  private async isPasswordCorrect(
+    channelId: number,
+    password: string,
+  ): Promise<boolean> {
+    const query = await this.prisma.chatChannels.findFirst({
+      where: {
+        channelId: channelId,
+      },
+    });
+    // compare hashed password
+    if (!query.hashedPassword) {
+      throw new BadRequestException();
+    }
+
+    return compare(password, query.hashedPassword);
   }
 
   private async createChannelInfoDto(post: any): Promise<ChannelInfoDto> {

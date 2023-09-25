@@ -2,9 +2,11 @@
 
 import React, { useState } from "react";
 import makeAPIRequest from "@/app/api/api";
+import { useRouter } from "next/navigation";
 
 export default function StaffLoginPage() {
   const [error, setError] = useState("");
+  const router = useRouter();
 
   const handleCodeSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -18,7 +20,7 @@ export default function StaffLoginPage() {
     makeAPIRequest("post", "/auth/staff", { username, password })
       .then((result) => {
         if (result.success) {
-          window.location.href = "/test";
+          router.push("/chat");
         } else {
           setError(result.error);
         }
