@@ -462,6 +462,7 @@ export class ChatsService {
     userId: number,
     type: UserType,
   ): Promise<boolean> {
+    console.log(channelId, userId, type);
     const query = await this.prisma.chatChannelUsers.findFirst({
       where: {
         channelId: channelId,

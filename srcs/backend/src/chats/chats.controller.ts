@@ -270,6 +270,8 @@ export class ChatsController {
       },
     },
   })
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
   @ApiResponse({
     status: 200,
     description: '指定したチャンネルIDの情報を返却',
@@ -278,11 +280,11 @@ export class ChatsController {
   @Delete(':channelid/users')
   async leaveChannel(
     @Param('channelid') channelId: string,
-    @Body() leaveRequest: { userId: string },
+    @Request() req,
   ): Promise<ChannelInfoDto> {
     return await this.chatsService.removeChannelUsers(
       Number(channelId),
-      Number(leaveRequest.userId),
+      Number(req.user.id),
       UserType.USER,
     );
   }
