@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import makeAPIRequest from "@/app/api/api";
+import Link from "next/link";
 
 export type ProfileType = { userId: string; bio: string };
 
@@ -35,6 +36,19 @@ export default function Profile() {
     <>
       <h1>User Settings (id: {profile.userId})</h1>
       <p>{profile.bio}</p>
+      <h2>Work in progress...</h2>
+      <ul>
+        <li>
+          <Link className="text-teal-200" href="settings/avatar">
+            avatar
+          </Link>
+        </li>
+        <li>
+          <Link className="text-teal-200" href="settings/enable2fa">
+            enable2fa
+          </Link>
+        </li>
+      </ul>
     </>
   );
 }
