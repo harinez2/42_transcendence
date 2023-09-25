@@ -76,8 +76,8 @@ const ChannelName = ({
           ) : (
             <Tooltip title="Leave channel" arrow placement="right">
               <Image
-                src="/crown@2x.png"
-                className="z-10 h-auto max-w-full rounded-full bg-black p-1"
+                src="/exit-svgrepo-com.svg"
+                className="z-10 h-auto max-w-full bg-gray-300 rounded-full"
                 width={24}
                 height={24}
                 alt=""
