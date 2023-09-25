@@ -10,6 +10,9 @@ function RankingContainer({ userId }: any) {
   const [gamesum, setGamesum] = useState<GameSummaryType>();
   const [players, setPlayers] = useState<GameSummaryType[]>([]);
   const [rank, setRank] = useState<number>(-1);
+  const [count, setCount] = useState<number>(0);
+  const [woncount, setWonCount] = useState<number>(0);
+  const [lostcount, setLostCount] = useState<number>(0);
 
    useEffect(() => {
       // すべてのユーザー情報を取得
@@ -17,6 +20,9 @@ function RankingContainer({ userId }: any) {
         .then((result) => {
           if (result.success) {
             setUsers(result.data);
+            if (users) {
+              setCount(users.length);
+            }
           } else {
             console.error(result.error);
           }
@@ -33,6 +39,10 @@ function RankingContainer({ userId }: any) {
         .then((result) => {
           if (result.success) {
             setGamesum(result.data);
+            if (gamesum) {
+              setWonCount(gamesum.wonCount);
+              setLostCount(gamesum.lostCount);
+            }
           } else {
             console.error(result.error);
           }
@@ -43,12 +53,12 @@ function RankingContainer({ userId }: any) {
     }
   }, []);
 
-const num_of_users = users?.length;
   useEffect(() => {
-    if (num_of_users) {
+    if (count) {
+      // 全ユーザーのゲームサマリーを取得
       const fetchPlayers = async () => {
         const playerData: GameSummaryType[] = [];
-        for (let i = 1; i <= num_of_users; i++) {
+        for (let i = 1; i <= count; i++) {
           makeAPIRequest<GameSummaryType>("get", `/games/summary/user/${i}`)
             .then((result) => {
               if (result.success) {
@@ -66,7 +76,7 @@ const num_of_users = users?.length;
       fetchPlayers();
     }
     console.log("players", players)
-  }, [num_of_users]);
+  }, [count]);
 
    useEffect(() => {
     if (players) {
@@ -87,17 +97,17 @@ const num_of_users = users?.length;
     <div className="absolute left-[590px] top-[506px] h-[227px] w-[300px]">
       <div className="absolute left-[1px] top-[0px] flex h-14 w-[300px] flex-row items-center justify-start gap-[66px] overflow-hidden">
         <div className="relative tracking-[0.1em]">ranking</div>
-        <div className="relative text-29xl tracking-[0.1em]">{rank}/{num_of_users}</div>
+        <div className="relative text-29xl tracking-[0.1em]">{rank}/{count}</div>
       </div>
       <div className="absolute left-[5px] top-[83px] flex h-14 w-[300px] flex-row items-center justify-start gap-[118px] overflow-hidden">
         <div className="relative tracking-[0.1em]">win</div>
-        <div className="relative text-29xl tracking-[0.1em]">{gamesum?.wonCount}</div>
+        <div className="relative text-29xl tracking-[0.1em]">{woncount}</div>
       </div>
       <div className="absolute left-[0px] top-[171px] flex h-14 w-[300px] flex-row items-center justify-start gap-[130px] overflow-hidden">
         <div className="mb-[11px] inline-block w-[34px] tracking-[0.1em]">
           lose
         </div>
-        <div className="relative text-29xl tracking-[0.1em]">{gamesum?.lostCount}</div>
+        <div className="relative text-29xl tracking-[0.1em]">{lostcount}</div>
       </div>
     </div>
   );
