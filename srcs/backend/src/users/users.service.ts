@@ -47,10 +47,4 @@ export class UsersService {
       where: { username: username },
     });
   }
-
-  async findStaff(username: string) {
-    return await this.prisma.user.findFirst({
-      where: { username: username, staff: true },
-    });
-  }
 }
