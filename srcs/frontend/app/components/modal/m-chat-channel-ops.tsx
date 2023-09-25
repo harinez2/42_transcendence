@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import type { NextPage } from "next";
 import { useCallback } from "react";
 import { User } from "@/app/chat/user";
@@ -8,9 +8,10 @@ import { ChannelType } from "@/app/chat/types";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context";
 import { Socket } from "socket.io-client";
 import { ProfileType } from "@/app/types";
+import makeAPIRequest from "@/app/api/api";
 
 type MChatChannelOpsType = {
-  onClose?: () => void;
+  onClose: () => void;
   user: User | undefined;
   router: AppRouterInstance;
   socket: Socket;
@@ -26,28 +27,87 @@ export const MChatChannelOps: NextPage<MChatChannelOpsType> = ({
   profile, // eslint-disable-line no-unused-vars
   channel, // eslint-disable-line no-unused-vars
 }: MChatChannelOpsType) => {
-  const onClickKick = useCallback(() => {
-    // makeAPIRequest<ChannelType>("delete", `/chats/${props.channel?.channelId}/users`, {"userId": props.user.id})
-    //   .then((result) => {
-    //     if (!result.success) {
-    //       console.error(result.error);
-    //     }
-    //   })
-    //   .catch((error) => {
-    //     console.error("Error:", error.message);
-    //   });
+  const [error, setError] = useState("");
+
+  const onClickKick = useCallback(async () => {
+    if (channel && user) {
+      await makeAPIRequest<ChannelType>(
+        "delete",
+        `/chats/${channel.channelId}/users`,
+        { userId: user.id },
+      )
+        .then((result) => {
+          if (result.success) {
+            setError("");
+            onClose();
+          } else {
+            setError(result.error);
+          }
+        })
+        .catch(() => {
+          setError("An unexpected error occured.");
+        });
+    }
   }, [router]);
 
-  const onClickBan = useCallback(() => {
-    router.push("/chat");
+  const onClickBan = useCallback(async () => {
+    if (channel && user) {
+      await makeAPIRequest<ChannelType>("put", `/chats/${channel.channelId}/ban`, {
+        bannedUserId: user.id,
+      })
+        .then((result) => {
+          if (result.success) {
+            setError("");
+            onClose();
+          } else {
+            setError(result.error);
+          }
+        })
+        .catch(() => {
+          setError("An unexpected error occured.");
+        });
+    }
   }, [router]);
 
-  const onClickMute = useCallback(() => {
-    router.push("/chat");
+  const onClickMute = useCallback(async () => {
+    if (channel && user) {
+      const dateFiveMinLaterUnix = new Date().getTime() + 300000; //300ミリ秒=5分
+      const dateFiveMinLater = new Date(dateFiveMinLaterUnix);
+      await makeAPIRequest<ChannelType>("put", `/chats/${channel.channelId}/mute`, {
+        mutedUserId: user.id,
+        muteUntil: dateFiveMinLater,
+      })
+        .then((result) => {
+          if (result.success) {
+            setError("");
+            onClose();
+          } else {
+            setError(result.error);
+          }
+        })
+        .catch(() => {
+          setError("An unexpected error occured.");
+        });
+    }
   }, [router]);
 
-  const onClickAddAdmin = useCallback(() => {
-    router.push("/chat");
+  const onClickAddAdmin = useCallback(async () => {
+    if (channel && user) {
+      await makeAPIRequest<ChannelType>("put", `/chats/${channel.channelId}/admins`, {
+        userId: user.id,
+      })
+        .then((result) => {
+          if (result.success) {
+            setError("");
+            onClose();
+          } else {
+            setError(result.error);
+          }
+        })
+        .catch(() => {
+          setError("An unexpected error occured.");
+        });
+    }
   }, [router]);
 
   return (
@@ -57,7 +117,7 @@ export const MChatChannelOps: NextPage<MChatChannelOpsType> = ({
       </div>
 
       <button
-        className="absolute left-[59px] top-[102px] h-[41px] w-[241px] cursor-pointer bg-[transparent] p-0 [border:none]"
+        className="absolute left-[59px] top-[100px] h-[41px] w-[241px] cursor-pointer bg-[transparent] p-0 [border:none]"
         onClick={onClickKick}
       >
         <img
@@ -71,7 +131,7 @@ export const MChatChannelOps: NextPage<MChatChannelOpsType> = ({
       </button>
 
       <button
-        className="absolute left-[59px] top-[202px] h-[41px] w-[241px] cursor-pointer bg-[transparent] p-0 [border:none]"
+        className="absolute left-[59px] top-[180px] h-[41px] w-[241px] cursor-pointer bg-[transparent] p-0 [border:none]"
         onClick={onClickBan}
       >
         <img
@@ -85,7 +145,7 @@ export const MChatChannelOps: NextPage<MChatChannelOpsType> = ({
       </button>
 
       <button
-        className="absolute left-[59px] top-[302px] h-[41px] w-[241px] cursor-pointer bg-[transparent] p-0 [border:none]"
+        className="absolute left-[59px] top-[260px] h-[41px] w-[241px] cursor-pointer bg-[transparent] p-0 [border:none]"
         onClick={onClickMute}
       >
         <img
@@ -99,7 +159,7 @@ export const MChatChannelOps: NextPage<MChatChannelOpsType> = ({
       </button>
 
       <button
-        className="absolute left-[59px] top-[400px] h-[41px] w-[241px] cursor-pointer bg-[transparent] p-0 [border:none]"
+        className="absolute left-[59px] top-[340px] h-[41px] w-[241px] cursor-pointer bg-[transparent] p-0 [border:none]"
         onClick={onClickAddAdmin}
       >
         <img
@@ -111,6 +171,9 @@ export const MChatChannelOps: NextPage<MChatChannelOpsType> = ({
           Add admin
         </div>
       </button>
+      <span className="h-[41px] w-[200px] text-center text-xs normal-case tracking-tighter">
+        {error && <p>error: {error}</p>}
+      </span>
     </div>
   );
 };
