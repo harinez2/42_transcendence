@@ -38,7 +38,7 @@ const MePage = () => {
           console.error("Error:", error.message);
         });
     }
-    }, []);
+    }, [profile]);
   
   if (user) {
     if (user.twoFactorAuthEnabled === true) {
@@ -94,13 +94,13 @@ const MePage = () => {
           alt=""
           src="/line-2.svg"
         />
-        <RankingContainer userId="1" />
+        <RankingContainer userId={profile.userId} />
         <img
           className="absolute left-[470px] top-[768px] h-0.5 w-[500px]"
           alt=""
           src="/line-2.svg"
         />
-        <MatchHistoryContainer userId="1" />
+        <MatchHistoryContainer userId={profile.userId} />
       </div>
     </>
   );
