@@ -144,7 +144,7 @@ const ShowSettingComponent = ({
   channel,
 }: UserProps) => {
   const { ref, showModal, closeModal } = useModal();
-  
+
   const stopPropagation = useCallback(
     (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
       e.stopPropagation();

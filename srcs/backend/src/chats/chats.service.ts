@@ -206,9 +206,13 @@ export class ChatsService {
       const ischannel = await this.isChannelUsers(channelId, userId, type);
       if (ischannel) {
         if (type === UserType.ADMIN) {
-          throw new BadRequestException('The specified user is already in the admins.');
+          throw new BadRequestException(
+            'The specified user is already in the admins.',
+          );
         } else if (type === UserType.USER) {
-          throw new BadRequestException('The specified user is already in the channel.');
+          throw new BadRequestException(
+            'The specified user is already in the channel.',
+          );
         }
       }
 
@@ -261,9 +265,13 @@ export class ChatsService {
       });
       if (query.count === 0) {
         if (type === UserType.ADMIN)
-          throw new NotFoundException("The specified user is not in the admins.");
+          throw new NotFoundException(
+            'The specified user is not in the admins.',
+          );
         else
-          throw new NotFoundException("The specified user is not in the channel.");
+          throw new NotFoundException(
+            'The specified user is not in the channel.',
+          );
       }
       return this.findById(channelId);
     } catch (e) {

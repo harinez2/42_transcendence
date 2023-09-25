@@ -53,9 +53,13 @@ export const MChatChannelOps: NextPage<MChatChannelOpsType> = ({
 
   const onClickBan = useCallback(async () => {
     if (channel && user) {
-      await makeAPIRequest<ChannelType>("put", `/chats/${channel.channelId}/ban`, {
-        bannedUserId: user.id,
-      })
+      await makeAPIRequest<ChannelType>(
+        "put",
+        `/chats/${channel.channelId}/ban`,
+        {
+          bannedUserId: user.id,
+        },
+      )
         .then((result) => {
           if (result.success) {
             setError("");
@@ -74,10 +78,14 @@ export const MChatChannelOps: NextPage<MChatChannelOpsType> = ({
     if (channel && user) {
       const dateFiveMinLaterUnix = new Date().getTime() + 300000; //300ミリ秒=5分
       const dateFiveMinLater = new Date(dateFiveMinLaterUnix);
-      await makeAPIRequest<ChannelType>("put", `/chats/${channel.channelId}/mute`, {
-        mutedUserId: user.id,
-        muteUntil: dateFiveMinLater,
-      })
+      await makeAPIRequest<ChannelType>(
+        "put",
+        `/chats/${channel.channelId}/mute`,
+        {
+          mutedUserId: user.id,
+          muteUntil: dateFiveMinLater,
+        },
+      )
         .then((result) => {
           if (result.success) {
             setError("");
@@ -94,9 +102,13 @@ export const MChatChannelOps: NextPage<MChatChannelOpsType> = ({
 
   const onClickAddAdmin = useCallback(async () => {
     if (channel && user) {
-      await makeAPIRequest<ChannelType>("put", `/chats/${channel.channelId}/admins`, {
-        userId: user.id,
-      })
+      await makeAPIRequest<ChannelType>(
+        "put",
+        `/chats/${channel.channelId}/admins`,
+        {
+          userId: user.id,
+        },
+      )
         .then((result) => {
           if (result.success) {
             setError("");
@@ -113,7 +125,10 @@ export const MChatChannelOps: NextPage<MChatChannelOpsType> = ({
 
   const onClickRemoveAdmin = useCallback(async () => {
     if (channel && user) {
-      await makeAPIRequest<ChannelType>("delete", `/chats/${channel.channelId}/admins/${user.id}`)
+      await makeAPIRequest<ChannelType>(
+        "delete",
+        `/chats/${channel.channelId}/admins/${user.id}`,
+      )
         .then((result) => {
           if (result.success) {
             setError("");
