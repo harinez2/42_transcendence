@@ -109,6 +109,23 @@ export const MChatChannelOps: NextPage<MChatChannelOpsType> = ({
     }
   }, [router]);
 
+  const onClickRemoveAdmin = useCallback(async () => {
+    if (channel && user) {
+      await makeAPIRequest<ChannelType>("delete", `/chats/${channel.channelId}/admins/${user.id}`)
+        .then((result) => {
+          if (result.success) {
+            setError("");
+            onClose();
+          } else {
+            setError("Remove Admin: " + result.error);
+          }
+        })
+        .catch(() => {
+          setError("Remove Admin: An unexpected error occured.");
+        });
+    }
+  }, [router]);
+
   return (
     <div
       className="relative h-[485px] max-h-full w-[390px] max-w-full overflow-hidden bg-darkslategray-100 text-left font-body text-5xl text-base-white"
@@ -126,13 +143,13 @@ export const MChatChannelOps: NextPage<MChatChannelOpsType> = ({
           alt=""
           src="/rectangle-128.svg"
         />
-        <div className="absolute left-[46px] top-[7px] inline-block h-[34px] w-[186px] text-left font-body text-5xl tracking-[0.1em] text-base-white">
+        <div className="absolute left-[46px] top-[7px] inline-block h-[34px] w-[200px] text-left font-body text-5xl tracking-[0.1em] text-base-white">
           Kick
         </div>
       </button>
 
       <button
-        className="absolute left-[59px] top-[180px] h-[41px] w-[241px] cursor-pointer bg-[transparent] p-0 [border:none]"
+        className="absolute left-[59px] top-[170px] h-[41px] w-[241px] cursor-pointer bg-[transparent] p-0 [border:none]"
         onClick={onClickBan}
       >
         <img
@@ -140,13 +157,13 @@ export const MChatChannelOps: NextPage<MChatChannelOpsType> = ({
           alt=""
           src="/rectangle-128.svg"
         />
-        <div className="absolute left-[46px] top-[7px] inline-block h-[34px] w-[186px] text-left font-body text-5xl tracking-[0.1em] text-base-white">
+        <div className="absolute left-[46px] top-[7px] inline-block h-[34px] w-[200px] text-left font-body text-5xl tracking-[0.1em] text-base-white">
           Ban
         </div>
       </button>
 
       <button
-        className="absolute left-[59px] top-[260px] h-[41px] w-[241px] cursor-pointer bg-[transparent] p-0 [border:none]"
+        className="absolute left-[59px] top-[240px] h-[41px] w-[241px] cursor-pointer bg-[transparent] p-0 [border:none]"
         onClick={onClickMute}
       >
         <img
@@ -154,13 +171,13 @@ export const MChatChannelOps: NextPage<MChatChannelOpsType> = ({
           alt=""
           src="/rectangle-128.svg"
         />
-        <div className="absolute left-[46px] top-[7px] inline-block h-[34px] w-[186px] text-left font-body text-5xl tracking-[0.1em] text-base-white">
+        <div className="absolute left-[46px] top-[7px] inline-block h-[34px] w-[200px] text-left font-body text-5xl tracking-[0.1em] text-base-white">
           Mute 5 mins
         </div>
       </button>
 
       <button
-        className="absolute left-[59px] top-[340px] h-[41px] w-[241px] cursor-pointer bg-[transparent] p-0 [border:none]"
+        className="absolute left-[59px] top-[310px] h-[41px] w-[241px] cursor-pointer bg-[transparent] p-0 [border:none]"
         onClick={onClickAddAdmin}
       >
         <img
@@ -168,10 +185,25 @@ export const MChatChannelOps: NextPage<MChatChannelOpsType> = ({
           alt=""
           src="/rectangle-128.svg"
         />
-        <div className="absolute left-[46px] top-[7px] inline-block h-[34px] w-[186px] text-left font-body text-5xl tracking-[0.1em] text-base-white">
+        <div className="absolute left-[46px] top-[7px] inline-block h-[34px] w-[200px] text-left font-body text-5xl tracking-[0.1em] text-base-white">
           Add admin
         </div>
       </button>
+
+      <button
+        className="absolute left-[59px] top-[380px] h-[41px] w-[241px] cursor-pointer bg-[transparent] p-0 [border:none]"
+        onClick={onClickRemoveAdmin}
+      >
+        <img
+          className="absolute left-[0px] top-[0px] h-[41px] w-[241px]"
+          alt=""
+          src="/rectangle-128.svg"
+        />
+        <div className="absolute left-[46px] top-[7px] inline-block h-[34px] w-[200px] text-left font-body text-5xl tracking-[0.1em] text-base-white">
+          Remove admin
+        </div>
+      </button>
+
       <div className="absolute left-[59px] top-[420px]">
         <span className="h-[41px] w-[200px] text-center text-xl normal-case tracking-tighter text-red-600">
           {error && <p>{error}</p>}
