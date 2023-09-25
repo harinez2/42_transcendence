@@ -1,9 +1,11 @@
-// "use client";
+"use client";
 
-import React from "react";
+// import React from "react";
 // import { useState, useCallback } from "react";
 // eslint-disable-next-line no-unused-vars
-async function MatchHistoryContainer({ userId }: any) {
+// async
+
+function MatchHistoryContainer({ userId }: any) {
   // const prof: ProfileType = await getProfileByUserId(userId);
 
   // const [isMUserOpsDMOpen, setMUserOpsDMOpen] = useState(false);
@@ -15,7 +17,8 @@ async function MatchHistoryContainer({ userId }: any) {
   // const closeMUserOpsDM = useCallback(() => {
   //   setMUserOpsDMOpen(false);
   // }, []);
-
+  console.log(userId);
+  
   return (
     <div>
       <div className="absolute left-[481px] top-[806px] tracking-[0.1em]">

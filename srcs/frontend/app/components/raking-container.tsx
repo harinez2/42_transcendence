@@ -1,9 +1,12 @@
-import React from "react";
+"use client";
+
+// import React from "react";
 
 // eslint-disable-next-line no-unused-vars
-async function RankingContainer({ userId }: any) {
+// async
+function RankingContainer({ userId }: any) {
   // const prof: ProfileType = await getProfileByUserId(userId); //unused yet.
-
+  console.log(userId);
   return (
     <div className="absolute left-[590px] top-[506px] h-[227px] w-[229px]">
       <div className="absolute left-[1px] top-[0px] flex h-14 w-[228px] flex-row items-center justify-start gap-[66px] overflow-hidden">
