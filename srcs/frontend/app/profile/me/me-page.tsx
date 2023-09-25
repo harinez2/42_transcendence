@@ -1,8 +1,5 @@
 "use client";
 
-// import { useState, useCallback } from "react";
-// import ModalPopup from "../../components/modal/modal-popup";
-// import MSettingsMine from "../../components/modal/m-settings-mine";
 import HeaderMenu from "../../components/headermenu";
 import RankingContainer from "../../components/raking-container";
 import MatchHistoryContainer from "../../components/match-history-container";
@@ -13,16 +10,6 @@ import makeAPIRequest from "@/app/api/api";
 import { UserType } from "./blocked/types";
 
 const MePage = () => {
-  // const [isMSettingsMinePopupOpen, setMSettingsMinePopupOpen] = useState(false);
-
-  // const openMSettingsMinePopup = useCallback(() => {
-  //   setMSettingsMinePopupOpen(true);
-  // }, []);
-
-  // const closeMSettingsMinePopup = useCallback(() => {
-  //   setMSettingsMinePopupOpen(false);
-  // }, []);
-
   const profile: ProfileType = useContext(ProfileContext);
   const [user, setUser] = useState<UserType>();
   const [icon, setIcon] = useState<string>("http://localhost:3000/api/users/avatar/0");
@@ -45,7 +32,6 @@ const MePage = () => {
         });
     }
     }, []);
-   console.log("user", user);
   
   if (user) {
     if (user.twoFactorAuthEnabled === true) {
@@ -55,19 +41,10 @@ const MePage = () => {
       setIcon(`http://localhost:3000/api/users/avatar/${profile.userId}`);
     }
   } 
-  console.log(icon);
-
-  // const icon = () => {
-  //   if (user && user.avatar) {
-  //     return `http://localhost:3000/api/users/avatar/${status_variable?.userId}`;
-  //   } else {
-  //     return "http://localhost:3000/favicon.ico";
-  //   }
-  // };
 
   return (
     <>
-      <div className="relative h-screen w-full overflow-hidden bg-darkslategray-100 text-left font-body text-xl text-base-white">
+      <div className="relative h-screen w-full overflow-y-auto bg-darkslategray-100 text-left font-body text-xl text-base-white">
         <HeaderMenu />
         <div className="absolute left-[481px] top-[200px] tracking-[0.1em]">
           Your Profile
@@ -78,14 +55,14 @@ const MePage = () => {
           src="/line-1.svg"
         />
 
-        <div className="absolute left-[492px] top-[283px] flex h-[45px] w-[439px] flex-row items-center justify-start gap-[227px] overflow-hidden text-17xl">
-          <div className="flex h-[45px] w-[177px] shrink-0 flex-row items-center justify-start gap-[27px] overflow-hidden">
+        <div className="absolute left-[492px] top-[283px] flex h-[45px] w-[439px] flex-row items-center justify-start gap-[100px] overflow-hidden text-17xl">
+          <div className="flex h-[45px] w-[250px] shrink-0 flex-row items-center justify-start gap-[25px]">
             <img
               className="relative h-[45px] w-[45px] rounded-full"
               alt=""
               src={icon}
             />
-            <div className="relative tracking-[0.1em]">{user?.username}</div>
+            <div className="relative tracking-[0.1em] w-[175px] truncate">{user?.username}</div>
           </div>
           <img
             className="relative h-[35px] w-[35px] cursor-pointer"
@@ -118,15 +95,6 @@ const MePage = () => {
         />
         <MatchHistoryContainer userId="1" />
       </div>
-      {/* {isMSettingsMinePopupOpen && (
-        <ModalPopup
-          overlayColor="rgba(113, 113, 113, 0.3)"
-          placement="Centered"
-          onOutsideClick={closeMSettingsMinePopup}
-        >
-          <MSettingsMine onClose={closeMSettingsMinePopup} />
-        </ModalPopup>
-      )} */}
     </>
   );
 };
