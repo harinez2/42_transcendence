@@ -253,7 +253,10 @@ export class ChatsService {
         },
       });
       if (query.count === 0) {
-        throw new NotFoundException();
+        if (type === UserType.ADMIN)
+          throw new NotFoundException("The specified user is not in the admins.");
+        else
+          throw new NotFoundException("The specified user is not in the channel.");
       }
       return this.findById(channelId);
     } catch (e) {
