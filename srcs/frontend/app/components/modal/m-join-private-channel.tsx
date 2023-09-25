@@ -129,10 +129,12 @@ const MJoinPrivateChannel: NextPage<MJoinPrivateChannelType> = ({
           placement="Centered"
           onOutsideClick={closeMJoinChannelPasswordPopup}
         >
-          <MJoinChannelPassword
-            onClose={closeMJoinChannelPasswordPopup}
-            channel={channel}
-          />
+          {channel && (
+            <MJoinChannelPassword
+              onClose={closeMJoinChannelPasswordPopup}
+              channel={channel}
+            />
+          )}
         </ModalPopup>
       )}
     </>
