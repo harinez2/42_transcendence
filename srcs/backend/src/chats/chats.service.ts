@@ -202,19 +202,26 @@ export class ChatsService {
         );
       }
 
-      // 登録されていない場合のみ新規追加
+      // すでに登録されているかチェック
       const ischannel = await this.isChannelUsers(channelId, userId, type);
-      if (!ischannel) {
-        const query = await this.prisma.chatChannelUsers.create({
-          data: {
-            channelId: channelId,
-            userId: userId,
-            type: type,
-          },
-        });
-        if (!query) {
-          throw new BadRequestException();
+      if (ischannel) {
+        if (type === UserType.ADMIN) {
+          throw new BadRequestException('The specified user is already in the admins.');
+        } else if (type === UserType.USER) {
+          throw new BadRequestException('The specified user is already in the channel.');
         }
+      }
+
+      // 作成
+      const query = await this.prisma.chatChannelUsers.create({
+        data: {
+          channelId: channelId,
+          userId: userId,
+          type: type,
+        },
+      });
+      if (!query) {
+        throw new BadRequestException();
       }
       return this.findById(channelId);
     } catch (e) {

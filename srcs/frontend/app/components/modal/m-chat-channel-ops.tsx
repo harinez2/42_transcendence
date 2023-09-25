@@ -100,11 +100,11 @@ export const MChatChannelOps: NextPage<MChatChannelOpsType> = ({
             setError("");
             onClose();
           } else {
-            setError(result.error);
+            setError("Add Admin: " + result.error);
           }
         })
         .catch(() => {
-          setError("An unexpected error occured.");
+          setError("Add Admin: An unexpected error occured.");
         });
     }
   }, [router]);
