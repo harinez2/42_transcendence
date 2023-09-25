@@ -4,12 +4,19 @@ import HeaderMenu from "../../components/headermenu";
 import RankingContainer from "../../components/raking-container";
 import MatchHistoryContainer from "../../components/match-history-container";
 import { ProfileType } from "@/app/types";
-import { useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { ProfileContext } from "@/app/layout";
 import makeAPIRequest from "@/app/api/api";
 import { UserType } from "./blocked/types";
+import { useRouter } from "next/router";
 
 const MePage = () => {
+   const router = useRouter();
+
+  const onSettingClick = useCallback(() => {
+    router.push("/profile/me/settings");
+  }, [router]);
+
   const profile: ProfileType = useContext(ProfileContext);
   const [user, setUser] = useState<UserType>();
   const [icon, setIcon] = useState<string>("http://localhost:3000/api/users/avatar/0");
@@ -68,7 +75,7 @@ const MePage = () => {
             className="relative h-[35px] w-[35px] cursor-pointer"
             alt=""
             src="/settings-icon.svg"
-            // onClick={openMSettingsMinePopup}
+            onClick={onSettingClick}
           />
         </div>
         <div className="absolute left-[492px] top-[401px] flex h-7 w-[354px] flex-row items-center justify-start text-5xl">
