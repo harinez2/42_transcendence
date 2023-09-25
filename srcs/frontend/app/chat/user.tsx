@@ -144,6 +144,14 @@ const ShowSettingComponent = ({
   channel,
 }: UserProps) => {
   const { ref, showModal, closeModal } = useModal();
+  
+  const stopPropagation = useCallback(
+    (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+      e.stopPropagation();
+    },
+    [],
+  );
+
   return (
     <>
       {user?.id !== profile.userId && (
@@ -155,12 +163,14 @@ const ShowSettingComponent = ({
         </button>
       )}
       <dialog
+        onClick={closeModal}
         ref={ref}
         style={{ top: "30px" }}
         className="rounded-lg bg-darkslategray-100 px-6 py-2"
       >
         <MChatChannelOps
           onClose={closeModal}
+          stopPropagation={stopPropagation}
           user={user}
           router={router}
           socket={socket}

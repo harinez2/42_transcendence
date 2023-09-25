@@ -12,6 +12,7 @@ import makeAPIRequest from "@/app/api/api";
 
 type MChatChannelOpsType = {
   onClose: () => void;
+  stopPropagation: any;
   user: User | undefined;
   router: AppRouterInstance;
   socket: Socket;
@@ -20,12 +21,13 @@ type MChatChannelOpsType = {
 };
 
 export const MChatChannelOps: NextPage<MChatChannelOpsType> = ({
-  onClose, // eslint-disable-line no-unused-vars
+  onClose,
+  stopPropagation,
   user,
   router,
   socket, // eslint-disable-line no-unused-vars
   profile, // eslint-disable-line no-unused-vars
-  channel, // eslint-disable-line no-unused-vars
+  channel,
 }: MChatChannelOpsType) => {
   const [error, setError] = useState("");
 
@@ -128,6 +130,7 @@ export const MChatChannelOps: NextPage<MChatChannelOpsType> = ({
 
   return (
     <div
+      onClick={stopPropagation}
       className="relative h-[485px] max-h-full w-[390px] max-w-full overflow-hidden bg-darkslategray-100 text-left font-body text-5xl text-base-white"
     >
       <div className="absolute left-[41px] top-[38px] tracking-[0.1em]">
