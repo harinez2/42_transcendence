@@ -38,7 +38,7 @@ export default function TwoFactorAuthPage() {
     makeAPIRequest("post", "/auth/2fa", { token: token, code: otp })
       .then((result) => {
         if (result.success) {
-          router.push("/test");
+          router.push("/chat");
         } else {
           setError(result.error);
         }
