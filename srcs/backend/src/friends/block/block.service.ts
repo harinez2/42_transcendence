@@ -39,11 +39,15 @@ export class BlockService {
       await this.prisma.follow.deleteMany({
         where: { followerId: blockerId, followeeId: blockedId },
       });
+      const block = await this.prisma.block.findFirst({
+        where: { blockerId: blockerId, blockedId: blockedId },
+      });
+      if (block) throw new BadRequestException('You already blocked this user');
       return await this.prisma.block.create({
         data: { blockerId: blockerId, blockedId: blockedId },
       });
-    } catch {
-      throw new BadRequestException();
+    } catch (e) {
+      throw new BadRequestException(e);
     }
   }
 

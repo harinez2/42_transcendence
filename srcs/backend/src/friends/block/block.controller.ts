@@ -10,7 +10,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { BlockService } from './block.service';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { BlockDto } from './block.dto';
 
@@ -49,16 +49,18 @@ export class BlockController {
   }
 
   @Post()
+  @ApiBody({ type: BlockDto })
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'))
   block(@Req() req, @Body() blockDto: BlockDto) {
-    return this.blockService.setBlock(req.user.id, blockDto.blockedId);
+    console.log(req.user.id, blockDto.blockeeId);
+    return this.blockService.setBlock(req.user.id, blockDto.blockeeId);
   }
 
   @Delete()
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'))
   unblock(@Req() req, @Body() blockDto: BlockDto) {
-    return this.blockService.deleteBlock(req.user.id, blockDto.blockedId);
+    return this.blockService.deleteBlock(req.user.id, blockDto.blockeeId);
   }
 }
