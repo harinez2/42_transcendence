@@ -7,7 +7,7 @@ import ModalPopup from "../../../components/modal/modal-popup";
 import { useState, useCallback } from "react";
 import { ProfileType } from "@/app/types";
 import makeAPIRequest from "@/app/api/api";
-import { StatusType, UserType } from "./types";
+import { UserType } from "./types";
 import { useRouter } from "next/navigation";
 import { ProfileContext, SocketContext } from "@/app/layout";
 
@@ -26,16 +26,21 @@ const BlockedComponent = ({ blocked }: { blocked: UserType }) => {
     setMUserOpsOpen(false);
   }, []);
 
-  const [status_variable, setStatus] = useState<StatusType>();
-  const [user, setUser] = useState<UserType>();
+  const [status, setStatus] = useState<string>("offline");
+  const [icon, setIcon] = useState<string>(
+    `http://localhost:3000/api/users/avatar/${blocked.id}`,
+  );
+  const [timer, setTimer] = useState<number>(0);
 
   useEffect(() => {
     if (blocked.id) {
       // statusを取得
-      makeAPIRequest<StatusType>("get", `/status/${blocked.id}`)
+      makeAPIRequest<string>("get", `/status/${blocked.id}`)
         .then((result) => {
           if (result.success) {
             setStatus(result.data);
+            setTimeout(() => setTimer(timer + 1), 60 * 1000);
+            setIcon(`http://localhost:3000/api/users/avatar/${blocked.id}`);
           } else {
             console.error(result.error);
           }
@@ -44,48 +49,14 @@ const BlockedComponent = ({ blocked }: { blocked: UserType }) => {
           console.error("Error:", error.message);
         });
     }
-  }, [blocked]);
-
-  useEffect(() => {
-    if (status_variable) {
-      // アイコン画像を取得
-      makeAPIRequest<UserType>("get", `/users/${status_variable.userId}`)
-        .then((result) => {
-          if (result.success) {
-            setUser(result.data);
-          } else {
-            console.error(result.error);
-          }
-        })
-        .catch((error) => {
-          console.error("Error:", error.message);
-        });
-    }
-  }, [status_variable]);
-
-  //offlineの場合はstatusが反映されていなのでステータスをofflineに設定
-  const status1 = () => {
-    if (status_variable && status_variable.status !== "") {
-      return status_variable.status;
-    } else {
-      return "offline";
-    }
-  };
-
-  const icon = () => {
-    if (user && user.avatar) {
-      return `http://localhost:3000/api/users/avatar/${status_variable?.userId}`;
-    } else {
-      return "http://localhost:3000/favicon.ico";
-    }
-  };
+  }, [timer]);
 
   return (
     <>
       <div>
-        <a className="flex items-center rounded-lg p-4 text-white">
+        <a className="flex items-center rounded-full p-4 text-white">
           <img
-            src={icon()}
+            src={icon}
             className="h-auto max-w-full cursor-pointer rounded-full"
             width={45}
             height={45}
@@ -94,9 +65,7 @@ const BlockedComponent = ({ blocked }: { blocked: UserType }) => {
           />
           <div className="ml-3 shrink-0 pr-8 text-xl">
             {blocked?.username}
-            <div className="tracking-[0.1em] text-darkgray-200">
-              {status1()}
-            </div>
+            <div className="tracking-[0.1em] text-darkgray-200">{status}</div>
           </div>
         </a>
       </div>
