@@ -1,3 +1,9 @@
+declare global {
+  interface BigInt {
+    toJSON(): number;
+  }
+}
+
 function getEnvVariable(key: string): string {
   const value = process.env[key];
   if (!value) {
