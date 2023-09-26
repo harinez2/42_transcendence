@@ -27,12 +27,12 @@ const MUserOps: NextPage<MUserOpsType> = ({
   const [error, setError] = useState<string>("");
 
   // ユーザが、自分自身の場合、button を disable にする
-  const [buttonDisabled, setButtonDisabled] = useState<boolean>(false);
+  const [isSelf, setIsSelf] = useState<boolean>(false);
   const [blocked, setBlocked] = useState<boolean>(false);
 
   useEffect(() => {
     if (user) {
-      setButtonDisabled(user.id === profile.userId);
+      setIsSelf(user.id === profile.userId);
     }
   }, [user]);
 
@@ -111,33 +111,62 @@ const MUserOps: NextPage<MUserOpsType> = ({
         setError(error.message);
       });
   };
-  // map に直す
+
+  const onClickUnblock = (userId: number) => {
+    // DELETE /friends/block
+    makeAPIRequest<UserType>("delete", `/friends/block`, {
+      blockedId: userId,
+    })
+      .then((result) => {
+        if (result.success) {
+          setError("");
+          onClose();
+        } else {
+          console.log(result.error);
+          setError(result.error);
+        }
+      })
+      .catch((error) => {
+        setError(error.message);
+      });
+  };
 
   const handles = [
     {
       name: "See Profile",
       onClick: () => router.push(`/profile/other/${user.id}`),
-      wantToggle: false,
+      selfAvailable: true,
+      blocked: false,
     },
     {
       name: "Send DM",
       onClick: () => router.push(`/dm`),
-      wantToggle: true,
+      selfAvailable: false,
+      blocked: false,
     },
     {
       name: "Add Friend",
       onClick: () => onClickAddFriend(user.id),
-      wantToggle: true,
+      selfAvailable: false,
+      blocked: false,
     },
     {
       name: "Invite to Game",
       onClick: () => onClickInviteToGame(user.id, router, socket, profile),
-      wantToggle: true,
+      selfAvailable: false,
+      blocked: false,
     },
     {
       name: "Block this user",
       onClick: () => onClickBlock(user.id),
-      wantToggle: true,
+      selfAvailable: false,
+      blocked: true,
+    },
+    {
+      name: "unBlock this user",
+      onClick: () => onClickUnblock(user.id),
+      selfAvailable: false,
+      blocked: false,
     },
   ];
 
@@ -156,11 +185,13 @@ const MUserOps: NextPage<MUserOpsType> = ({
             onClick={handle.onClick}
             key={handle.name}
             className={
-              handle.wantToggle && (buttonDisabled || blocked)
+              (!handle.selfAvailable && isSelf) || (handle.blocked && blocked)
                 ? buttonStyleDisabled
                 : buttonStyle
             }
-            disabled={handle.wantToggle && (buttonDisabled || blocked)}
+            disabled={
+              (!handle.selfAvailable && isSelf) || (handle.blocked && blocked)
+            }
           >
             <span className="x1 text-left">{handle.name}</span>
           </button>
