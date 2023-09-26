@@ -39,6 +39,11 @@ export default function Profile() {
       <h2>Work in progress...</h2>
       <ul>
         <li>
+          <Link className="text-teal-200" href="settings/username">
+            username
+          </Link>
+        </li>
+        <li>
           <Link className="text-teal-200" href="settings/avatar">
             avatar
           </Link>
