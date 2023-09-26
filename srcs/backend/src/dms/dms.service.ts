@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateDmChannelDto } from './dto/create-dm-channel.dto';
 import { DmChannelInfoDto } from './dto/dm-channel-info.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -11,11 +15,27 @@ export class DmsService {
   // channel operations
 
   async createChannel(createDmChannelDto: CreateDmChannelDto): Promise<number> {
+    // すでにある場合はエラーにする
+    let isAlreadyExists = true;
+    try {
+      await this.findBTwoUserId(
+        createDmChannelDto.user1Id,
+        createDmChannelDto.user2Id,
+      );
+    } catch (e) {
+      if (e instanceof NotFoundException) {
+        isAlreadyExists = false;
+      }
+    }
+    if (isAlreadyExists) {
+      throw new BadRequestException('The specified user is already added.');
+    }
+
+    // ルーム作成
     try {
       const createdChannel = await this.prisma.dmChannels.create({
         data: createDmChannelDto,
       });
-
       return createdChannel.channelId;
     } catch (e) {
       throw this.prisma.handleError(e);

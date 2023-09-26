@@ -1,6 +1,8 @@
 import Image from "next/image";
 import { DmChannelType } from "./types";
 import { ProfileType } from "../types";
+import useModal from "../components/useModal";
+import MAddUserDm from "./m-add-user-dm";
 
 const UserComponent = ({
   profile,
@@ -51,6 +53,8 @@ const UserListComponent = ({
   channels: DmChannelType[];
   onSelectChannel: (c: DmChannelType) => void; // eslint-disable-line no-unused-vars
 }) => {
+  const { ref, showModal, closeModal } = useModal();
+
   return (
     <div className="relative h-full overflow-y-auto bg-darkslategray-200 px-3 py-4">
       <ul className="divide-y divide-gray-500/30">
@@ -63,13 +67,22 @@ const UserListComponent = ({
           />
         ))}
       </ul>
-      <div className="fixed bottom-0 left-0 mb-4 w-full px-4">
-        <button className="h-[38px] w-[160px] items-center justify-center rounded-[5px] bg-neutral-400 px-[27px] py-[5px]">
-          <div className="text-center text-xl font-normal tracking-widest text-white">
-            Join channel
-          </div>
-        </button>
-      </div>
+      <button
+        className="fixed bottom-5 ml-6 h-[38px] w-[160px] cursor-pointer items-center justify-center  rounded-[5px] bg-neutral-400"
+        onClick={showModal}
+      >
+        <div className="text-center text-xl font-normal tracking-widest text-white">
+          Add user
+        </div>
+      </button>
+      <dialog
+        onClick={closeModal}
+        ref={ref}
+        style={{ top: "30px" }}
+        className="rounded-lg bg-darkslategray-100 px-6 py-2"
+      >
+        <MAddUserDm onClose={closeModal} />
+      </dialog>
     </div>
   );
 };
