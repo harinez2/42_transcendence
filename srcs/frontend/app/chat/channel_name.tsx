@@ -24,7 +24,18 @@ const ChannelName = ({
   handleChannelLeave: (channelId: ChannelType) => void; // eslint-disable-line no-unused-vars
 }) => {
   const { ref, showModal, closeModal } = useModal();
+  const [open, setOpen] = React.useState(false);
   const profile: ProfileType = useContext(ProfileContext);
+
+  const onClose = () => {
+    setOpen(false);
+    closeModal();
+  }
+
+  const openModal = () => {
+    setOpen(true);
+    showModal();
+  }
 
   const handleClick = () => {
     onSelectChannel(channel);
@@ -36,7 +47,6 @@ const ChannelName = ({
       makeAPIRequest("delete", `/chats/${channel.channelId}/users`)
         .then((result) => {
           if (result.success) {
-            console.log("leave channel success");
             removeChannel(channel.channelId);
             // 現在の channel が leave した channel だった場合は、selectedChannel を null にする
             handleChannelLeave(channel);
@@ -70,7 +80,7 @@ const ChannelName = ({
                 width={24}
                 height={24}
                 alt=""
-                onClick={showModal}
+                onClick={openModal}
               />
             </Tooltip>
           ) : (
@@ -86,13 +96,14 @@ const ChannelName = ({
             </Tooltip>
           )}
           <dialog
-            onClick={closeModal}
+            onClick={onClose}
             ref={ref}
             style={{ top: "30px" }}
             className="rounded-lg bg-gray-600"
           >
             <MEditChannel
-              onClose={closeModal}
+              isClose={!open}
+              onClose={onClose}
               channel={channel}
               setChannel={setChannel}
               removeChannel={removeChannel}
@@ -100,7 +111,7 @@ const ChannelName = ({
           </dialog>
         </span>
       </a>
-    </li>
+    </li >
   );
 };
 
