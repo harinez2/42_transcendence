@@ -1,12 +1,12 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import makeAPIRequest from "../api/api";
-import { MatchType, UserType } from "@/app/types";
-// eslint-disable-next-line no-unused-vars
-import ModalPopup from "../components/modal/modal-popup"; // TODO: check please! by tsudo
-// eslint-disable-next-line no-unused-vars
-import MUserOps from "../components/modal/m-user-ops"; // TODO: check please! by tsudo
+import { MatchType, ProfileType, UserType } from "@/app/types";
+import ModalPopup from "../components/modal/modal-popup";
+import MUserOps from "../components/modal/m-user-ops";
+import { ProfileContext, SocketContext } from "../layout";
+import { useRouter } from "next/navigation";
 
 const MatchComponent = ({
   match,
@@ -15,17 +15,19 @@ const MatchComponent = ({
   match: MatchType;
   userId: number;
 }) => {
-  // eslint-disable-next-line no-unused-vars
-  const [isMUserOpsOpen, setMUserOpsOpen] = useState(false); // TODO: check please! by tsudo
+
+  const socket: any = useContext(SocketContext);
+  const profile: ProfileType = useContext(ProfileContext)
+  const router = useRouter();
+
+  const [isMUserOpsOpen, setMUserOpsOpen] = useState(false);
   const [opponent, setOpponent] = useState<UserType>();
 
   const openMUserOps = useCallback(() => {
     setMUserOpsOpen(true);
   }, []);
 
-  // eslint-disable-next-line no-unused-vars
   const closeMUserOps = useCallback(() => {
-    // TODO: check please! by tsudo
     setMUserOpsOpen(false);
   }, []);
 
@@ -61,8 +63,8 @@ const MatchComponent = ({
   };
 
   const getDate = () => {
-    const date: string = match.endedAt;
-    const res: string = date.slice(0, 10);
+    const date: string = match?.endedAt;
+    const res: string = date?.slice(0, 10);
     return res;
   };
 
@@ -104,21 +106,22 @@ const MatchComponent = ({
           {getDate()}
         </div>
       </div>
-      <div className="text-red">
-        {/* TODO: check please! by tsudo */}
-        Tsudo removed this section because necessary property is missing!
-      </div>
-      {/* 
+      
       {isMUserOpsOpen && (
         <ModalPopup
           overlayColor="rgba(113, 113, 113, 0.3)"
           placement="Centered"
           onOutsideClick={closeMUserOps}
         >
-          <MUserOps onClose={closeMUserOps} />
+          <MUserOps onClose={closeMUserOps}
+            user={opponent}
+            router={router}
+            socket={socket}
+            profile={profile}
+          />
         </ModalPopup>
       )}
-       */}
+      
     </>
   );
 };
