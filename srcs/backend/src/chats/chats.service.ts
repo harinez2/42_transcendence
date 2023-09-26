@@ -201,9 +201,14 @@ export class ChatsService {
   ): Promise<ChannelInfoDto> {
     try {
       // admin権限操作時の権限チェック
-      if (type === UserType.ADMIN && operatorUserId !== 0
-        && !await this.isAdminUsers(channelId, operatorUserId)) {
-        throw new UnauthorizedException('Admin rights required to operate this method.');
+      if (
+        type === UserType.ADMIN &&
+        operatorUserId !== 0 &&
+        !(await this.isAdminUsers(channelId, operatorUserId))
+      ) {
+        throw new UnauthorizedException(
+          'Admin rights required to operate this method.',
+        );
       }
 
       // Banされているユーザでないかをチェック
@@ -282,8 +287,13 @@ export class ChatsService {
   ): Promise<ChannelInfoDto> {
     try {
       // admin権限操作時の権限チェック
-      if (type === UserType.ADMIN && !await this.isAdminUsers(channelId, operatorUserId)) {
-        throw new UnauthorizedException('Admin rights required to operate this method.');
+      if (
+        type === UserType.ADMIN &&
+        !(await this.isAdminUsers(channelId, operatorUserId))
+      ) {
+        throw new UnauthorizedException(
+          'Admin rights required to operate this method.',
+        );
       }
 
       const isChannelOwner = await this.isChannelUsers(
@@ -351,8 +361,10 @@ export class ChatsService {
   ): Promise<ChannelInfoDto> {
     try {
       // admin権限操作時の権限チェック
-      if (!await this.isAdminUsers(channelId, operatorUserId)) {
-        throw new ForbiddenException('Admin rights required to operate this method.');
+      if (!(await this.isAdminUsers(channelId, operatorUserId))) {
+        throw new ForbiddenException(
+          'Admin rights required to operate this method.',
+        );
       }
 
       // OwnerはBanできないのでチェック
@@ -378,7 +390,12 @@ export class ChatsService {
       }
 
       // チャンネルから追い出し
-      await this.removeChannelUsers(channelId, bannedUserId, UserType.USER, operatorUserId);
+      await this.removeChannelUsers(
+        channelId,
+        bannedUserId,
+        UserType.USER,
+        operatorUserId,
+      );
 
       return this.findById(channelId);
     } catch (e) {
@@ -393,8 +410,10 @@ export class ChatsService {
   ): Promise<ChannelInfoDto> {
     try {
       // admin権限操作時の権限チェック
-      if (!await this.isAdminUsers(channelId, operatorUserId)) {
-        throw new UnauthorizedException('Admin rights required to operate this method.');
+      if (!(await this.isAdminUsers(channelId, operatorUserId))) {
+        throw new UnauthorizedException(
+          'Admin rights required to operate this method.',
+        );
       }
 
       const query = await this.prisma.chatBan.deleteMany({
@@ -445,8 +464,10 @@ export class ChatsService {
   ): Promise<ChannelInfoDto> {
     try {
       // admin権限操作時の権限チェック
-      if (!await this.isAdminUsers(channelId, operatorUserId)) {
-        throw new UnauthorizedException('Admin rights required to operate this method.');
+      if (!(await this.isAdminUsers(channelId, operatorUserId))) {
+        throw new UnauthorizedException(
+          'Admin rights required to operate this method.',
+        );
       }
 
       // OwnerはMuteできないのでチェック
@@ -501,8 +522,10 @@ export class ChatsService {
   ): Promise<ChannelInfoDto> {
     try {
       // admin権限操作時の権限チェック
-      if (!await this.isAdminUsers(channelId, operatorUserId)) {
-        throw new UnauthorizedException('Admin rights required to operate this method.');
+      if (!(await this.isAdminUsers(channelId, operatorUserId))) {
+        throw new UnauthorizedException(
+          'Admin rights required to operate this method.',
+        );
       }
 
       const query = await this.prisma.chatMute.deleteMany({
