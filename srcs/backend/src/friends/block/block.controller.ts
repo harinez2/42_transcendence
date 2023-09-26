@@ -1,7 +1,6 @@
 import {
   Body,
   Controller,
-  Delete,
   Get,
   Param,
   ParseIntPipe,
@@ -56,7 +55,8 @@ export class BlockController {
     return this.blockService.setBlock(req.user.id, blockDto.blockedId);
   }
 
-  @Delete()
+  @Post('unblock')
+  @ApiBody({ type: BlockDto })
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'))
   unblock(@Req() req, @Body() blockDto: BlockDto) {
