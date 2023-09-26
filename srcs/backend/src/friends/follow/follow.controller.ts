@@ -1,7 +1,6 @@
 import {
   Body,
   Controller,
-  Delete,
   Get,
   Param,
   ParseIntPipe,
@@ -55,7 +54,7 @@ export class FollowController {
     return this.followService.setFollow(req.user.id, followDto.followeeId);
   }
 
-  @Delete()
+  @Post('unfollow')
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'))
   unfollow(@Req() req, @Body() followDto: FollowDto) {

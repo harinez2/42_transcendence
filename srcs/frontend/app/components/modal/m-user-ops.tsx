@@ -114,7 +114,7 @@ const MUserOps: NextPage<MUserOpsType> = ({
 
   const onClickUnblock = (userId: number) => {
     // DELETE /friends/block
-    makeAPIRequest<UserType>("delete", `/friends/block`, {
+    makeAPIRequest<UserType>("post", `/friends/block/unblock`, {
       blockedId: userId,
     })
       .then((result) => {
