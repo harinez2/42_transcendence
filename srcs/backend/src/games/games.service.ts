@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { GameInfoDto } from './dto/game-info.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { GameSummaryDto } from './dto/game-summary';
@@ -96,5 +100,68 @@ export class GamesService {
     } catch (e) {
       throw this.prisma.handleError(e);
     }
+  }
+
+  async getWinRanking(userId: number) {
+    const user = await this.prisma.user.findFirst({ where: { id: userId } });
+    if (!user) {
+      throw new BadRequestException('User not found');
+    }
+
+    const ranking: Array<{ rank: number; userId: number; winCount: number }> =
+      await this.prisma.$queryRaw`
+        SELECT
+          rank,
+          "userId",
+          wins
+        FROM (
+          SELECT
+            DENSE_RANK() OVER (ORDER BY wins DESC) as rank,
+            "userId",
+            wins
+          FROM (
+            SELECT
+              "userId",
+              COUNT(*) as wins
+            FROM (
+              SELECT "user1Id" as "userId" FROM "GameInfo" WHERE "endedAt" IS NOT NULL AND "user1Score" > "user2Score"
+              UNION ALL
+              SELECT "user2Id" as "userId" FROM "GameInfo" WHERE "endedAt" IS NOT NULL AND "user2Score" > "user1Score"
+            ) as "UserWins"
+            GROUP BY "userId"
+          ) as "RankedUsers"
+        ) as "FinalRank"
+        WHERE "userId" = ${userId}
+      `;
+
+    if (ranking.length > 0) {
+      return ranking[0];
+    } else {
+      return { rank: -1, userId: userId, winCount: 0 };
+    }
+  }
+
+  async getWinRankingList() {
+    const ranking: any = await this.prisma.$queryRaw`
+      SELECT
+        DENSE_RANK() OVER (ORDER BY wins DESC) as rank,
+        "userId",
+        wins
+      FROM (
+        SELECT
+          "userId",
+          COUNT(*) as wins
+        FROM (
+          SELECT "user1Id" as "userId" FROM "GameInfo" WHERE "endedAt" IS NOT NULL AND "user1Score" > "user2Score"
+          UNION ALL
+          SELECT "user2Id" as "userId" FROM "GameInfo" WHERE "endedAt" IS NOT NULL AND "user2Score" > "user1Score"
+        ) as "UserWins"
+        GROUP BY "userId"
+      ) as "RankedUsers"
+      ORDER BY rank
+      LIMIT 20
+    `;
+
+    return ranking as Array<{ rank: number; userId: number; winCount: number }>;
   }
 }

@@ -5,6 +5,10 @@ import * as cookieParser from 'cookie-parser';
 import { ValidationPipe } from '@nestjs/common';
 import { FRONT_URL } from 'config';
 
+BigInt.prototype.toJSON = function () {
+  return Number(this);
+};
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 

@@ -73,4 +73,14 @@ export class GamesController {
   ): Promise<GameSummaryDto> {
     return await this.gamesService.countWonLostNum(userId);
   }
+
+  @Get('ranking/win/:userId')
+  async getWinRanking(@Param('userId', ParseIntPipe) userId: number) {
+    return await this.gamesService.getWinRanking(userId);
+  }
+
+  @Get('ranking/win')
+  async getWinRankingList() {
+    return await this.gamesService.getWinRankingList();
+  }
 }
