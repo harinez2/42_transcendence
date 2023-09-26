@@ -31,6 +31,10 @@ export default function AvatarSettingsPage() {
       form.elements.namedItem("newUsername") as HTMLInputElement
     ).value;
 
+    if (!newUsername) {
+      return;
+    }
+
     makeAPIRequest("post", "auth/username", {
       username: newUsername,
     })
@@ -67,6 +71,8 @@ export default function AvatarSettingsPage() {
             id="newUsername"
             name="newUsername"
             placeholder={username}
+            pattern="^[A-Za-z0-9]{3,16}$"
+            required
             className="mr-2 grow rounded-md border p-2 text-xl shadow-sm"
           />
           <input
@@ -75,6 +81,10 @@ export default function AvatarSettingsPage() {
             className="rounded-md bg-blue-500 p-2 font-bold text-white"
           />
         </div>
+        <span className="text-sm text-gray-400">
+          The username must be between 3 and 16 characters long and can only
+          contain alphanumeric characters (letters A-Z, a-z and numbers 0-9).
+        </span>
         {error && <p className="text-red-600">Error: {error}</p>}
       </form>
     </>
