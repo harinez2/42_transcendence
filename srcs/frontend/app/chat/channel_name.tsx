@@ -91,7 +91,10 @@ const ChannelName = ({
                 width={24}
                 height={24}
                 alt=""
-                onClick={leaveChannel}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  leaveChannel();
+                }}
               />
             </Tooltip>
           )}
