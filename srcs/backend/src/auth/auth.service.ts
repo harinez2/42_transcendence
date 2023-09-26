@@ -189,6 +189,10 @@ export class AuthService {
   async generate2FASecret(user: User) {
     const auth = await this.getAuth(user);
 
+    if (auth.staff) {
+      throw new BadRequestException('Staff cannot enable 2FA login');
+    }
+
     if (auth.twoFactorAuthEnabled) {
       throw new BadRequestException('2FA already enabled');
     }
@@ -253,7 +257,7 @@ export class AuthService {
   async is2faEnabled(user: User) {
     return await this.prisma.auth.findUnique({
       where: { userId: user.id },
-      select: { twoFactorAuthEnabled: true },
+      select: { staff: true, twoFactorAuthEnabled: true },
     });
   }
 
