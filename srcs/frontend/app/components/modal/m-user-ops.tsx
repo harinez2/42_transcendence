@@ -28,12 +28,35 @@ const MUserOps: NextPage<MUserOpsType> = ({
 
   // ユーザが、自分自身の場合、button を disable にする
   const [buttonDisabled, setButtonDisabled] = useState<boolean>(false);
+  const [blocked, setBlocked] = useState<boolean>(false);
 
   useEffect(() => {
     if (user) {
       setButtonDisabled(user.id === profile.userId);
     }
   }, [user]);
+
+  useEffect(() => {
+    if (profile.userId) {
+      // Blockeds一覧を取得
+      makeAPIRequest<UserType[]>(
+        "get",
+        `/friends/block/blockeds/${profile.userId}`,
+      )
+        .then((result) => {
+          if (result.success) {
+            result.data.some((blocked) => user && blocked.id === user.id)
+              ? setBlocked(true)
+              : setBlocked(false);
+          } else {
+            setError(result.error);
+          }
+        })
+        .catch((error) => {
+          setError(error.message);
+        });
+    }
+  }, [profile]);
 
   if (!user) {
     return <></>; // TODO: checkお願いします！ by tsudo
@@ -45,7 +68,6 @@ const MUserOps: NextPage<MUserOpsType> = ({
     socket: Socket,
     profile: ProfileType,
   ) => {
-    // user が自分自身の場合は、ゲームを開始しない
     socket?.emit("game-invite", {
       myUserId: profile.userId,
       invitingUserId: invitingUserId,
@@ -134,11 +156,11 @@ const MUserOps: NextPage<MUserOpsType> = ({
             onClick={handle.onClick}
             key={handle.name}
             className={
-              handle.wantToggle && buttonDisabled
+              handle.wantToggle && (buttonDisabled || blocked)
                 ? buttonStyleDisabled
                 : buttonStyle
             }
-            disabled={handle.wantToggle && buttonDisabled}
+            disabled={handle.wantToggle && (buttonDisabled || blocked)}
           >
             <span className="x1 text-left">{handle.name}</span>
           </button>
