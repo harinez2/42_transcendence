@@ -177,7 +177,13 @@ export class AuthService {
   // =========================================================================
 
   private async getAuth(user: User) {
-    return await this.prisma.auth.findUnique({ where: { id: user.id } });
+    const auth = await this.prisma.auth.findUnique({
+      where: { userId: user.id },
+    });
+    if (!auth) {
+      throw new BadRequestException('Account not found');
+    }
+    return auth;
   }
 
   /**
@@ -216,7 +222,7 @@ export class AuthService {
    * @param user who is attempting to enable 2fa
    * @param code 2fa code input by user
    */
-  async enable2FA(user: User, code: string) {
+  async enable2fa(user: User, code: string) {
     const auth = await this.getAuth(user);
 
     const valid = this.validate2FACode(auth, code);

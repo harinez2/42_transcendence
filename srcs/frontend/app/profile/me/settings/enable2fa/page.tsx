@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import dynamic from "next/dynamic";
 import QRCode from "qrcode.react";
+import Link from "next/link";
 
 const OtpInput = dynamic(() => import("react-otp-input"), {
   loading: () => <p>Loading...</p>,
@@ -57,6 +58,12 @@ export default function Page() {
 
   return (
     <>
+      <Link
+        href="/profile/me/settings"
+        className="cursor-pointer text-sm text-gray-200"
+      >
+        Go Back
+      </Link>
       <h1>Enable 2FA Authentication</h1>
       <div className="flex flex-col items-center">
         {otpauthUrl ? (

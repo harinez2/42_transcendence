@@ -136,17 +136,17 @@ export class AuthController {
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'))
   async enable2fa(@Req() req, @Body() enable2fa: Enable2faDto) {
-    await this.authService.enable2FA(req.user, enable2fa.code);
+    await this.authService.enable2fa(req.user, enable2fa.code);
     return;
   }
 
-  @UseGuards(AuthGuard('jwt'))
-  @ApiOperation({ summary: 'Refresh JWT' })
+  @Post('disable2fa')
+  @ApiOperation({ summary: 'Disable 2FA' })
   @ApiBearerAuth()
-  @Get('refresh')
-  async refresh(@Req() req, @Res() res: Response) {
-    const newToken = this.authService.accessToken(req.user);
-    return res.cookie('jwt', newToken, { httpOnly: true });
+  @UseGuards(AuthGuard('jwt'))
+  async disable2fa(@Req() req) {
+    await this.authService.disable2fa(req.user);
+    return;
   }
 
   @UseGuards(AuthGuard('jwt'))
@@ -176,5 +176,14 @@ export class AuthController {
   @ApiBody({ type: UsernameDto })
   async updateUsername(@Req() req, @Body() dto: UsernameDto) {
     return await this.authService.changeUsername(req.user, dto.username);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @ApiOperation({ summary: 'Refresh JWT' })
+  @ApiBearerAuth()
+  @Get('refresh')
+  async refresh(@Req() req, @Res() res: Response) {
+    const newToken = this.authService.accessToken(req.user);
+    return res.cookie('jwt', newToken, { httpOnly: true });
   }
 }
