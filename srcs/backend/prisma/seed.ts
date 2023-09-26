@@ -9,9 +9,13 @@ async function seedUser(username: string): Promise<User> {
   return await prisma.user.create({
     data: {
       username: username,
-      email: `${lowerUsername}@example.com`,
-      staff: true,
-      password: await hash(lowerUsername, 10),
+      auth: {
+        create: {
+          email: `${lowerUsername}@example.com`,
+          staff: true,
+          password: await hash(lowerUsername, 10),
+        },
+      },
       profile: {
         create: { bio: `Hi! This is ${username}.` },
       },
@@ -67,9 +71,13 @@ async function seed() {
   const user1 = await prisma.user.create({
     data: {
       username: 'user01',
-      email: 'user01@example.com',
-      staff: true,
-      password: await hash('password1', 10),
+      auth: {
+        create: {
+          email: 'user01@example.com',
+          staff: true,
+          password: await hash('password1', 10),
+        },
+      },
       profile: {
         create: { bio: 'Hi! This is user01.' },
       },

@@ -39,11 +39,16 @@ export class FollowService {
       where: { blockerId: followerId, blockedId: followeeId },
     });
     if (block) throw new BadRequestException('You cannot follow blocked users');
+    const follow = await this.prisma.follow.findFirst({
+      where: { followerId: followerId, followeeId: followeeId },
+    });
+    if (follow) throw new BadRequestException('You already followed this user');
     try {
+      console.log(followerId, followeeId);
       return await this.prisma.follow.create({
         data: { followerId: followerId, followeeId: followeeId },
       });
-    } catch {
+    } catch (e) {
       throw new BadRequestException();
     }
   }

@@ -1,28 +1,59 @@
 "use client";
 
-import type { NextPage } from "next";
-import { useState, useCallback } from "react";
-import ModalPopup from "../../components/modal/modal-popup";
-import MSettingsMine from "../../components/modal/m-settings-mine";
 import HeaderMenu from "../../components/headermenu";
 import RankingContainer from "../../components/raking-container";
 import MatchHistoryContainer from "../../components/match-history-container";
-import React from "react";
+import { ProfileType } from "@/app/types";
+import { useCallback, useContext, useEffect, useState } from "react";
+import { ProfileContext } from "@/app/layout";
+import makeAPIRequest from "@/app/api/api";
+import { UserType } from "./blocked/types";
+import { useRouter } from "next/navigation";
 
-const MePage: NextPage = () => {
-  const [isMSettingsMinePopupOpen, setMSettingsMinePopupOpen] = useState(false);
+const MePage = () => {
+  const router = useRouter();
 
-  const openMSettingsMinePopup = useCallback(() => {
-    setMSettingsMinePopupOpen(true);
-  }, []);
+  const onSettingClick = useCallback(() => {
+    router.push("/profile/me/settings");
+  }, [router]);
 
-  const closeMSettingsMinePopup = useCallback(() => {
-    setMSettingsMinePopupOpen(false);
-  }, []);
+  const profile: ProfileType = useContext(ProfileContext);
+  const [user, setUser] = useState<UserType>();
+  const [icon, setIcon] = useState<string>(
+    "http://localhost:3000/api/users/avatar/0",
+  );
+  const [twofactorauth, setTwofactorauth] = useState<string>("off");
+
+  console.log("profile.userId", profile.userId);
+  useEffect(() => {
+    if (profile?.userId) {
+      // ユーザー情報を取得
+      makeAPIRequest<UserType>("get", `/users/${profile.userId}`)
+        .then((result) => {
+          if (result.success) {
+            setUser(result.data);
+          } else {
+            console.error(result.error);
+          }
+        })
+        .catch((error) => {
+          console.error("Error:", error.message);
+        });
+    }
+  }, [profile]);
+
+  if (user) {
+    if (user.twoFactorAuthEnabled === true) {
+      setTwofactorauth("on");
+    }
+    if (user.avatar) {
+      setIcon(`http://localhost:3000/api/users/avatar/${profile.userId}`);
+    }
+  }
 
   return (
     <>
-      <div className="relative h-screen w-full overflow-hidden bg-darkslategray-100 text-left font-body text-xl text-base-white">
+      <div className="relative h-screen w-full overflow-y-auto bg-darkslategray-100 text-left font-body text-xl text-base-white">
         <HeaderMenu />
         <div className="absolute left-[481px] top-[200px] tracking-[0.1em]">
           Your Profile
@@ -33,20 +64,22 @@ const MePage: NextPage = () => {
           src="/line-1.svg"
         />
 
-        <div className="absolute left-[492px] top-[283px] flex h-[45px] w-[439px] flex-row items-center justify-start gap-[227px] overflow-hidden text-17xl">
-          <div className="flex h-[45px] w-[177px] shrink-0 flex-row items-center justify-start gap-[27px] overflow-hidden">
+        <div className="absolute left-[492px] top-[283px] flex h-[45px] w-[439px] flex-row items-center justify-start gap-[100px] overflow-hidden text-17xl">
+          <div className="flex h-[45px] w-[250px] shrink-0 flex-row items-center justify-start gap-[25px]">
             <img
-              className="relative h-[45px] w-[45px]"
+              className="relative h-[45px] w-[45px] rounded-full"
               alt=""
-              src="/icon1.svg"
+              src={icon}
             />
-            <div className="relative tracking-[0.1em]">user1</div>
+            <div className="relative w-[175px] truncate tracking-[0.1em]">
+              {user?.username}
+            </div>
           </div>
           <img
             className="relative h-[35px] w-[35px] cursor-pointer"
             alt=""
             src="/settings-icon.svg"
-            onClick={openMSettingsMinePopup}
+            onClick={onSettingClick}
           />
         </div>
         <div className="absolute left-[492px] top-[401px] flex h-7 w-[354px] flex-row items-center justify-start text-5xl">
@@ -57,7 +90,7 @@ const MePage: NextPage = () => {
         <div className="absolute left-[891.5px] top-[401px] h-7 w-[60px] text-5xl">
           <div className="absolute left-[0px] top-[3px] h-[25px] w-[60px] rounded-8xs bg-gray-500" />
           <div className="absolute left-[15px] top-[0px] tracking-[0.1em]">
-            on
+            {twofactorauth}
           </div>
         </div>
         <img
@@ -65,23 +98,14 @@ const MePage: NextPage = () => {
           alt=""
           src="/line-2.svg"
         />
-        <RankingContainer userId="1" />
+        <RankingContainer userId={profile.userId} />
         <img
           className="absolute left-[470px] top-[768px] h-0.5 w-[500px]"
           alt=""
           src="/line-2.svg"
         />
-        <MatchHistoryContainer userId="1" />
+        <MatchHistoryContainer userId={profile.userId} />
       </div>
-      {isMSettingsMinePopupOpen && (
-        <ModalPopup
-          overlayColor="rgba(113, 113, 113, 0.3)"
-          placement="Centered"
-          onOutsideClick={closeMSettingsMinePopup}
-        >
-          <MSettingsMine onClose={closeMSettingsMinePopup} />
-        </ModalPopup>
-      )}
     </>
   );
 };
