@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import makeAPIRequest from "../api/api";
+import { FRONT_URL } from "@/config";
 import { MatchType, UserType } from "@/app/types";
 // eslint-disable-next-line no-unused-vars
 import ModalPopup from "../components/modal/modal-popup"; // TODO: check please! by tsudo
@@ -31,9 +32,9 @@ const MatchComponent = ({
 
   const icon = () => {
     if (userId === match.user1Id) {
-      return `http://localhost:3000/api/users/avatar/${match.user2Id}`;
+      return `${FRONT_URL}/api/users/avatar/${match.user2Id}`;
     } else {
-      return `http://localhost:3000/api/users/avatar/${userId}`;
+      return `${FRONT_URL}/api/users/avatar/${userId}`;
     }
   };
 

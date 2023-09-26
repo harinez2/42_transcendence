@@ -10,6 +10,7 @@ import makeAPIRequest from "@/app/api/api";
 import { StatusType, UserType } from "./types";
 import { useRouter } from "next/navigation";
 import { ProfileContext, SocketContext } from "@/app/layout";
+import { FRONT_URL } from "@/config";
 
 const BlockedComponent = ({ blocked }: { blocked: UserType }) => {
   const router = useRouter();
@@ -74,9 +75,9 @@ const BlockedComponent = ({ blocked }: { blocked: UserType }) => {
 
   const icon = () => {
     if (user && user.avatar) {
-      return `http://localhost:3000/api/users/avatar/${status_variable?.userId}`;
+      return `${FRONT_URL}/api/users/avatar/${status_variable?.userId}`;
     } else {
-      return "http://localhost:3000/favicon.ico";
+      return "/favicon.ico";
     }
   };
 

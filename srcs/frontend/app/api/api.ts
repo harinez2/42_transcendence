@@ -88,8 +88,16 @@ export default async function makeAPIRequest<T>(
   }
 }
 
+export const getApiUrl = () => {
+  const url = process.env.NEXT_PUBLIC_API_URL;
+  if (!url) {
+    throw new Error("NEXT_PUBLIC_API_URL is not defined.");
+  }
+  return url;
+};
+
 export async function getAllProfile() {
-  const response = await fetch("http://localhost:5000/users", {
+  const response = await fetch(`${getApiUrl()}/users`, {
     method: "GET",
     cache: "no-store",
   });
@@ -98,7 +106,7 @@ export async function getAllProfile() {
 
 export async function getProfileByUserId(userId: string) {
   try {
-    const response = await fetch(`http://localhost:5000/users/${userId}`, {
+    const response = await fetch(`${getApiUrl()}/users/${userId}`, {
       method: "GET",
       cache: "no-store",
     });

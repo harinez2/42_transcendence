@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { DmChannelType, DmMessageType } from "./types";
 import Link from "next/link";
+import { FRONT_URL } from "@/config";
 
 const MessageComponent = ({ message }: { message: DmMessageType }) => {
   return (
@@ -8,7 +9,7 @@ const MessageComponent = ({ message }: { message: DmMessageType }) => {
       <div className="mt-2 p-4">
         <div className="mb-2 flex flex-row items-end space-x-6">
           <Image
-            src="http://localhost:3000/favicon.ico"
+            src="/favicon.ico"
             className="h-auto max-w-full rounded-full"
             width={30}
             height={30}
@@ -22,19 +23,15 @@ const MessageComponent = ({ message }: { message: DmMessageType }) => {
             {message?.createdAt?.toLocaleString()}
           </div>
         </div>
-        {message.content.indexOf("http://localhost:3000/game/preparing") >=
-        0 ? (
+        {message.content.indexOf(`${FRONT_URL}/game/preparing`) >= 0 ? (
           <>
             <p className="px-2 text-base text-gray-300">
-              {message.content.replace(
-                "http://localhost:3000/game/preparing",
-                "",
-              )}
+              {message.content.replace(`${FRONT_URL}/game/preparing`, "")}
               <Link
                 href="/game/preparing"
                 className="m-2 rounded-md bg-gray-500 px-2 text-white"
               >
-                http://localhost:3000/game/preparing
+                {`${FRONT_URL}/game/preparing`}
               </Link>
             </p>
           </>

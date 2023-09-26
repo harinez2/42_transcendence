@@ -9,6 +9,7 @@ import makeAPIRequest from "@/app/api/api";
 import { FolloweeType, StatusType, UserType } from "./types";
 import { useRouter } from "next/navigation";
 import { ProfileContext, SocketContext } from "@/app/layout";
+import { FRONT_URL } from "@/config";
 
 const FriendComponent = ({ followee }: { followee: FolloweeType }) => {
   const router = useRouter();
@@ -74,9 +75,9 @@ const FriendComponent = ({ followee }: { followee: FolloweeType }) => {
 
   const icon = () => {
     if (user && user.avatar) {
-      return `http://localhost:3000/api/users/avatar/${status_variable?.userId}`;
+      return `${FRONT_URL}/api/users/avatar/${status_variable?.userId}`;
     } else {
-      return "http://localhost:3000/favicon.ico";
+      return "/favicon.ico";
     }
   };
 

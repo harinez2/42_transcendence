@@ -9,12 +9,11 @@ import HeaderMenu from "@/app/components/headermenu";
 import RankingContainer from "@/app/components/raking-container";
 import MatchHistoryContainer from "../../match-history-container";
 import { StatusType } from "../../me/blocked/types";
+import { FRONT_URL } from "@/config";
 
 const ProfileOtherPage = ({ userId }: any) => {
   const [user, setUser] = useState<UserType>();
-  const [icon, setIcon] = useState<string>(
-    "http://localhost:3000/api/users/avatar/0",
-  );
+  const [icon, setIcon] = useState<string>(`${FRONT_URL}/api/users/avatar/0`);
   const [status, setStatus] = useState<StatusType>();
   const [statusstr, setStatusStr] = useState<string>("offline");
 
@@ -70,7 +69,7 @@ const ProfileOtherPage = ({ userId }: any) => {
   }, [status]);
 
   if (user?.avatar) {
-    setIcon(`http://localhost:3000/api/users/avatar/${userId}`);
+    setIcon(`${FRONT_URL}/api/users/avatar/${userId}`);
   }
 
   return (

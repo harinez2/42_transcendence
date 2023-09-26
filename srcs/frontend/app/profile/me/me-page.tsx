@@ -9,6 +9,7 @@ import { ProfileContext } from "@/app/layout";
 import makeAPIRequest from "@/app/api/api";
 import { UserType } from "./blocked/types";
 import { useRouter } from "next/navigation";
+import { FRONT_URL } from "@/config";
 
 const MePage = () => {
   const router = useRouter();
@@ -19,9 +20,7 @@ const MePage = () => {
 
   const profile: ProfileType = useContext(ProfileContext);
   const [user, setUser] = useState<UserType>();
-  const [icon, setIcon] = useState<string>(
-    "http://localhost:3000/api/users/avatar/0",
-  );
+  const [icon, setIcon] = useState<string>(`${FRONT_URL}/api/users/avatar/0`);
   const [twofactorauth, setTwofactorauth] = useState<string>("off");
 
   useEffect(() => {
@@ -46,7 +45,7 @@ const MePage = () => {
       setTwofactorauth("on");
     }
     if (user.avatar) {
-      setIcon(`http://localhost:3000/api/users/avatar/${profile.userId}`);
+      setIcon(`${FRONT_URL}/api/users/avatar/${profile.userId}`);
     }
   }
 

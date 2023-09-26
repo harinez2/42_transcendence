@@ -3,7 +3,7 @@
 import "../styles/globals.css";
 import React, { createContext, useEffect, useState } from "react";
 import { Socket, io } from "socket.io-client";
-import makeAPIRequest from "./api/api";
+import makeAPIRequest, { getApiUrl } from "./api/api";
 import { ProfileType } from "./types";
 
 export let ProfileContext: any = createContext(undefined);
@@ -33,7 +33,7 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
   // ソケット接続(認証後)
   useEffect(() => {
     if (profile && profile.userId) {
-      const socket = io("http://localhost:5000");
+      const socket = io(getApiUrl());
 
       socket.on("connect", () => {
         console.log("connected:", socket.id);

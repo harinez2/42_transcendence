@@ -14,6 +14,7 @@ import {
 } from '@nestjs/common';
 import { StatusService } from 'src/status/status.service';
 import { DmsService } from 'src/dms/dms.service';
+import { FRONT_URL } from 'config';
 
 @WebSocketGateway({
   cors: {
@@ -269,9 +270,9 @@ export class GamesMatchingGateway {
       }
 
       // メッセージを投稿
+      const url = FRONT_URL + `/game/preparing`;
       const content =
-        `${channel.user1.username}さんがあなたをゲームに招待しています！` +
-        `http://localhost:3000/game/preparing`;
+        `${channel.user1.username}さんがあなたをゲームに招待しています！` + url;
       const createdMessage = await this.prisma.dmMessages.create({
         data: {
           channelId: channel.channelId,
