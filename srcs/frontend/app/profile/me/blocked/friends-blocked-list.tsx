@@ -6,11 +6,17 @@ import MUserOps from "../../../components/modal/m-user-ops";
 import ModalPopup from "../../../components/modal/modal-popup";
 import { useState, useCallback } from "react";
 import { ProfileType } from "@/app/types";
-import { ProfileContext } from "@/app/layout";
 import makeAPIRequest from "@/app/api/api";
 import { StatusType, UserType } from "./types";
+import { useRouter } from "next/navigation";
+import { ProfileContext, SocketContext } from "@/app/layout";
 
 const BlockedComponent = ({ blocked }: { blocked: UserType }) => {
+  const router = useRouter();
+
+  const profile: ProfileType = useContext(ProfileContext);
+  const socket: any = useContext(SocketContext);
+
   const [isMUserOpsOpen, setMUserOpsOpen] = useState(false);
   const openMUserOps = useCallback(() => {
     setMUserOpsOpen(true);
@@ -100,7 +106,13 @@ const BlockedComponent = ({ blocked }: { blocked: UserType }) => {
           placement="Centered"
           onOutsideClick={closeMUserOps}
         >
-          <MUserOps onClose={closeMUserOps} />
+          <MUserOps
+            onClose={closeMUserOps}
+            user={blocked}
+            router={router}
+            socket={socket}
+            profile={profile}
+          />
         </ModalPopup>
       )}
     </>

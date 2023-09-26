@@ -1,7 +1,8 @@
 export type FolloweeType = {
   id: number;
-  email: string;
   username: string;
+  avatar: Uint8Array;
+  email: string;
   staff: boolean;
   password: string;
   twoFactorAuthEnabled: boolean;

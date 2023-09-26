@@ -5,11 +5,17 @@ import MUserOps from "../../../components/modal/m-user-ops";
 import ModalPopup from "../../../components/modal/modal-popup";
 import { useState, useCallback } from "react";
 import { ProfileType } from "@/app/types";
-import { ProfileContext } from "@/app/layout";
 import makeAPIRequest from "@/app/api/api";
 import { FolloweeType, StatusType, UserType } from "./types";
+import { useRouter } from "next/navigation";
+import { ProfileContext, SocketContext } from "@/app/layout";
 
 const FriendComponent = ({ followee }: { followee: FolloweeType }) => {
+  const router = useRouter();
+
+  const profile: ProfileType = useContext(ProfileContext);
+  const socket: any = useContext(SocketContext);
+
   const [isMUserOpsOpen, setMUserOpsOpen] = useState(false);
   const openMUserOps = useCallback(() => {
     setMUserOpsOpen(true);
@@ -100,7 +106,13 @@ const FriendComponent = ({ followee }: { followee: FolloweeType }) => {
           placement="Centered"
           onOutsideClick={closeMUserOps}
         >
-          <MUserOps onClose={closeMUserOps} />
+          <MUserOps
+            onClose={closeMUserOps}
+            user={followee}
+            router={router}
+            socket={socket}
+            profile={profile}
+          />
         </ModalPopup>
       )}
     </>

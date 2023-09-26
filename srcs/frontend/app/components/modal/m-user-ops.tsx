@@ -1,117 +1,128 @@
-import React from "react";
+import React, { useState } from "react";
 import type { NextPage } from "next";
-import { useCallback } from "react";
-import { useRouter } from "next/navigation";
+import { UserType } from "./types";
+import makeAPIRequest from "@/app/api/api";
+import { AppRouterInstance } from "next/dist/shared/lib/app-router-context";
+import { Socket } from "socket.io-client";
+import { ProfileType } from "@/app/types";
 
 type MUserOpsType = {
-  onClose?: () => void;
+  onClose: () => void;
+  user: UserType;
+  router: AppRouterInstance;
+  socket: Socket;
+  profile: ProfileType;
+};
+
+const onClickInviteToGame = (
+  invitingUserId: number,
+  router: AppRouterInstance,
+  socket: Socket,
+  profile: ProfileType,
+) => {
+  socket?.emit("game-invite", {
+    myUserId: profile.userId,
+    invitingUserId: invitingUserId,
+  });
+  router.push("/game/preparing");
 };
 
 // eslint-disable-next-line no-unused-vars
-const MUserOps: NextPage<MUserOpsType> = ({ onClose }) => {
-  const router = useRouter();
+// const MUserOps: NextPage<MUserOpsType> = ({ onClose }) => {
+// NOTE: User をクリックしたときに表示される dialog
+const MUserOps: NextPage<MUserOpsType> = ({
+  onClose,
+  user,
+  router,
+  socket,
+  profile,
+}) => {
+  const onClickAddFriend = (userId: number) => {
+    makeAPIRequest<UserType>("post", `/friends/follow`, {
+      followeeId: userId,
+    })
+      .then((result) => {
+        if (result.success) {
+          setError("");
+          // modal を閉じる
+          onClose();
+        } else {
+          setError(result.error);
+        }
+      })
+      .catch((error) => {
+        setError(error.message);
+      });
+  };
 
-  const onSeeProfileClick = useCallback(() => {
-    router.push("/../profile/other");
-  }, [router]);
+  const onClickBlock = (userId: number) => {
+    // POST /friends/block
+    makeAPIRequest<UserType>("post", `/friends/block`, {
+      blockedId: userId,
+    })
+      .then((result) => {
+        if (result.success) {
+          setError("");
+          onClose();
+        } else {
+          console.log(result.error);
+          setError(result.error);
+        }
+      })
+      .catch((error) => {
+        setError(error.message);
+      });
+  };
+  // map に直す
+  const [error, setError] = useState<string>("");
 
-  const onSendDMClick = useCallback(() => {
-    router.push("/../dm");
-  }, [router]);
-
-  const onAddFriendClick = useCallback(() => {
-    router.push("/../chat");
-  }, [router]);
-
-  const onInviteToGameClick = useCallback(() => {
-    router.push("/../game/settings");
-  }, [router]);
-
-  const onBlockThisUserClick = useCallback(() => {
-    router.push("/../chat");
-  }, [router]);
-
+  const handles = [
+    {
+      name: "See Profile",
+      onClick: () => router.push(`/profile/other/${user.id}`),
+    },
+    {
+      name: "Send DM",
+      onClick: () => router.push(`/dm`),
+    },
+    {
+      name: "Add Friend",
+      onClick: () => onClickAddFriend(user.id),
+    },
+    {
+      name: "Invite to Game",
+      onClick: () => onClickInviteToGame(user.id, router, socket, profile),
+    },
+    {
+      name: "Block this user",
+      onClick: () => onClickBlock(user.id),
+    },
+  ];
   return (
-    <div className="relative box-border flex h-[482px] max-h-full w-[390px] max-w-full flex-col items-start justify-start overflow-hidden bg-darkslategray-100 px-10 py-[34px] text-left font-body text-5xl text-white">
-      <div className="relative inline-block h-80 w-32 tracking-[0.1em]">
-        User ops
-      </div>
-      <div className="relative inline-block h-20 w-32 tracking-[0.1em]"></div>
-      <div className="mt-[-338px] box-border flex h-[432px] flex-col items-start justify-center gap-[28px] self-stretch px-0 py-2.5">
-        <div className="relative h-[43px] w-[174px]">
+    // NOTE: dialog の中身
+    <div className="flex w-40 flex-col rounded-lg bg-darkslategray-100 px-6 py-2 text-white">
+      User ops
+      {/* map に直す} */}
+      {handles.map((handle) => {
+        return (
           <button
-            className="absolute h-[43px] w-[174px] cursor-pointer bg-[transparent] p-0 [border:none]"
-            onClick={onSeeProfileClick}
+            onClick={handle.onClick}
+            key={handle.name}
+            className="m-2 cursor-pointer rounded-md bg-gray-500 px-2 text-white"
           >
-            <img
-              className="absolute left-[0px] top-[0px] h-[41px] w-[174px]"
-              alt=""
-              src="/rectangle-1221.svg"
-            />
-            <div className="absolute left-[16px] top-[9px] inline-block h-[34px] w-[142px] text-left font-body text-5xl tracking-[0.1em] text-base-white">
-              See Profile
-            </div>
+            <span className="x1 text-left">{handle.name}</span>
           </button>
-        </div>
-        <div className="relative h-[41px] w-44">
-          <button
-            className="absolute h-[43px] w-[174px] cursor-pointer bg-[transparent] p-0 [border:none]"
-            onClick={onSendDMClick}
-          >
-            <img
-              className="absolute left-[0px] top-[0px] h-[41px] w-[174px]"
-              alt=""
-              src="/rectangle-1221.svg"
-            />
-            <div className="absolute left-[16px] top-[9px] inline-block h-[34px] w-[142px] text-left font-body text-5xl tracking-[0.1em] text-base-white">
-              Send DM
-            </div>
-          </button>
-        </div>
-        <div className="relative h-[42px] w-44">
-          <button
-            className="absolute h-[43px] w-[174px] cursor-pointer bg-[transparent] p-0 [border:none]"
-            onClick={onAddFriendClick}
-          >
-            <img
-              className="absolute left-[0px] top-[0px] h-[41px] w-[174px]"
-              alt=""
-              src="/rectangle-1221.svg"
-            />
-            <div className="absolute left-[16px] top-[9px] inline-block h-[34px] w-[142px] text-left font-body text-5xl tracking-[0.1em] text-base-white">
-              Add friend
-            </div>
-          </button>
-        </div>
-        <div className="relative h-[42px] w-[272px]">
-          <button
-            className="absolute h-[43px] w-[174px] cursor-pointer bg-[transparent] p-0 [border:none]"
-            onClick={onInviteToGameClick}
-          >
-            <img
-              className="absolute left-[0px] top-[0px] h-[41px] w-[272px]"
-              alt=""
-              src="/rectangle-124.svg"
-            />
-            <div className="absolute left-[16px] top-[9px] inline-block h-[34px] w-[248px] text-left font-body text-5xl tracking-[0.1em] text-base-white">
-              Invite to Game
-            </div>
-          </button>
-        </div>
-        <button
-          className="relative h-[42px] w-[272px] cursor-pointer bg-[transparent] p-0 [border:none]"
-          onClick={onBlockThisUserClick}
-        >
-          <img
-            className="absolute left-[0px] top-[0px] h-[41px] w-[272px]"
-            alt=""
-            src="/rectangle-124.svg"
-          />
-          <div className="absolute left-[24px] top-[8px] inline-block h-[34px] w-[248px] text-left font-body text-5xl tracking-[0.1em] text-white">
-            Block this user
-          </div>
-        </button>
-      </div>
+        );
+      })}
+      <br />
+      {error && <div className="text-red-500">{error}</div>}
+      <button
+        type="button"
+        onClick={onClose}
+        className="mx-8 rounded-md bg-gray-200 px-2 text-black"
+      >
+        close
+      </button>
     </div>
   );
 };
