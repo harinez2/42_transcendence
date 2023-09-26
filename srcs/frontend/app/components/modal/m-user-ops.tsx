@@ -103,7 +103,6 @@ const MUserOps: NextPage<MUserOpsType> = ({
           setError("");
           onClose();
         } else {
-          console.log(result.error);
           setError(result.error);
         }
       })
@@ -122,7 +121,6 @@ const MUserOps: NextPage<MUserOpsType> = ({
           setError("");
           onClose();
         } else {
-          console.log(result.error);
           setError(result.error);
         }
       })
@@ -136,37 +134,37 @@ const MUserOps: NextPage<MUserOpsType> = ({
       name: "See Profile",
       onClick: () => router.push(`/profile/other/${user.id}`),
       selfAvailable: true,
-      blocked: false,
+      ok: true,
     },
     {
       name: "Send DM",
       onClick: () => router.push(`/dm`),
       selfAvailable: false,
-      blocked: false,
+      ok: !isSelf && !blocked,
     },
     {
       name: "Add Friend",
       onClick: () => onClickAddFriend(user.id),
       selfAvailable: false,
-      blocked: false,
+      ok: !isSelf && !blocked,
     },
     {
       name: "Invite to Game",
       onClick: () => onClickInviteToGame(user.id, router, socket, profile),
       selfAvailable: false,
-      blocked: false,
+      ok: !isSelf && !blocked,
     },
     {
       name: "Block this user",
       onClick: () => onClickBlock(user.id),
       selfAvailable: false,
-      blocked: true,
+      blocked: false,
+      ok: !isSelf && !blocked,
     },
     {
       name: "unBlock this user",
       onClick: () => onClickUnblock(user.id),
-      selfAvailable: false,
-      blocked: false,
+      ok: !isSelf && blocked,
     },
   ];
 
@@ -185,13 +183,10 @@ const MUserOps: NextPage<MUserOpsType> = ({
             onClick={handle.onClick}
             key={handle.name}
             className={
-              (!handle.selfAvailable && isSelf) || (handle.blocked && blocked)
-                ? buttonStyleDisabled
-                : buttonStyle
+              // 自分自身の場合、button を disable にする
+              !handle.ok ? buttonStyleDisabled : buttonStyle
             }
-            disabled={
-              (!handle.selfAvailable && isSelf) || (handle.blocked && blocked)
-            }
+            disabled={!handle.ok}
           >
             <span className="x1 text-left">{handle.name}</span>
           </button>
