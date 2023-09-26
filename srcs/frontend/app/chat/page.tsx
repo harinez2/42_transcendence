@@ -3,11 +3,11 @@
 import { useContext, useEffect, useState } from "react";
 import ChannelName from "./channel_name";
 
-import UserComponent, { User } from "./user";
+import UserComponent from "./user";
 import makeAPIRequest from "@/app/api/api";
 import type { ChannelType, MessageType } from "./types";
 import { ProfileContext, SocketContext, ErrorContext } from "../layout";
-import { ProfileType } from "../types";
+import { UserType, ProfileType } from "@/app/types";
 import ChannelCategory from "./channel_category";
 import UserStatusCategory from "./user_status_category";
 import HeaderMenu from "../components/headermenu";
@@ -22,7 +22,7 @@ enum OnlineStatus { // eslint-disable-line no-unused-vars
 
 type StatusType = {
   userId: number;
-  user: User;
+  user: UserType; // | undefined; // 確認して下さい! by tsudo
   socketId: string;
   status: OnlineStatus;
 };

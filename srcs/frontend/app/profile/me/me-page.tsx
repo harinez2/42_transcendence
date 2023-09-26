@@ -2,7 +2,7 @@
 
 import HeaderMenu from "../../components/headermenu";
 import RankingContainer from "../../components/raking-container";
-import MatchHistoryContainer from "../../components/match-history-container";
+import MatchHistoryContainer from "../match-history-container";
 import { ProfileType } from "@/app/types";
 import { useCallback, useContext, useEffect, useState } from "react";
 import { ProfileContext } from "@/app/layout";
