@@ -1,78 +1,149 @@
 "use client";
 
-// import React from "react";
-// import { useState, useCallback } from "react";
-// eslint-disable-next-line no-unused-vars
-// async
+import { useCallback, useEffect, useState } from "react";
+import makeAPIRequest from "../api/api";
+import { MatchType, UserType } from "./types";
+import ModalPopup from "./modal/modal-popup";
+import MUserOps from "./modal/m-user-ops";
+
+const MatchComponent = ({ match, userId }: { match: MatchType, userId: number}) => {
+  const [isMUserOpsOpen, setMUserOpsOpen] = useState(false);
+  const [opponent, setOpponent] = useState<UserType>();
+  
+  const openMUserOps = useCallback(() => {
+    setMUserOpsOpen(true);
+  }, []);
+
+  const closeMUserOps = useCallback(() => {
+    setMUserOpsOpen(false);
+  }, []);
+  
+  const icon = () => {
+    if (userId === match.user1Id) {
+      return `http://localhost:3000/api/users/avatar/${match.user2Id}`;
+    } else {
+      return `http://localhost:3000/api/users/avatar/${userId}`;
+    }
+  };
+
+  const getResult = () => {
+    if (userId === match.user1Id) {
+      if (match.user1Score > match.user2Score)
+        return "Win";
+      else
+        return "Lose";
+    } else {
+      if (match.user1Score < match.user2Score)
+        return "Win";
+      else
+        return "Lose";
+    }
+  };
+
+  const getScore = () => {
+    const score :string = match.user1Score + " - " + match.user2Score;
+    return score;
+  };
+
+  const getOpponentId = () => {
+    if (userId === match.user1Id) {
+      return match.user2Id;
+    } else {
+      return match.user1Id;
+    }
+  };
+
+  const getDate = () => {
+    const date: string = match.endedAt;
+    const res: string = date.slice(0, 10);
+    return res;
+  };
+
+  useEffect(() => {
+    if (match) {
+      // ユーザー情報を取得
+      makeAPIRequest<UserType>("get", `/users/${getOpponentId()}`)
+        .then((result) => {
+          if (result.success) {
+            setOpponent(result.data);
+          } else {
+            console.error(result.error);
+          }
+        })
+        .catch((error) => {
+          console.error("Error:", error.message);
+        });
+    }
+  }, [match]);
+  console.log("match.user1Score", match.user1Score);
+
+return (
+    <>
+    <div className="flex h-[90px] w-[500px] flex-row items-center justify-start gap-[30px] shrink-0 flex-row border-b-10">
+          <img
+            src={icon()}
+            className="relative h-[45px] w-[45px] cursor-pointer rounded-full"
+            width={45}
+            height={45}
+            alt=""
+            onClick={openMUserOps}
+          />
+          <div className="relative tracking-[0.1em] w-[150px] truncate">
+            {opponent?.username}
+      </div>
+<b className="relative tracking-[0.1em]">{getResult()}</b>
+      <div className="relative w-[100px]">{getScore()}</div>
+         <div className="relative tracking-[0.1em] text-silver-100 w-[190px]">
+          {getDate()}
+          </div>
+    </div>
+       {isMUserOpsOpen && (
+        <ModalPopup
+          overlayColor="rgba(113, 113, 113, 0.3)"
+          placement="Centered"
+          onOutsideClick={closeMUserOps}
+        >
+          <MUserOps onClose={closeMUserOps} />
+        </ModalPopup>
+    )}
+    </>
+  );
+};
 
 function MatchHistoryContainer({ userId }: any) {
-  // const prof: ProfileType = await getProfileByUserId(userId);
 
-  // const [isMUserOpsDMOpen, setMUserOpsDMOpen] = useState(false);
+  const [matches, setMatches] = useState<MatchType[]>([]);
 
-  // const openMUserOpsDM = useCallback(() => {
-  //   setMUserOpsDMOpen(true);
-  // }, []);
-
-  // const closeMUserOpsDM = useCallback(() => {
-  //   setMUserOpsDMOpen(false);
-  // }, []);
-  console.log(userId);
-  
+  useEffect(() => {
+    if (userId != 0) {
+      // Match History一覧を取得
+      makeAPIRequest<MatchType[]>(
+        "get", `/games/user/${userId}`,)
+        .then((result) => {
+          if (result.success) {
+            setMatches(result.data);
+          } else {
+            console.error(result.error);
+          }
+        })
+        .catch((error) => {
+          console.error("Error:", error.message);
+        });
+    }
+  }, [userId]);
+              
   return (
     <div>
       <div className="absolute left-[481px] top-[806px] tracking-[0.1em]">
         Match history
       </div>
-      <div className="absolute left-[479px] top-[866px] flex h-[45px] w-[490px] flex-row items-center justify-start gap-[67px]">
-        <div className="flex h-[45px] w-[116px] shrink-0 flex-row items-center justify-start gap-[13px] overflow-hidden">
-          <img
-            className="relative h-[45px] w-[45px] cursor-pointer"
-            alt=""
-            src="/icon2.svg"
-            // onClick={openMUserOpsDM}
-          />
-          <div className="relative tracking-[0.1em]">user2</div>
-        </div>
-        <div className="flex h-[23px] w-[307px] shrink-0 flex-row items-center justify-start gap-[45px] overflow-hidden">
-          <b className="relative tracking-[0.1em]">win</b>
-          <div className="flex h-[23px] w-[226px] flex-row items-center justify-start gap-[41px] overflow-hidden">
-            <div className="relative tracking-[0.1em]">7 - 2</div>
-            <div className="relative tracking-[0.1em] text-silver-100">
-              2023/07/16
-            </div>
-          </div>
+      <div className="absolute left-[479px] top-[866px] flex w-[490px]">
+        <div>
+          {matches?.slice(0).reverse().map((match) => (
+            <MatchComponent key={match.gameId} match={match} userId={userId} />
+          ))}
         </div>
       </div>
-      <div className="absolute left-[479px] top-[943px] flex h-[45px] w-[489px] flex-row items-center justify-start gap-[68px]">
-        <div className="flex h-[45px] w-[114px] shrink-0 flex-row items-center justify-start gap-[11px] overflow-hidden">
-          <img
-            className="relative h-[45px] w-[45px] cursor-pointer"
-            alt=""
-            src="/icon3.svg"
-            // onClick={openMUserOpsDM}
-          />
-          <div className="relative tracking-[0.1em]">user4</div>
-        </div>
-        <div className="flex h-[23px] w-[307px] flex-row items-center justify-start gap-[46px] overflow-hidden">
-          <div className="relative tracking-[0.1em]">lose</div>
-          <div className="flex h-[23px] w-[226px] flex-row items-center justify-start gap-[41px] overflow-hidden">
-            <div className="relative tracking-[0.1em]">3 - 5</div>
-            <div className="relative tracking-[0.1em] text-silver-100">
-              2023/07/15
-            </div>
-          </div>
-        </div>
-      </div>
-      {/* {isMUserOpsDMOpen && (
-        <ModalPopup
-          overlayColor="rgba(113, 113, 113, 0.3)"
-          placement="Centered"
-          onOutsideClick={closeMUserOpsDM}
-        >
-          <MUserOpsDM onClose={closeMUserOpsDM} />
-        </ModalPopup>
-      )} */}
     </div>
   );
 }
