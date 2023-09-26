@@ -177,7 +177,13 @@ export class AuthService {
   // =========================================================================
 
   private async getAuth(user: User) {
-    return await this.prisma.auth.findUnique({ where: { id: user.id } });
+    const auth = await this.prisma.auth.findUnique({
+      where: { userId: user.id },
+    });
+    if (!auth) {
+      throw new BadRequestException('Account not found');
+    }
+    return auth;
   }
 
   /**
