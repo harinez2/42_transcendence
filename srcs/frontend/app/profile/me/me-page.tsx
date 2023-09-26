@@ -24,7 +24,6 @@ const MePage = () => {
   );
   const [twofactorauth, setTwofactorauth] = useState<string>("off");
 
-  console.log("profile.userId", profile.userId);
   useEffect(() => {
     if (profile?.userId) {
       // ユーザー情報を取得
