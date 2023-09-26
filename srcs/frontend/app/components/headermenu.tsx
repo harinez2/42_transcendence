@@ -1,14 +1,24 @@
 "use client";
 
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 import type { NextPage } from "next";
 import { useMemo } from "react";
 import CSS from "csstype";
 import { useCallback } from "react";
 import { useRouter } from "next/navigation";
+import { UserType } from "./types";
+import { ProfileContext } from "../layout";
+import { ProfileType } from "../types";
+import makeAPIRequest from "../api/api";
 
 const HeaderMenu: NextPage = () => {
   const router = useRouter();
+  const profile: ProfileType = useContext(ProfileContext);
+
+  const [user, setUser] = useState<UserType>();
+  const [icon, setIcon] = useState<string>(
+    "http://localhost:3000/api/users/avatar/0",
+  );
 
   const onMyIconClick = useCallback(() => {
     router.push("/profile/me");
@@ -30,6 +40,26 @@ const HeaderMenu: NextPage = () => {
     router.push("/chat");
   }, [router]);
 
+    useEffect(() => {
+    if (profile?.userId) {
+      // ユーザー情報を取得
+      makeAPIRequest<UserType>("get", `/users/${profile.userId}`)
+        .then((result) => {
+          if (result.success) {
+            setUser(result.data);
+              if (user?.avatar) {
+    setIcon(`http://localhost:3000/api/users/avatar/${profile.userId}`);
+  }
+          } else {
+            console.error(result.error);
+          }
+        })
+        .catch((error) => {
+          console.error("Error:", error.message);
+        });
+    }
+    }, [profile.userId]);
+  
   const headerMenuStyle: CSS.Properties = useMemo(() => {
     return {
       position: "absolute",
@@ -91,7 +121,7 @@ const HeaderMenu: NextPage = () => {
       <img
         className="absolute right-[30px] top-[calc(50%_-_22px)] h-[45px] w-[45px]"
         alt=""
-        src={"/icon1.svg"}
+        src={icon}
         style={iconStyle}
         onClick={onMyIconClick}
       />
