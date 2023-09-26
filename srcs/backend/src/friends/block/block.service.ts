@@ -27,8 +27,8 @@ export class BlockService {
     return blockers.map((block) => block.blocker);
   }
 
-  async getBlockeds(blockedId: number) {
-    const blockeds = await this.getBlocks(blockedId, undefined);
+  async getBlockeds(blockerId: number) {
+    const blockeds = await this.getBlocks(blockerId, undefined);
     return blockeds.map((block) => block.blocked);
   }
 
