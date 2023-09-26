@@ -7,7 +7,7 @@ import ModalPopup from "../../../components/modal/modal-popup";
 import { useState, useCallback } from "react";
 import { ProfileType } from "@/app/types";
 import makeAPIRequest from "@/app/api/api";
-import { StatusType, UserType } from "./types";
+import { UserType } from "./types";
 import { useRouter } from "next/navigation";
 import { ProfileContext, SocketContext } from "@/app/layout";
 
@@ -26,22 +26,21 @@ const BlockedComponent = ({ blocked }: { blocked: UserType }) => {
     setMUserOpsOpen(false);
   }, []);
 
-  const [status_variable, setStatus] = useState<StatusType>();
-  const [user, setUser] = useState<UserType>();
+  const [status, setStatus] = useState<string>("offline");
   const [icon, setIcon] = useState<string>(
-    "http://localhost:3000/api/users/avatar/0",
+    `http://localhost:3000/api/users/avatar/${blocked.id}`,
   );
-  const [statusstr, setStatusStr] = useState<string>("offline");
   const [timer, setTimer] = useState<number>(0);
 
   useEffect(() => {
     if (blocked.id) {
       // statusを取得
-      makeAPIRequest<StatusType>("get", `/status/${blocked.id}`)
+      makeAPIRequest<string>("get", `/status/${blocked.id}`)
         .then((result) => {
           if (result.success) {
             setStatus(result.data);
             setTimeout(() => setTimer(timer + 1), 60 * 1000);
+            setIcon(`http://localhost:3000/api/users/avatar/${blocked.id}`);
           } else {
             console.error(result.error);
           }
@@ -49,41 +48,13 @@ const BlockedComponent = ({ blocked }: { blocked: UserType }) => {
         .catch((error) => {
           console.error("Error:", error.message);
         });
-    }
-  }, [blocked, timer]);
-
-  useEffect(() => {
-    if (status_variable) {
-      // アイコン画像を取得
-      makeAPIRequest<UserType>("get", `/users/${status_variable.userId}`)
-        .then((result) => {
-          if (result.success) {
-            setUser(result.data);
-                     if (user?.avatar) {
-    setIcon(`http://localhost:3000/api/users/avatar/${profile.userId}`);
-  }
-          } else {
-            console.error(result.error);
-          }
-        })
-        .catch((error) => {
-          console.error("Error:", error.message);
-        });
-    }
-  }, [status_variable]);
-
-    useEffect(() => {
-    if (status_variable?.userId) {
-      if (status_variable && status_variable.status !== "") {
-        setStatusStr(status_variable.status);
-      }
     }
   }, [timer]);
 
   return (
     <>
       <div>
-        <a className="flex items-center rounded-lg p-4 text-white">
+        <a className="flex items-center rounded-full p-4 text-white">
           <img
             src={icon}
             className="h-auto max-w-full cursor-pointer rounded-full"
@@ -95,7 +66,7 @@ const BlockedComponent = ({ blocked }: { blocked: UserType }) => {
           <div className="ml-3 shrink-0 pr-8 text-xl">
             {blocked?.username}
             <div className="tracking-[0.1em] text-darkgray-200">
-              {statusstr}
+              {status}
             </div>
           </div>
         </a>
