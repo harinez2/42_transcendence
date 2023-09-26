@@ -7,10 +7,14 @@ import { CreateDmChannelDto } from './dto/create-dm-channel.dto';
 import { DmChannelInfoDto } from './dto/dm-channel-info.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { MessageDto } from 'src/chats/dto/message.dto';
+import { BlockService } from 'src/friends/block/block.service';
 
 @Injectable()
 export class DmsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private readonly blockService: BlockService,
+  ) {}
 
   // channel operations
 
@@ -43,10 +47,18 @@ export class DmsService {
   }
 
   async findByUserId(userId: number): Promise<DmChannelInfoDto[]> {
+    const blocklist = await this.blockService.getBlockeds(userId);
+    const blockIdList = blocklist.map((user) => {
+      return user.id;
+    });
     try {
       const channel = await this.prisma.dmChannels.findMany({
         where: {
-          OR: [{ user1Id: userId }, { user2Id: userId }],
+          AND: [
+            { OR: [{ user1Id: userId }, { user2Id: userId }] },
+            { user1Id: { notIn: blockIdList } },
+            { user2Id: { notIn: blockIdList } },
+          ],
         },
         include: {
           user1: true,
