@@ -30,12 +30,12 @@ const ChannelName = ({
   const onClose = () => {
     setOpen(false);
     closeModal();
-  }
+  };
 
   const openModal = () => {
     setOpen(true);
     showModal();
-  }
+  };
 
   const handleClick = () => {
     onSelectChannel(channel);
@@ -111,7 +111,7 @@ const ChannelName = ({
           </dialog>
         </span>
       </a>
-    </li >
+    </li>
   );
 };
 

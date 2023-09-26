@@ -26,9 +26,7 @@ const MEditChannel: NextPage<MEditChannelType> = ({
   // パスワードボタンが ON か OFF かを管理する
   const [passwordEnabled, setPasswordEnabled] = useState<boolean>(false);
   // チャンネルタイプボタンが ON か OFF かどうかを管理する
-  const [channelTypeEnabled, setChannelTypeEnabled] = useState<boolean>(
-    false,
-  );
+  const [channelTypeEnabled, setChannelTypeEnabled] = useState<boolean>(false);
 
   const [channelDTO, setChannelDTO] = useState<updateChannelDTO>({
     channelName: channel.channelName,
