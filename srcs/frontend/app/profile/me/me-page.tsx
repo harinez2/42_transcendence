@@ -20,9 +20,10 @@ const MePage = () => {
   const profile: ProfileType = useContext(ProfileContext);
   const [user, setUser] = useState<UserType>();
   const [icon, setIcon] = useState<string>(
-    "http://localhost:3000/api/users/avatar/0",
+    `http://localhost:3000/api/users/avatar/${profile.userId}`,
   );
   const [twofactorauth, setTwofactorauth] = useState<string>("off");
+  const [timer, setTimer] = useState<number>(0);
 
   useEffect(() => {
     if (profile?.userId) {
@@ -31,6 +32,15 @@ const MePage = () => {
         .then((result) => {
           if (result.success) {
             setUser(result.data);
+            setTimeout(() => setTimer(timer + 1), 60 * 1000);
+            if (user?.twoFactorAuthEnabled === true) {
+              setTwofactorauth("on");
+            }
+            if (user?.avatar) {
+              setIcon(
+                `http://localhost:3000/api/users/avatar/${profile.userId}`,
+              );
+            }
           } else {
             console.error(result.error);
           }
@@ -39,16 +49,7 @@ const MePage = () => {
           console.error("Error:", error.message);
         });
     }
-  }, [profile]);
-
-  if (user) {
-    if (user.twoFactorAuthEnabled === true) {
-      setTwofactorauth("on");
-    }
-    if (user.avatar) {
-      setIcon(`http://localhost:3000/api/users/avatar/${profile.userId}`);
-    }
-  }
+  }, [timer]);
 
   return (
     <>

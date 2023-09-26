@@ -65,9 +65,7 @@ const BlockedComponent = ({ blocked }: { blocked: UserType }) => {
           />
           <div className="ml-3 shrink-0 pr-8 text-xl">
             {blocked?.username}
-            <div className="tracking-[0.1em] text-darkgray-200">
-              {status}
-            </div>
+            <div className="tracking-[0.1em] text-darkgray-200">{status}</div>
           </div>
         </a>
       </div>

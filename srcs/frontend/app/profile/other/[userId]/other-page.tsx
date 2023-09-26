@@ -15,13 +15,13 @@ const ProfileOtherPage = ({ userId }: any) => {
   const socket: any = useContext(SocketContext);
   const profile: ProfileType = useContext(ProfileContext);
   const router = useRouter();
-  
+
   const [user, setUser] = useState<UserType>();
   const [icon, setIcon] = useState<string>(
     `http://localhost:3000/api/users/avatar/${userId}`,
   );
   const [status, setStatus] = useState<string>("offline");
-    const [timer, setTimer] = useState<number>(0);
+  const [timer, setTimer] = useState<number>(0);
 
   const [isMUserOpsOpen, setMUserOpsOpen] = useState(false);
   const openMUserOps = useCallback(() => {
@@ -90,7 +90,7 @@ const ProfileOtherPage = ({ userId }: any) => {
           <div className="relative w-[175px] truncate tracking-[0.1em]">
             {user?.username}
           </div>
-          <div className="relative w-[70px] overflow-visible tracking-[0.1em]">
+          <div className="relative w-[70px] overflow-visible tracking-[0.1em] text-darkgray-200">
             {status}
           </div>
         </div>

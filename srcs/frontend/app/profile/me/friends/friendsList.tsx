@@ -64,9 +64,7 @@ const FriendComponent = ({ followee }: { followee: FolloweeType }) => {
           />
           <div className="ml-3 shrink-0 pr-8 text-xl">
             {followee?.username}
-            <div className="tracking-[0.1em] text-darkgray-200">
-              {status}
-            </div>
+            <div className="tracking-[0.1em] text-darkgray-200">{status}</div>
           </div>
         </a>
       </div>
@@ -118,10 +116,7 @@ const FriendsList = () => {
       <div className="absolute left-[470px] top-[400px] text-left text-xl ">
         <ul className="border-b-8">
           {followees?.map((followee) => (
-            <FriendComponent
-              key={followee.id}
-              followee={followee}
-            />
+            <FriendComponent key={followee.id} followee={followee} />
           ))}
         </ul>
       </div>

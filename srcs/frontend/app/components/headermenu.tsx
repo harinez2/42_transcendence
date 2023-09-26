@@ -16,7 +16,7 @@ const HeaderMenu: NextPage = () => {
 
   const [user, setUser] = useState<UserType>();
   const [icon, setIcon] = useState<string>(
-    `http://localhost:3000/api/users/avatar/${profile.userId}`
+    `http://localhost:3000/api/users/avatar/${profile.userId}`,
   );
   const [timer, setTimer] = useState<number>(0);
 
@@ -40,7 +40,7 @@ const HeaderMenu: NextPage = () => {
     router.push("/chat");
   }, [router]);
 
-    useEffect(() => {
+  useEffect(() => {
     if (profile?.userId) {
       // ユーザー情報を取得
       makeAPIRequest<UserType>("get", `/users/${profile.userId}`)
@@ -48,9 +48,11 @@ const HeaderMenu: NextPage = () => {
           if (result.success) {
             setUser(result.data);
             setTimeout(() => setTimer(timer + 1), 60 * 1000);
-              if (user?.avatar) {
-    setIcon(`http://localhost:3000/api/users/avatar/${profile.userId}`);
-  }
+            if (user?.avatar) {
+              setIcon(
+                `http://localhost:3000/api/users/avatar/${profile.userId}`,
+              );
+            }
           } else {
             console.error(result.error);
           }
@@ -59,8 +61,8 @@ const HeaderMenu: NextPage = () => {
           console.error("Error:", error.message);
         });
     }
-    }, [timer]);
-  
+  }, [timer]);
+
   const headerMenuStyle: CSS.Properties = useMemo(() => {
     return {
       position: "absolute",
