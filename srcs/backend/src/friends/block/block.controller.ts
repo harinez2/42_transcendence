@@ -57,6 +57,7 @@ export class BlockController {
   }
 
   @Delete()
+  @ApiBody({ type: BlockDto })
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'))
   unblock(@Req() req, @Body() blockDto: BlockDto) {
