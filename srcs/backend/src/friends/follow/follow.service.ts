@@ -44,7 +44,6 @@ export class FollowService {
     });
     if (follow) throw new BadRequestException('You already followed this user');
     try {
-      console.log(followerId, followeeId);
       return await this.prisma.follow.create({
         data: { followerId: followerId, followeeId: followeeId },
       });
