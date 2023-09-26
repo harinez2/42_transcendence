@@ -8,6 +8,7 @@ import {
   Param,
   Body,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ChatsService } from './chats.service';
@@ -20,6 +21,7 @@ import {
   ApiParam,
   ApiResponse,
   ApiTags,
+  ApiQuery,
 } from '@nestjs/swagger';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { UserType } from './chats.interface';
@@ -60,6 +62,25 @@ export class ChatsController {
   async findAllChannel(@Request() req) {
     const userId = req.user.id;
     return await this.chatsService.findAllChannelByUserId(userId);
+  }
+
+  @ApiOperation({ summary: 'チャンネルを検索する' })
+  @ApiQuery({
+    name: 'channelName',
+    type: 'string',
+    example: '1',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '指定したチャンネルIDの情報を返却',
+    type: ChannelInfoDto,
+  })
+  @Get('search')
+  async findByChannelName(
+    @Query('channelName') channelName: string,
+  ): Promise<ChannelInfoDto> {
+    console.log(channelName);
+    return await this.chatsService.findByChannelName(channelName);
   }
 
   @ApiOperation({ summary: 'public なチャンネル一覧を取得する' })
@@ -205,9 +226,9 @@ export class ChatsController {
   @ApiBody({
     schema: {
       properties: {
-        userId: {
+        password: {
           type: 'string',
-          example: '1',
+          example: 'password',
         },
       },
     },
@@ -217,15 +238,19 @@ export class ChatsController {
     description: '指定したチャンネルIDの情報を返却',
     type: ChannelInfoDto,
   })
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
   @Put(':channelid/users')
   async joinChannel(
     @Param('channelid') channelId: string,
-    @Body() joinRequest: { userId: string },
+    @Body() joinRequest: { password: string },
+    @Request() req,
   ): Promise<ChannelInfoDto> {
     return await this.chatsService.addChannelUsers(
       Number(channelId),
-      Number(joinRequest.userId),
+      req.user.id,
       UserType.USER,
+      joinRequest.password,
     );
   }
 
@@ -245,6 +270,8 @@ export class ChatsController {
       },
     },
   })
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
   @ApiResponse({
     status: 200,
     description: '指定したチャンネルIDの情報を返却',
@@ -253,11 +280,11 @@ export class ChatsController {
   @Delete(':channelid/users')
   async leaveChannel(
     @Param('channelid') channelId: string,
-    @Body() leaveRequest: { userId: string },
+    @Request() req,
   ): Promise<ChannelInfoDto> {
     return await this.chatsService.removeChannelUsers(
       Number(channelId),
-      Number(leaveRequest.userId),
+      Number(req.user.id),
       UserType.USER,
     );
   }
