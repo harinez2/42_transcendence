@@ -83,10 +83,7 @@ const UserListComponent = ({
         style={{ top: "30px" }}
         className="rounded-lg bg-darkslategray-100 px-6 py-2"
       >
-        <MAddUserDm
-          onClose={closeModal}
-          onUpdateChannel={onUpdateChannel}
-        />
+        <MAddUserDm onClose={closeModal} onUpdateChannel={onUpdateChannel} />
       </dialog>
     </div>
   );
