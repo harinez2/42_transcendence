@@ -26,8 +26,12 @@ const FriendComponent = ({ followee }: { followee: FolloweeType }) => {
   }, []);
 
   const [status_variable, setStatus] = useState<StatusType>();
-
   const [user, setUser] = useState<UserType>();
+  const [icon, setIcon] = useState<string>(
+    "http://localhost:3000/api/users/avatar/0",
+  );
+  const [statusstr, setStatusStr] = useState<string>("offline");
+  const [timer, setTimer] = useState<number>(0);
 
   useEffect(() => {
     if (followee.id) {
@@ -36,6 +40,7 @@ const FriendComponent = ({ followee }: { followee: FolloweeType }) => {
         .then((result) => {
           if (result.success) {
             setStatus(result.data);
+            setTimeout(() => setTimer(timer + 1), 60 * 1000);
           } else {
             console.error(result.error);
           }
@@ -44,7 +49,7 @@ const FriendComponent = ({ followee }: { followee: FolloweeType }) => {
           console.error("Error:", error.message);
         });
     }
-  }, [followee]);
+  }, [followee, timer]);
 
   useEffect(() => {
     if (status_variable) {
@@ -53,6 +58,9 @@ const FriendComponent = ({ followee }: { followee: FolloweeType }) => {
         .then((result) => {
           if (result.success) {
             setUser(result.data);
+            if (user?.avatar) {
+              setIcon(`http://localhost:3000/api/users/avatar/${status_variable.userId}`);
+            }
           } else {
             console.error(result.error);
           }
@@ -61,31 +69,30 @@ const FriendComponent = ({ followee }: { followee: FolloweeType }) => {
           console.error("Error:", error.message);
         });
     }
-  }, [status_variable]);
+  }, []);
 
-  //offlineの場合はstatusが反映されていなのでステータスをofflineに設定
-  const status1 = () => {
-    if (status_variable && status_variable.status !== "") {
-      return status_variable.status;
-    } else {
-      return "offline";
-    }
-  };
+  // const status1 = () => {
+  //   if (status_variable && status_variable.status !== "") {
+  //     return status_variable.status;
+  //   } else {
+  //     return "offline";
+  //   }
+  // };
 
-  const icon = () => {
-    if (user && user.avatar) {
-      return `http://localhost:3000/api/users/avatar/${status_variable?.userId}`;
-    } else {
-      return "http://localhost:3000/favicon.ico";
+  useEffect(() => {
+    if (status_variable?.userId) {
+      if (status_variable && status_variable.status !== "") {
+        setStatusStr(status_variable.status);
+      }
     }
-  };
+  }, [timer]);
 
   return (
     <>
       <div>
         <a className="flex items-center rounded-lg p-4 text-white">
           <img
-            src={icon()}
+            src={icon}
             className="h-auto max-w-full cursor-pointer rounded-full"
             width={45}
             height={45}
@@ -95,7 +102,7 @@ const FriendComponent = ({ followee }: { followee: FolloweeType }) => {
           <div className="ml-3 shrink-0 pr-8 text-xl">
             {followee?.username}
             <div className="tracking-[0.1em] text-darkgray-200">
-              {status1()}
+              {statusstr}
             </div>
           </div>
         </a>
@@ -150,7 +157,6 @@ const FriendsList = () => {
           {followees?.map((followee) => (
             <FriendComponent
               key={followee.id}
-              // profile={profile}
               followee={followee}
             />
           ))}
