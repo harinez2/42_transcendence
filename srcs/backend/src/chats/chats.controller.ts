@@ -172,15 +172,19 @@ export class ChatsController {
     description: '指定したチャンネルIDの情報を返却',
     type: ChannelInfoDto,
   })
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
   @Put(':channelid/admins')
   async addAdminRights(
     @Param('channelid') channelId: string,
     @Body() addAdminRequest: { userId: string },
+    @Request() req,
   ): Promise<ChannelInfoDto> {
     return await this.chatsService.addChannelUsers(
       Number(channelId),
       Number(addAdminRequest.userId),
       UserType.ADMIN,
+      Number(req.user.id),
     );
   }
 
@@ -195,15 +199,19 @@ export class ChatsController {
     description: '指定したチャンネルIDの情報を返却',
     type: ChannelInfoDto,
   })
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
   @Delete(':channelid/admins/:userid')
   async removeAdminRights(
     @Param('channelid') channelId: string,
     @Param('userid') userId: string,
+    @Request() req,
   ): Promise<ChannelInfoDto> {
     return await this.chatsService.removeChannelUsers(
       Number(channelId),
       Number(userId),
       UserType.ADMIN,
+      Number(req.user.id),
     );
   }
 
@@ -240,6 +248,7 @@ export class ChatsController {
       Number(channelId),
       req.user.id,
       UserType.USER,
+      req.user.id,
       joinRequest.password,
     );
   }
@@ -261,11 +270,13 @@ export class ChatsController {
   async leaveChannel(
     @Param('channelid') channelId: string,
     @Param('userid') userId: string,
+    @Request() req,
   ): Promise<ChannelInfoDto> {
     return await this.chatsService.removeChannelUsers(
       Number(channelId),
       Number(userId),
       UserType.USER,
+      req.user.id,
     );
   }
 
@@ -307,14 +318,18 @@ export class ChatsController {
     description: '指定したチャンネルIDの情報を返却',
     type: ChannelInfoDto,
   })
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
   @Put(':channelid/ban')
   async banUser(
     @Param('channelid') channelId: string,
     @Body() banRequest: { bannedUserId: string },
+    @Request() req,
   ): Promise<ChannelInfoDto> {
     return await this.chatsService.banUser(
       Number(channelId),
       Number(banRequest.bannedUserId),
+      req.user.id,
     );
   }
 
@@ -339,14 +354,18 @@ export class ChatsController {
     description: '指定したチャンネルIDの情報を返却',
     type: ChannelInfoDto,
   })
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
   @Delete(':channelid/ban')
   async unbanUser(
     @Param('channelid') channelId: string,
     @Body() unbanRequest: { bannedUserId: string },
+    @Request() req,
   ): Promise<ChannelInfoDto> {
     return await this.chatsService.unbanUsers(
       Number(channelId),
       Number(unbanRequest.bannedUserId),
+      req.user.id,
     );
   }
 
@@ -395,15 +414,19 @@ export class ChatsController {
     description: '指定したチャンネルIDの情報を返却',
     type: ChannelInfoDto,
   })
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
   @Put(':channelid/mute')
   async muteUser(
     @Param('channelid') channelId: string,
     @Body() muteRequest: { mutedUserId: string; muteUntil: Date },
+    @Request() req,
   ): Promise<ChannelInfoDto> {
     return await this.chatsService.muteUser(
       Number(channelId),
       Number(muteRequest.mutedUserId),
       muteRequest.muteUntil,
+      req.user.id,
     );
   }
 
@@ -428,14 +451,18 @@ export class ChatsController {
     description: '指定したチャンネルIDの情報を返却',
     type: ChannelInfoDto,
   })
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
   @Delete(':channelid/mute')
   async unmuteUser(
     @Param('channelid') channelId: string,
     @Body() unmuteRequest: { mutedUserId: string },
+    @Request() req,
   ): Promise<ChannelInfoDto> {
     return await this.chatsService.unmuteUsers(
       Number(channelId),
       Number(unmuteRequest.mutedUserId),
+      req.user.id,
     );
   }
 }
