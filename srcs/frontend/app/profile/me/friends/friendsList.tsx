@@ -6,7 +6,7 @@ import ModalPopup from "../../../components/modal/modal-popup";
 import { useState, useCallback } from "react";
 import { ProfileType } from "@/app/types";
 import makeAPIRequest from "@/app/api/api";
-import { FolloweeType, StatusType, UserType } from "./types";
+import { FolloweeType } from "./types";
 import { useRouter } from "next/navigation";
 import { ProfileContext, SocketContext } from "@/app/layout";
 
@@ -25,22 +25,21 @@ const FriendComponent = ({ followee }: { followee: FolloweeType }) => {
     setMUserOpsOpen(false);
   }, []);
 
-  const [status_variable, setStatus] = useState<StatusType>();
-  const [user, setUser] = useState<UserType>();
+  const [status, setStatus] = useState<string>();
   const [icon, setIcon] = useState<string>(
-    "http://localhost:3000/api/users/avatar/0",
+    `http://localhost:3000/api/users/avatar/${followee.id}`,
   );
-  const [statusstr, setStatusStr] = useState<string>("offline");
   const [timer, setTimer] = useState<number>(0);
 
   useEffect(() => {
     if (followee.id) {
       // statusを取得
-      makeAPIRequest<StatusType>("get", `/status/${followee.id}`)
+      makeAPIRequest<string>("get", `/status/${followee.id}`)
         .then((result) => {
           if (result.success) {
             setStatus(result.data);
             setTimeout(() => setTimer(timer + 1), 60 * 1000);
+            setIcon(`http://localhost:3000/api/users/avatar/${followee.id}`);
           } else {
             console.error(result.error);
           }
@@ -48,49 +47,13 @@ const FriendComponent = ({ followee }: { followee: FolloweeType }) => {
         .catch((error) => {
           console.error("Error:", error.message);
         });
-    }
-  }, [followee, timer]);
-
-  useEffect(() => {
-    if (status_variable) {
-      // アイコン画像を取得
-      makeAPIRequest<UserType>("get", `/users/${status_variable.userId}`)
-        .then((result) => {
-          if (result.success) {
-            setUser(result.data);
-            if (user?.avatar) {
-              setIcon(`http://localhost:3000/api/users/avatar/${status_variable.userId}`);
-            }
-          } else {
-            console.error(result.error);
-          }
-        })
-        .catch((error) => {
-          console.error("Error:", error.message);
-        });
-    }
-  }, []);
-
-  // const status1 = () => {
-  //   if (status_variable && status_variable.status !== "") {
-  //     return status_variable.status;
-  //   } else {
-  //     return "offline";
-  //   }
-  // };
-
-  useEffect(() => {
-    if (status_variable?.userId) {
-      if (status_variable && status_variable.status !== "") {
-        setStatusStr(status_variable.status);
-      }
     }
   }, [timer]);
 
   return (
     <>
       <div>
-        <a className="flex items-center rounded-lg p-4 text-white">
+        <a className="flex items-center rounded-full p-4 text-white">
           <img
             src={icon}
             className="h-auto max-w-full cursor-pointer rounded-full"
@@ -102,7 +65,7 @@ const FriendComponent = ({ followee }: { followee: FolloweeType }) => {
           <div className="ml-3 shrink-0 pr-8 text-xl">
             {followee?.username}
             <div className="tracking-[0.1em] text-darkgray-200">
-              {statusstr}
+              {status}
             </div>
           </div>
         </a>
