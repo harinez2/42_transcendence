@@ -6,10 +6,16 @@ import { MatchType, UserType } from "./types";
 import ModalPopup from "./modal/modal-popup";
 import MUserOps from "./modal/m-user-ops";
 
-const MatchComponent = ({ match, userId }: { match: MatchType, userId: number}) => {
+const MatchComponent = ({
+  match,
+  userId,
+}: {
+  match: MatchType;
+  userId: number;
+}) => {
   const [isMUserOpsOpen, setMUserOpsOpen] = useState(false);
   const [opponent, setOpponent] = useState<UserType>();
-  
+
   const openMUserOps = useCallback(() => {
     setMUserOpsOpen(true);
   }, []);
@@ -17,7 +23,7 @@ const MatchComponent = ({ match, userId }: { match: MatchType, userId: number}) 
   const closeMUserOps = useCallback(() => {
     setMUserOpsOpen(false);
   }, []);
-  
+
   const icon = () => {
     if (userId === match.user1Id) {
       return `http://localhost:3000/api/users/avatar/${match.user2Id}`;
@@ -28,20 +34,16 @@ const MatchComponent = ({ match, userId }: { match: MatchType, userId: number}) 
 
   const getResult = () => {
     if (userId === match.user1Id) {
-      if (match.user1Score > match.user2Score)
-        return "Win";
-      else
-        return "Lose";
+      if (match.user1Score > match.user2Score) return "Win";
+      else return "Lose";
     } else {
-      if (match.user1Score < match.user2Score)
-        return "Win";
-      else
-        return "Lose";
+      if (match.user1Score < match.user2Score) return "Win";
+      else return "Lose";
     }
   };
 
   const getScore = () => {
-    const score :string = match.user1Score + " - " + match.user2Score;
+    const score: string = match.user1Score + " - " + match.user2Score;
     return score;
   };
 
@@ -77,27 +79,27 @@ const MatchComponent = ({ match, userId }: { match: MatchType, userId: number}) 
   }, [match]);
   console.log("match.user1Score", match.user1Score);
 
-return (
+  return (
     <>
-    <div className="flex h-[90px] w-[500px] flex-row items-center justify-start gap-[30px] shrink-0 flex-row border-b-10">
-          <img
-            src={icon()}
-            className="relative h-[45px] w-[45px] cursor-pointer rounded-full"
-            width={45}
-            height={45}
-            alt=""
-            onClick={openMUserOps}
-          />
-          <div className="relative tracking-[0.1em] w-[150px] truncate">
-            {opponent?.username}
-      </div>
-<b className="relative tracking-[0.1em]">{getResult()}</b>
-      <div className="relative w-[100px]">{getScore()}</div>
-         <div className="relative tracking-[0.1em] text-silver-100 w-[190px]">
+      <div className="border-b-10 flex h-[90px] w-[500px] shrink-0 flex-row flex-row items-center justify-start gap-[30px]">
+        <img
+          src={icon()}
+          className="relative h-[45px] w-[45px] cursor-pointer rounded-full"
+          width={45}
+          height={45}
+          alt=""
+          onClick={openMUserOps}
+        />
+        <div className="relative w-[150px] truncate tracking-[0.1em]">
+          {opponent?.username}
+        </div>
+        <b className="relative tracking-[0.1em]">{getResult()}</b>
+        <div className="relative w-[100px]">{getScore()}</div>
+        <div className="relative w-[190px] tracking-[0.1em] text-silver-100">
           {getDate()}
-          </div>
-    </div>
-       {isMUserOpsOpen && (
+        </div>
+      </div>
+      {isMUserOpsOpen && (
         <ModalPopup
           overlayColor="rgba(113, 113, 113, 0.3)"
           placement="Centered"
@@ -105,20 +107,18 @@ return (
         >
           <MUserOps onClose={closeMUserOps} />
         </ModalPopup>
-    )}
+      )}
     </>
   );
 };
 
 function MatchHistoryContainer({ userId }: any) {
-
   const [matches, setMatches] = useState<MatchType[]>([]);
 
   useEffect(() => {
     if (userId != 0) {
       // Match History一覧を取得
-      makeAPIRequest<MatchType[]>(
-        "get", `/games/user/${userId}`,)
+      makeAPIRequest<MatchType[]>("get", `/games/user/${userId}`)
         .then((result) => {
           if (result.success) {
             setMatches(result.data);
@@ -131,7 +131,7 @@ function MatchHistoryContainer({ userId }: any) {
         });
     }
   }, [userId]);
-              
+
   return (
     <div>
       <div className="absolute left-[481px] top-[806px] tracking-[0.1em]">
@@ -139,9 +139,16 @@ function MatchHistoryContainer({ userId }: any) {
       </div>
       <div className="absolute left-[479px] top-[866px] flex w-[490px]">
         <div>
-          {matches?.slice(0).reverse().map((match) => (
-            <MatchComponent key={match.gameId} match={match} userId={userId} />
-          ))}
+          {matches
+            ?.slice(0)
+            .reverse()
+            .map((match) => (
+              <MatchComponent
+                key={match.gameId}
+                match={match}
+                userId={userId}
+              />
+            ))}
         </div>
       </div>
     </div>

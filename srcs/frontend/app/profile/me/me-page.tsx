@@ -11,7 +11,7 @@ import { UserType } from "./blocked/types";
 import { useRouter } from "next/navigation";
 
 const MePage = () => {
-   const router = useRouter();
+  const router = useRouter();
 
   const onSettingClick = useCallback(() => {
     router.push("/profile/me/settings");
@@ -19,11 +19,13 @@ const MePage = () => {
 
   const profile: ProfileType = useContext(ProfileContext);
   const [user, setUser] = useState<UserType>();
-  const [icon, setIcon] = useState<string>("http://localhost:3000/api/users/avatar/0");
+  const [icon, setIcon] = useState<string>(
+    "http://localhost:3000/api/users/avatar/0",
+  );
   const [twofactorauth, setTwofactorauth] = useState<string>("off");
-  
+
   console.log("profile.userId", profile.userId);
-    useEffect(() => {
+  useEffect(() => {
     if (profile?.userId) {
       // ユーザー情報を取得
       makeAPIRequest<UserType>("get", `/users/${profile.userId}`)
@@ -38,8 +40,8 @@ const MePage = () => {
           console.error("Error:", error.message);
         });
     }
-    }, [profile]);
-  
+  }, [profile]);
+
   if (user) {
     if (user.twoFactorAuthEnabled === true) {
       setTwofactorauth("on");
@@ -47,7 +49,7 @@ const MePage = () => {
     if (user.avatar) {
       setIcon(`http://localhost:3000/api/users/avatar/${profile.userId}`);
     }
-  } 
+  }
 
   return (
     <>
@@ -69,7 +71,9 @@ const MePage = () => {
               alt=""
               src={icon}
             />
-            <div className="relative tracking-[0.1em] w-[175px] truncate">{user?.username}</div>
+            <div className="relative w-[175px] truncate tracking-[0.1em]">
+              {user?.username}
+            </div>
           </div>
           <img
             className="relative h-[35px] w-[35px] cursor-pointer"

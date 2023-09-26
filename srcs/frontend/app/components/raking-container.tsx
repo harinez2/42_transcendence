@@ -14,28 +14,28 @@ function RankingContainer({ userId }: any) {
   const [woncount, setWonCount] = useState<number>(0);
   const [lostcount, setLostCount] = useState<number>(0);
 
-   useEffect(() => {
-      // すべてのユーザー情報を取得
-      makeAPIRequest<UserType[]>("get", `/users`)
-        .then((result) => {
-          if (result.success) {
-            setUsers(result.data);
-            if (users) {
-              setCount(users.length);
-            }
-          } else {
-            console.error(result.error);
+  useEffect(() => {
+    // すべてのユーザー情報を取得
+    makeAPIRequest<UserType[]>("get", `/users`)
+      .then((result) => {
+        if (result.success) {
+          setUsers(result.data);
+          if (users) {
+            setCount(users.length);
           }
-        })
-        .catch((error) => {
-          console.error("Error:", error.message);
-        });
-    }, []);
+        } else {
+          console.error(result.error);
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error.message);
+      });
+  }, []);
 
   useEffect(() => {
-  if (userId) {
-    // ゲームの勝敗数を取得
-    makeAPIRequest<GameSummaryType>("get", `/games/summary/user/${userId}`)
+    if (userId) {
+      // ゲームの勝敗数を取得
+      makeAPIRequest<GameSummaryType>("get", `/games/summary/user/${userId}`)
         .then((result) => {
           if (result.success) {
             setGamesum(result.data);
@@ -75,17 +75,17 @@ function RankingContainer({ userId }: any) {
       };
       fetchPlayers();
     }
-    console.log("players", players)
+    console.log("players", players);
   }, [count]);
 
-   useEffect(() => {
+  useEffect(() => {
     if (players) {
       const getRanking = () => {
         players.sort((a, b) => b.wonCount - a.wonCount);
         for (let i = 0; i < players.length; i++) {
           if (players[i].userId === userId) {
             setRank(i + 1);
-          break;
+            break;
           }
         }
       };
@@ -97,7 +97,9 @@ function RankingContainer({ userId }: any) {
     <div className="absolute left-[590px] top-[506px] h-[227px] w-[300px]">
       <div className="absolute left-[1px] top-[0px] flex h-14 w-[300px] flex-row items-center justify-start gap-[66px] overflow-hidden">
         <div className="relative tracking-[0.1em]">ranking</div>
-        <div className="relative text-29xl tracking-[0.1em]">{rank}/{count}</div>
+        <div className="relative text-29xl tracking-[0.1em]">
+          {rank}/{count}
+        </div>
       </div>
       <div className="absolute left-[5px] top-[83px] flex h-14 w-[300px] flex-row items-center justify-start gap-[118px] overflow-hidden">
         <div className="relative tracking-[0.1em]">win</div>
