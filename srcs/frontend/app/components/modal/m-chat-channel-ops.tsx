@@ -129,25 +129,25 @@ export const MChatChannelOps: NextPage<MChatChannelOpsType> = ({
     }
   }, [router]);
 
-  const onClickRemoveAdmin = useCallback(async () => {
-    if (channel && user) {
-      await makeAPIRequest<ChannelType>(
-        "delete",
-        `/chats/${channel.channelId}/admins/${user.id}`,
-      )
-        .then((result) => {
-          if (result.success) {
-            setError("");
-            onClose();
-          } else {
-            setError("Remove Admin: " + result.error);
-          }
-        })
-        .catch(() => {
-          setError("Remove Admin: An unexpected error occured.");
-        });
-    }
-  }, [router]);
+  // const onClickRemoveAdmin = useCallback(async () => {
+  //   if (channel && user) {
+  //     await makeAPIRequest<ChannelType>(
+  //       "delete",
+  //       `/chats/${channel.channelId}/admins/${user.id}`,
+  //     )
+  //       .then((result) => {
+  //         if (result.success) {
+  //           setError("");
+  //           onClose();
+  //         } else {
+  //           setError("Remove Admin: " + result.error);
+  //         }
+  //       })
+  //       .catch(() => {
+  //         setError("Remove Admin: An unexpected error occured.");
+  //       });
+  //   }
+  // }, [router]);
 
   return (
     <div
@@ -214,7 +214,7 @@ export const MChatChannelOps: NextPage<MChatChannelOpsType> = ({
         </div>
       </button>
 
-      <button
+      {/* <button
         className="absolute left-[59px] top-[380px] h-[41px] w-[241px] cursor-pointer bg-[transparent] p-0 [border:none]"
         onClick={onClickRemoveAdmin}
       >
@@ -226,7 +226,7 @@ export const MChatChannelOps: NextPage<MChatChannelOpsType> = ({
         <div className="absolute left-[46px] top-[7px] inline-block h-[34px] w-[200px] text-left font-body text-5xl tracking-[0.1em] text-base-white">
           Remove admin
         </div>
-      </button>
+      </button> */}
 
       <div className="absolute left-[59px] top-[420px]">
         <span className="h-[41px] w-[200px] text-center text-xl normal-case tracking-tighter text-red-600">
