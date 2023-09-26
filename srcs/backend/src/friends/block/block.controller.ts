@@ -53,14 +53,13 @@ export class BlockController {
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'))
   block(@Req() req, @Body() blockDto: BlockDto) {
-    console.log(req.user.id, blockDto.blockeeId);
-    return this.blockService.setBlock(req.user.id, blockDto.blockeeId);
+    return this.blockService.setBlock(req.user.id, blockDto.blockedId);
   }
 
   @Delete()
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'))
   unblock(@Req() req, @Body() blockDto: BlockDto) {
-    return this.blockService.deleteBlock(req.user.id, blockDto.blockeeId);
+    return this.blockService.deleteBlock(req.user.id, blockDto.blockedId);
   }
 }
