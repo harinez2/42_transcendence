@@ -44,7 +44,7 @@ const ChannelName = ({
   const leaveChannel = () => {
     // PUT /chats/channelId/users を呼び出す
     if (profile && profile.userId) {
-      makeAPIRequest("delete", `/chats/${channel.channelId}/users`)
+      makeAPIRequest("delete", `/chats/${channel.channelId}/users/${userId}`)
         .then((result) => {
           if (result.success) {
             removeChannel(channel.channelId);
