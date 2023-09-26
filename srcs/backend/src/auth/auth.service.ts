@@ -250,6 +250,13 @@ export class AuthService {
     return true;
   }
 
+  async is2faEnabled(user: User) {
+    return await this.prisma.auth.findUnique({
+      where: { userId: user.id },
+      select: { twoFactorAuthEnabled: true },
+    });
+  }
+
   // =========================================================================
   // SECTION 4: Other settings
   // =========================================================================

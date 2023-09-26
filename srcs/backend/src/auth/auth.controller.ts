@@ -149,6 +149,13 @@ export class AuthController {
     return res.cookie('jwt', newToken, { httpOnly: true });
   }
 
+  @UseGuards(AuthGuard('jwt'))
+  @ApiBearerAuth()
+  @Get('is2fa')
+  async fetch2faEnabled(@Req() req) {
+    return await this.authService.is2faEnabled(req.user);
+  }
+
   // =========================================================================
   // SECTION 4: Other settings
   // =========================================================================
