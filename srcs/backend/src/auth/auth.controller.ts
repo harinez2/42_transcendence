@@ -6,11 +6,10 @@ import {
   Post,
   Req,
   Res,
-  UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { AuthService } from './auth.service';
+import { AuthService, Login42data } from './auth.service';
 import { StaffLoginDto } from './dto/login.dto';
 import { Login2faDto, Enable2faDto } from './dto/2fa.dto';
 import { FRONT_URL } from 'config';
@@ -21,11 +20,25 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { UsernameDto } from './dto/username.dto';
+import { Response } from 'express';
 
 @ApiTags('Authentication')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
+
+  @Get('validate')
+  @ApiOperation({ summary: 'Check JWT validation' })
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
+  validateJwt(@Req() req) {
+    return { valid: true, user: req.user };
+  }
+
+  // =========================================================================
+  // SECTION 1: Login
+  // =========================================================================
 
   @Get('42')
   @ApiOperation({ summary: '42 login' })
@@ -38,29 +51,28 @@ export class AuthController {
   @ApiResponse({ status: 302, description: 'Login successful.' })
   @HttpCode(302)
   @UseGuards(AuthGuard('42'))
-  async handle42Callback(@Req() req, @Res() res) {
-    const user = req.user;
-    if (!user) {
-      throw new UnauthorizedException();
-    }
+  async handle42Callback(
+    @Req() req: { user: Login42data },
+    @Res() res: Response,
+  ) {
+    const { newuser, user, auth } = req.user;
 
-    if (user.twoFactorAuthEnabled) {
+    if (auth.twoFactorAuthEnabled) {
       const query = await this.authService.challenge2FA(user);
       res.redirect(`${FRONT_URL}/auth/2fa?${query}`);
       return;
     }
 
-    const jwt = await this.authService.accessToken(user.id);
+    const jwt = this.authService.accessToken(user);
     res.cookie('jwt', jwt, { httpOnly: true });
-    res.redirect(`${FRONT_URL}/chat`);
-  }
 
-  @Get('validate')
-  @ApiOperation({ summary: 'Check JWT validation' })
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard('jwt'))
-  validateJwt(@Req() req) {
-    return { valid: true, user: req.user };
+    if (newuser) {
+      // TODO: WIP: redirect to displayname setting page
+      res.redirect(`${FRONT_URL}/profile/me/settings/newuser`);
+    } else {
+      res.redirect(`${FRONT_URL}/chat`);
+    }
+    return;
   }
 
   @Post('staff')
@@ -69,7 +81,7 @@ export class AuthController {
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @ApiBody({ type: StaffLoginDto })
   @HttpCode(302)
-  async loginStaff(@Body() loginDto: StaffLoginDto, @Res() res) {
+  async loginStaff(@Body() loginDto: StaffLoginDto, @Res() res: Response) {
     const jwt = await this.authService.validateStaff(
       loginDto.username,
       loginDto.password,
@@ -87,6 +99,10 @@ export class AuthController {
     return this.authService.validateStaff(loginDto.username, loginDto.password);
   }
 
+  // =========================================================================
+  // SECTION 2: 2FA Login
+  // =========================================================================
+
   @Post('2fa')
   @ApiOperation({ summary: 'Validate 2FA login' })
   @ApiResponse({ status: 302, description: 'Login successful.' })
@@ -94,19 +110,23 @@ export class AuthController {
   @ApiResponse({ status: 401, description: 'Invalid 2FA code.' })
   @ApiBody({ type: Login2faDto })
   @HttpCode(302)
-  async login2FA(@Body() login2fa: Login2faDto, @Res() res) {
+  async login2FA(@Body() login2fa: Login2faDto, @Res() res: Response) {
     const { token, code } = login2fa;
     const jwt = await this.authService.response2FA(token, code);
     res.cookie('jwt', jwt, { httpOnly: true });
     res.redirect(`${FRONT_URL}/chat`);
   }
 
+  // =========================================================================
+  // SECTION 3: 2FA Setting
+  // =========================================================================
+
   @Get('request2faurl')
   @ApiOperation({ summary: 'Validate 2FA login' })
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'))
-  async request2faUrl(@Req() req, @Res() res) {
-    const otpauth_url = this.authService.generate2FASecret(req.user);
+  async request2faUrl(@Req() req, @Res() res: Response) {
+    const otpauth_url = await this.authService.generate2FASecret(req.user);
 
     return res.json({ otpauth_url });
   }
@@ -116,7 +136,7 @@ export class AuthController {
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'))
   async enable2fa(@Req() req, @Body() enable2fa: Enable2faDto) {
-    this.authService.enable2FA(req.user, enable2fa.code);
+    await this.authService.enable2FA(req.user, enable2fa.code);
     return;
   }
 
@@ -124,8 +144,37 @@ export class AuthController {
   @ApiOperation({ summary: 'Refresh JWT' })
   @ApiBearerAuth()
   @Get('refresh')
-  async refresh(@Req() req, @Res() res) {
-    const newToken = await this.authService.accessToken(req.user.id);
+  async refresh(@Req() req, @Res() res: Response) {
+    const newToken = this.authService.accessToken(req.user);
     return res.cookie('jwt', newToken, { httpOnly: true });
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @ApiBearerAuth()
+  @Get('is2fa')
+  async fetch2faEnabled(@Req() req) {
+    return await this.authService.is2faEnabled(req.user);
+  }
+
+  // =========================================================================
+  // SECTION 4: Other settings
+  // =========================================================================
+
+  @Post('logout')
+  logout(@Res() res: Response) {
+    res.cookie('jwt', '', {
+      httpOnly: true,
+      expires: new Date(0),
+    });
+
+    res.status(200).send('Logged out');
+  }
+
+  @Post('username')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
+  @ApiBody({ type: UsernameDto })
+  async updateUsername(@Req() req, @Body() dto: UsernameDto) {
+    return await this.authService.changeUsername(req.user, dto.username);
   }
 }

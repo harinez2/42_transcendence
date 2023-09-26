@@ -19,12 +19,7 @@ model User {
   username String   @unique
   avatar   Bytes?
   profile  Profile?
-
-  email                String  @unique
-  staff                Boolean @default(false)
-  password             String?
-  twoFactorAuthEnabled Boolean @default(false)
-  twoFactorAuthSecret  String?
+  auth     Auth?
 
   followee Follow[] @relation("Followee")
   follower Follow[] @relation("Follower")
@@ -42,6 +37,18 @@ model User {
 
   gameUser1 GameInfo[] @relation("GameUser1")
   gameUser2 GameInfo[] @relation("GameUser2")
+}
+
+model Auth {
+  id     Int  @id @default(autoincrement())
+  userId Int  @unique
+  user   User @relation(fields: [userId], references: [id])
+
+  email                String  @unique
+  staff                Boolean @default(false)
+  password             String?
+  twoFactorAuthEnabled Boolean @default(false)
+  twoFactorAuthSecret  String?
 }
 
 model Profile {
