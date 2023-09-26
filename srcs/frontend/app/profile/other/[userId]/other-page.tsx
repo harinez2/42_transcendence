@@ -3,11 +3,11 @@
 import { useCallback, useEffect, useState } from "react";
 import makeAPIRequest from "@/app/api/api";
 import ModalPopup from "@/app/components/modal/modal-popup";
-import MUserOps from "@/app/components/modal/m-user-ops";
-import { UserType } from "@/app/components/types";
+// import MUserOps from "@/app/components/modal/m-user-ops";
+import { UserType } from "@/app/types";
 import HeaderMenu from "@/app/components/headermenu";
 import RankingContainer from "@/app/components/raking-container";
-import MatchHistoryContainer from "@/app/components/match-history-container";
+import MatchHistoryContainer from "../../match-history-container";
 import { StatusType } from "../../me/blocked/types";
 
 const ProfileOtherPage = ({ userId }: any) => {
@@ -87,7 +87,7 @@ const ProfileOtherPage = ({ userId }: any) => {
         />
         <div className="absolute left-[492px] top-[350px] flex h-[45px] w-[439px] flex-row items-center justify-start  gap-[25px] text-17xl">
           <img
-            className="relative h-[45px] w-[45px] cursor-pointer rounded-full rounded-full"
+            className="relative h-[45px] w-[45px] cursor-pointer rounded-full"
             alt=""
             src={icon}
             onClick={openMUserOps}
@@ -116,7 +116,7 @@ const ProfileOtherPage = ({ userId }: any) => {
           placement="Centered"
           onOutsideClick={closeMUserOps}
         >
-          <MUserOps onClose={closeMUserOps} />
+          {/* <MUserOps onClose={closeMUserOps} /> tsudo */}
         </ModalPopup>
       )}
     </>

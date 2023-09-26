@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { GameSummaryType, UserType } from "./types";
+import { GameSummaryType, UserType } from "@/app/types";
 import makeAPIRequest from "../api/api";
 
 // eslint-disable-next-line no-unused-vars

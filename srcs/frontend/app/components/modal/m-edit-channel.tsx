@@ -35,6 +35,7 @@ const MEditChannel: NextPage<MEditChannelType> = ({
   });
   useEffect(() => {
     // channelDTO を channel の値で更新する
+    setError("");
     setChannelDTO({
       channelName: channel.channelName,
       channelType: channel.channelType as Publicity,
@@ -278,9 +279,6 @@ const MEditChannel: NextPage<MEditChannelType> = ({
           >
             Edit channel
           </button>
-          <span className="h-[41px] w-[200px] text-center text-xs normal-case tracking-tighter">
-            {error && <p>error: {error}</p>}
-          </span>
         </span>
         <span>
           <button

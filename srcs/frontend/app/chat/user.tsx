@@ -8,12 +8,12 @@ import { Socket } from "socket.io-client";
 import { ProfileType } from "../types";
 import MChatChannelOps from "../components/modal/m-chat-channel-ops";
 import { ChannelType } from "./types";
-import { UserType } from "../components/modal/types";
+import { UserType } from "@/app/types";
 import MUserOps from "../components/modal/m-user-ops";
 import ModalPopup from "../components/modal/modal-popup";
 
 export interface UserProps {
-  user: UserType;
+  user: UserType | undefined; // TODO: checkお願いします！ by tsudo
   router: AppRouterInstance;
   socket: Socket;
   profile: ProfileType;
@@ -35,6 +35,10 @@ const UserComponent = ({
   const closeMUserOps = useCallback(() => {
     setMUserOpsOpen(false);
   }, []);
+
+  if (!user) {
+    return <></>; // TODO: checkお願いします！ by tsudo
+  }
 
   return (
     <div className="flex">

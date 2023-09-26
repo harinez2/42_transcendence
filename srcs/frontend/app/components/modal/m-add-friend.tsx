@@ -3,7 +3,7 @@ import type { NextPage } from "next";
 import { TextField } from "@mui/material";
 import makeAPIRequest from "@/app/api/api";
 import { ProfileContext } from "@/app/layout";
-import { ProfileType, UserType } from "./types";
+import { ProfileType, UserType } from "@/app/types";
 
 type MAddFriendType = {
   onClose?: () => void;
