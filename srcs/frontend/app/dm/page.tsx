@@ -20,7 +20,7 @@ const DirectMessageUI = () => {
   const socket: any = useContext(SocketContext);
   const error: any = useContext(ErrorContext);
 
-  useEffect(() => {
+  const updateChannel = () => {
     if (profile && profile.userId) {
       // チャンネル一覧を取得
       makeAPIRequest<DmChannelType[]>("get", `/dms/${profile.userId}`)
@@ -35,6 +35,10 @@ const DirectMessageUI = () => {
           console.error("Error:", error.message);
         });
     }
+  };
+
+  useEffect(() => {
+    updateChannel();
   }, [profile]);
 
   useEffect(() => {
@@ -111,6 +115,7 @@ const DirectMessageUI = () => {
             profile={profile}
             channels={channels}
             onSelectChannel={handleChannelSelect}
+            onUpdateChannel={updateChannel}
           />
         )}
       </aside>

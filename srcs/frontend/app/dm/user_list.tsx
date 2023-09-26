@@ -48,10 +48,12 @@ const UserListComponent = ({
   profile,
   channels,
   onSelectChannel,
+  onUpdateChannel,
 }: {
   profile: ProfileType;
   channels: DmChannelType[];
   onSelectChannel: (c: DmChannelType) => void; // eslint-disable-line no-unused-vars
+  onUpdateChannel: () => void;
 }) => {
   const { ref, showModal, closeModal } = useModal();
 
@@ -81,7 +83,10 @@ const UserListComponent = ({
         style={{ top: "30px" }}
         className="rounded-lg bg-darkslategray-100 px-6 py-2"
       >
-        <MAddUserDm onClose={closeModal} />
+        <MAddUserDm
+          onClose={closeModal}
+          onUpdateChannel={onUpdateChannel}
+        />
       </dialog>
     </div>
   );
