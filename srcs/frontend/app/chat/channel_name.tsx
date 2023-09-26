@@ -62,7 +62,7 @@ const ChannelName = ({
 
   return (
     <li className="h-12 rounded-lg hover:bg-gray-700">
-      <a href="#" className="text-white" onClick={handleClick}>
+      <div className="cursor-pointer text-white" onClick={handleClick}>
         <span className="ml-3 flex flex-row items-center justify-between">
           <div className="flex flex-initial shrink-0 flex-row text-2xl text-gray-300">
             <div>{channel.channelName}</div>
@@ -113,7 +113,7 @@ const ChannelName = ({
             />
           </dialog>
         </span>
-      </a>
+      </div>
     </li>
   );
 };
