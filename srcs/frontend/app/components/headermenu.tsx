@@ -6,9 +6,8 @@ import { useMemo } from "react";
 import CSS from "csstype";
 import { useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { UserType } from "./types";
 import { ProfileContext } from "../layout";
-import { ProfileType } from "../types";
+import { ProfileType, UserType } from "../types";
 import makeAPIRequest from "../api/api";
 
 const HeaderMenu: NextPage = () => {
@@ -119,7 +118,7 @@ const HeaderMenu: NextPage = () => {
     >
       <div className="absolute inset-x-0 top-[calc(50%_-_50px)] h-[100px] w-full bg-darkslategray-300" />
       <img
-        className="absolute right-[30px] top-[calc(50%_-_22px)] h-[45px] w-[45px]"
+        className="absolute right-[30px] top-[calc(50%_-_22px)] h-[45px] w-[45px] rounded-full"
         alt=""
         src={icon}
         style={iconStyle}
