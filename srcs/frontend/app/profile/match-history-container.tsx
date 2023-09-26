@@ -15,9 +15,8 @@ const MatchComponent = ({
   match: MatchType;
   userId: number;
 }) => {
-
   const socket: any = useContext(SocketContext);
-  const profile: ProfileType = useContext(ProfileContext)
+  const profile: ProfileType = useContext(ProfileContext);
   const router = useRouter();
 
   const [isMUserOpsOpen, setMUserOpsOpen] = useState(false);
@@ -106,14 +105,15 @@ const MatchComponent = ({
           {getDate()}
         </div>
       </div>
-      
+
       {isMUserOpsOpen && (
         <ModalPopup
           overlayColor="rgba(113, 113, 113, 0.3)"
           placement="Centered"
           onOutsideClick={closeMUserOps}
         >
-          <MUserOps onClose={closeMUserOps}
+          <MUserOps
+            onClose={closeMUserOps}
             user={opponent}
             router={router}
             socket={socket}
@@ -121,7 +121,6 @@ const MatchComponent = ({
           />
         </ModalPopup>
       )}
-      
     </>
   );
 };
