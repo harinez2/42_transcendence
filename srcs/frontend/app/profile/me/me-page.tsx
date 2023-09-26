@@ -49,7 +49,7 @@ const MePage = () => {
           console.error("Error:", error.message);
         });
     }
-  }, [timer]);
+  }, [profile, timer]);
 
   return (
     <>
