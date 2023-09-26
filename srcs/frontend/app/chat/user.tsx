@@ -1,14 +1,15 @@
 "use client";
 
 import Image from "next/image";
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import useModal from "../components/useModal";
-import Link from "next/link";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context";
 import { Socket } from "socket.io-client";
 import { ProfileType } from "../types";
 import MChatChannelOps from "../components/modal/m-chat-channel-ops";
 import { ChannelType } from "./types";
+import { UserType } from "../components/modal/types";
+import makeAPIRequest from "../api/api";
 
 export type User = {
   id: number;
@@ -102,29 +103,86 @@ const UserDialog = ({
   socket,
   profile,
 }: any) => {
+  const onClickAddFriend = (userId: number) => {
+    makeAPIRequest<UserType>("post", `/friends/follow`, {
+      followeeId: userId,
+    })
+      .then((result) => {
+        if (result.success) {
+          setError("");
+          // modal を閉じる
+          closeModal();
+        } else {
+          setError(result.error);
+        }
+      })
+      .catch((error) => {
+        setError(error.message);
+      });
+  };
+
+  const onClickBlock = (userId: number) => {
+    // POST /friends/block
+    makeAPIRequest<UserType>("post", `/friends/block`, {
+      blockeeId: userId,
+    })
+      .then((result) => {
+        if (result.success) {
+          setError("");
+          closeModal();
+        } else {
+          console.log(result.error);
+          setError(result.error);
+        }
+      })
+      .catch((error) => {
+        setError(error.message);
+      });
+  };
+  // map に直す
+  const [error, setError] = useState<string>("");
+
+  const handles = [
+    {
+      name: "See Profile",
+      onClick: () => router.push(`/profile/other/${user.id}`),
+    },
+    {
+      name: "Send DM",
+      onClick: () => router.push(`/dm`),
+    },
+    {
+      name: "Add Friend",
+      onClick: () => onClickAddFriend(user.id),
+    },
+    {
+      name: "Invite to Game",
+      onClick: () => onClickInviteToGame(user.id, router, socket, profile),
+    },
+    {
+      name: "Block this user",
+      onClick: () => onClickBlock(user.id),
+    },
+  ];
   return (
     // NOTE: dialog の中身
+
     <div onClick={stopPropagation} className="flex w-40 flex-col text-white">
       User ops
-      <Link href="#" className="m-2 rounded-md bg-gray-500 px-2 text-white">
-        See Profile
-      </Link>
-      <Link href="/dm" className="m-2 rounded-md bg-gray-500 px-2 text-white">
-        Send DM
-      </Link>
-      <Link href="#" className="m-2 rounded-md bg-gray-500 px-2 text-white">
-        Add Friend
-      </Link>
-      <button
-        onClick={() => onClickInviteToGame(user.id, router, socket, profile)}
-        className="m-2 rounded-md bg-gray-500 px-2 text-white"
-      >
-        <span className="x1 text-left">Invite to Game</span>
-      </button>
-      <Link href="/chat" className="m-2 rounded-md bg-gray-500 px-2 text-white">
-        Block this user
-      </Link>
+      {/* map に直す} */}
+      {handles.map((handle) => {
+        return (
+          <button
+            onClick={handle.onClick}
+            key={handle.name}
+            className="m-2 cursor-pointer rounded-md bg-gray-500 px-2 text-white"
+          >
+            <span className="x1 text-left">{handle.name}</span>
+          </button>
+        );
+      })}
       <br />
+      {error && <div className="text-red-500">{error}</div>}
       <button
         type="button"
         onClick={closeModal}
