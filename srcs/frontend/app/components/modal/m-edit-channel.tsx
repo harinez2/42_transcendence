@@ -5,6 +5,7 @@ import { TextField, FormControlLabel, Switch } from "@mui/material";
 import { ChannelType, Publicity, updateChannelDTO } from "../../chat/types";
 
 type MEditChannelType = {
+  isClose: boolean;
   onClose: () => void;
   channel: ChannelType;
   setChannel: (c: ChannelType) => void; // eslint-disable-line no-unused-vars
@@ -12,6 +13,7 @@ type MEditChannelType = {
 };
 
 const MEditChannel: NextPage<MEditChannelType> = ({
+  isClose,
   onClose,
   channel,
   setChannel,
@@ -23,6 +25,8 @@ const MEditChannel: NextPage<MEditChannelType> = ({
 
   // パスワードボタンが ON か OFF かを管理する
   const [passwordEnabled, setPasswordEnabled] = useState<boolean>(false);
+  // チャンネルタイプボタンが ON か OFF かどうかを管理する
+  const [channelTypeEnabled, setChannelTypeEnabled] = useState<boolean>(false);
 
   const [channelDTO, setChannelDTO] = useState<updateChannelDTO>({
     channelName: channel.channelName,
@@ -36,10 +40,11 @@ const MEditChannel: NextPage<MEditChannelType> = ({
       channelType: channel.channelType as Publicity,
       password: null,
     });
+    setChannelTypeEnabled(channel.channelType === "PRIVATE" ? true : false);
     setPublicityButtonDisabled(channel.isPassword);
     setPasswordEnabled(channel.isPassword);
     setPasswordButtonDisabled(channel.channelType === "PRIVATE" ? false : true);
-  }, [channel]);
+  }, [channel, isClose]);
 
   const [publicityButtonDisabled, setPublicityButtonDisabled] =
     useState<boolean>(false); // [true: private, false: public
@@ -60,12 +65,14 @@ const MEditChannel: NextPage<MEditChannelType> = ({
   const onSwitchType = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
       setPasswordButtonDisabled(false);
+      setChannelTypeEnabled(true);
       setChannelDTO((c) => {
         c.channelType = Publicity.PRIVATE;
         return { ...c };
       });
     } else {
       setPasswordButtonDisabled(true);
+      setChannelTypeEnabled(false);
       setChannelDTO((c) => {
         c.channelType = Publicity.PUBLIC;
         return { ...c };
@@ -78,7 +85,6 @@ const MEditChannel: NextPage<MEditChannelType> = ({
   // channels を更新する
   const updateChannelAndSetChannels = useCallback(
     async (channelId: number, updateChannelDto: updateChannelDTO) => {
-      console.log(updateChannelDto);
       await makeAPIRequest<ChannelType>(
         "put",
         `/chats/${channelId}`,
@@ -217,6 +223,7 @@ const MEditChannel: NextPage<MEditChannelType> = ({
               color="info"
               size="medium"
               onChange={(e) => onSwitchType(e)}
+              checked={channelTypeEnabled}
             />
           }
           disabled={publicityButtonDisabled}
