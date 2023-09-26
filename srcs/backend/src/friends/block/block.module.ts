@@ -5,6 +5,7 @@ import { PrismaModule } from '../../prisma/prisma.module'; // Import the PrismaM
 
 @Module({
   imports: [PrismaModule],
+  exports: [BlockService],
   controllers: [BlockController],
   providers: [BlockService],
 })
