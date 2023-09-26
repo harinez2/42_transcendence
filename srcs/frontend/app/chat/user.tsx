@@ -9,14 +9,11 @@ import { ProfileType } from "../types";
 import MChatChannelOps from "../components/modal/m-chat-channel-ops";
 import { ChannelType } from "./types";
 import { UserType } from "../components/modal/types";
-import makeAPIRequest from "../api/api";
+import MUserOps from "../components/modal/m-user-ops";
+import ModalPopup from "../components/modal/modal-popup";
 
-export type User = {
-  id: number;
-  username: string;
-};
 export interface UserProps {
-  user: User | undefined;
+  user: UserType;
   router: AppRouterInstance;
   socket: Socket;
   profile: ProfileType;
@@ -30,19 +27,19 @@ const UserComponent = ({
   profile,
   channel,
 }: UserProps) => {
-  const { ref, showModal, closeModal } = useModal();
+  const [isMUserOpsOpen, setMUserOpsOpen] = useState(false);
+  const openMUserOps = useCallback(() => {
+    setMUserOpsOpen(true);
+  }, []);
 
-  const stopPropagation = useCallback(
-    (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-      e.stopPropagation();
-    },
-    [],
-  );
+  const closeMUserOps = useCallback(() => {
+    setMUserOpsOpen(false);
+  }, []);
 
   return (
     <div className="flex">
       <button
-        onClick={showModal}
+        onClick={openMUserOps}
         className="group flex items-center rounded-lg p-2 text-white hover:bg-gray-700"
       >
         <Image
@@ -54,21 +51,22 @@ const UserComponent = ({
         />
         <span className="ml-3 shrink-0 pr-8 text-black">{user?.username}</span>
       </button>
-      <dialog
-        onClick={closeModal}
-        ref={ref}
-        style={{ top: "30px" }}
-        className="rounded-lg bg-gray-600 px-6 py-2"
-      >
-        <UserDialog
-          closeModal={closeModal}
-          stopPropagation={stopPropagation}
-          user={user}
-          router={router}
-          socket={socket}
-          profile={profile}
-        />
-      </dialog>
+
+      {isMUserOpsOpen && (
+        <ModalPopup
+          overlayColor="rgba(113, 113, 113, 0.3)"
+          placement="Centered"
+          onOutsideClick={closeMUserOps}
+        >
+          <MUserOps
+            onClose={closeMUserOps}
+            user={user}
+            router={router}
+            socket={socket}
+            profile={profile}
+          />
+        </ModalPopup>
+      )}
 
       <ShowSettingComponent
         user={user}
@@ -81,119 +79,7 @@ const UserComponent = ({
   );
 };
 
-const onClickInviteToGame = (
-  invitingUserId: number,
-  router: AppRouterInstance,
-  socket: Socket,
-  profile: ProfileType,
-) => {
-  socket?.emit("game-invite", {
-    myUserId: profile.userId,
-    invitingUserId: invitingUserId,
-  });
-  router.push("/game/preparing");
-};
-
 // NOTE: User をクリックしたときに表示される dialog
-const UserDialog = ({
-  closeModal,
-  stopPropagation,
-  user,
-  router,
-  socket,
-  profile,
-}: any) => {
-  const onClickAddFriend = (userId: number) => {
-    makeAPIRequest<UserType>("post", `/friends/follow`, {
-      followeeId: userId,
-    })
-      .then((result) => {
-        if (result.success) {
-          setError("");
-          // modal を閉じる
-          closeModal();
-        } else {
-          setError(result.error);
-        }
-      })
-      .catch((error) => {
-        setError(error.message);
-      });
-  };
-
-  const onClickBlock = (userId: number) => {
-    // POST /friends/block
-    makeAPIRequest<UserType>("post", `/friends/block`, {
-      blockeeId: userId,
-    })
-      .then((result) => {
-        if (result.success) {
-          setError("");
-          closeModal();
-        } else {
-          console.log(result.error);
-          setError(result.error);
-        }
-      })
-      .catch((error) => {
-        setError(error.message);
-      });
-  };
-  // map に直す
-  const [error, setError] = useState<string>("");
-
-  const handles = [
-    {
-      name: "See Profile",
-      onClick: () => router.push(`/profile/other/${user.id}`),
-    },
-    {
-      name: "Send DM",
-      onClick: () => router.push(`/dm`),
-    },
-    {
-      name: "Add Friend",
-      onClick: () => onClickAddFriend(user.id),
-    },
-    {
-      name: "Invite to Game",
-      onClick: () => onClickInviteToGame(user.id, router, socket, profile),
-    },
-    {
-      name: "Block this user",
-      onClick: () => onClickBlock(user.id),
-    },
-  ];
-  return (
-    // NOTE: dialog の中身
-
-    <div onClick={stopPropagation} className="flex w-40 flex-col text-white">
-      User ops
-      {/* map に直す} */}
-      {handles.map((handle) => {
-        return (
-          <button
-            onClick={handle.onClick}
-            key={handle.name}
-            className="m-2 cursor-pointer rounded-md bg-gray-500 px-2 text-white"
-          >
-            <span className="x1 text-left">{handle.name}</span>
-          </button>
-        );
-      })}
-      <br />
-      {error && <div className="text-red-500">{error}</div>}
-      <button
-        type="button"
-        onClick={closeModal}
-        className="mx-8 rounded-md bg-gray-200 px-2 text-black"
-      >
-        close
-      </button>
-    </div>
-  );
-};
-
 const ShowSettingComponent = ({
   user,
   router,
