@@ -22,7 +22,6 @@ const MePage = () => {
   const [icon, setIcon] = useState<string>(
     `http://localhost:3000/api/users/avatar/${profile.userId}`,
   );
-  const [twofactorauth, setTwofactorauth] = useState<string>("off");
   const [timer, setTimer] = useState<number>(0);
 
   useEffect(() => {
@@ -33,9 +32,6 @@ const MePage = () => {
           if (result.success) {
             setUser(result.data);
             setTimeout(() => setTimer(timer + 1), 60 * 1000);
-            if (user?.twoFactorAuthEnabled === true) {
-              setTwofactorauth("on");
-            }
             if (user?.avatar) {
               setIcon(
                 `http://localhost:3000/api/users/avatar/${profile.userId}`,
@@ -81,17 +77,6 @@ const MePage = () => {
             src="/settings-icon.svg"
             onClick={onSettingClick}
           />
-        </div>
-        <div className="absolute left-[492px] top-[401px] flex h-7 w-[354px] flex-row items-center justify-start text-5xl">
-          <div className="relative tracking-[0.1em]">
-            two-factor authentication
-          </div>
-        </div>
-        <div className="absolute left-[891.5px] top-[401px] h-7 w-[60px] text-5xl">
-          <div className="absolute left-[0px] top-[3px] h-[25px] w-[60px] rounded-8xs bg-gray-500" />
-          <div className="absolute left-[15px] top-[0px] tracking-[0.1em]">
-            {twofactorauth}
-          </div>
         </div>
         <img
           className="absolute left-[470px] top-[473px] h-0.5 w-[500px]"
