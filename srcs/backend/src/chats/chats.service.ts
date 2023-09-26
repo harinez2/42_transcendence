@@ -208,6 +208,7 @@ export class ChatsService {
       if (ban) {
         throw new ForbiddenException('The specified user is banned.');
       }
+
       // Admin付与時、Userであること
       if (
         type === UserType.ADMIN &&
@@ -218,32 +219,44 @@ export class ChatsService {
         );
       }
 
-      // 登録されていない場合のみ新規追加
+      // すでに登録されているかチェック
       const ischannel = await this.isChannelUsers(channelId, userId, type);
-      if (!ischannel) {
-        const channel = await this.findById(channelId);
-        // パスワード付きのチャンネルの場合、パスワードが正しいかチェック
+      if (ischannel) {
+        if (type === UserType.ADMIN) {
+          throw new BadRequestException(
+            'The specified user is already in the admins.',
+          );
+        } else if (type === UserType.USER) {
+          throw new BadRequestException(
+            'The specified user is already in the channel.',
+          );
+        }
+      }
+
+      // パスワード付きのチャンネルの場合、パスワードが正しいかチェック
+      const channel = await this.findById(channelId);
+      if (
+        type === UserType.USER &&
+        channel.channelType === Publicity.PRIVATE &&
+        channel.isPassword
+      ) {
         if (
-          type === UserType.USER &&
-          channel.channelType === Publicity.PRIVATE &&
-          channel.isPassword
+          !(password && (await this.isPasswordCorrect(channelId, password)))
         ) {
-          if (
-            !(password && (await this.isPasswordCorrect(channelId, password)))
-          ) {
-            throw new ForbiddenException('The password is incorrect.');
-          }
+          throw new ForbiddenException('The password is incorrect.');
         }
-        const query = await this.prisma.chatChannelUsers.create({
-          data: {
-            channelId: channelId,
-            userId: userId,
-            type: type,
-          },
-        });
-        if (!query) {
-          throw new BadRequestException();
-        }
+      }
+
+      // 作成
+      const query = await this.prisma.chatChannelUsers.create({
+        data: {
+          channelId: channelId,
+          userId: userId,
+          type: type,
+        },
+      });
+      if (!query) {
+        throw new BadRequestException();
       }
       return this.findById(channelId);
     } catch (e) {
@@ -281,8 +294,15 @@ export class ChatsService {
           ...(type === UserType.ADMIN ? { type: UserType.ADMIN } : {}),
         },
       });
-      if (!query) {
-        throw new NotFoundException();
+      if (query.count === 0) {
+        if (type === UserType.ADMIN)
+          throw new NotFoundException(
+            'The specified user is not in the admins.',
+          );
+        else
+          throw new NotFoundException(
+            'The specified user is not in the channel.',
+          );
       }
       return this.findById(channelId);
     } catch (e) {
@@ -316,6 +336,12 @@ export class ChatsService {
       // OwnerはBanできないのでチェック
       if (await this.isChannelUsers(channelId, bannedUserId, UserType.OWNER)) {
         throw new ForbiddenException('The owner cannot be banned.');
+      }
+
+      // すでにBanにいれば400エラー
+      const bans = await this.getBans(channelId);
+      if (bans.bannedUsers.includes(bannedUserId)) {
+        throw new BadRequestException('The specified user is already banned.');
       }
 
       // Banに追加

@@ -36,9 +36,6 @@ const ChatUI = () => {
   const [status, setStatus] = useState<StatusType[]>([]);
   const [timer, setTimer] = useState<number>(0);
 
-  // 1分おきにAPIをたたいてtimer変数を書き換える=useEffect()でオンライン状態を取得する
-  setInterval(() => setTimer(timer + 1), 60 * 1000);
-
   const profile: ProfileType = useContext(ProfileContext);
   const socket: any = useContext(SocketContext);
   const error: any = useContext(ErrorContext);
@@ -66,6 +63,8 @@ const ChatUI = () => {
         .then((result) => {
           if (result.success) {
             setStatus(result.data);
+            // 1分後に再度APIをたたいてオンライン状態を取得する
+            setTimeout(() => setTimer(timer + 1), 60 * 1000);
           } else {
             console.error(result.error);
           }

@@ -190,29 +190,19 @@ export class ChatsController {
     type: 'string',
     example: '1',
   })
-  @ApiBody({
-    schema: {
-      properties: {
-        userId: {
-          type: 'string',
-          example: '1',
-        },
-      },
-    },
-  })
   @ApiResponse({
     status: 200,
     description: '指定したチャンネルIDの情報を返却',
     type: ChannelInfoDto,
   })
-  @Delete(':channelid/admins')
+  @Delete(':channelid/admins/:userid')
   async removeAdminRights(
     @Param('channelid') channelId: string,
-    @Body() removeAdminRequest: { userId: string },
+    @Param('userid') userId: string,
   ): Promise<ChannelInfoDto> {
     return await this.chatsService.removeChannelUsers(
       Number(channelId),
-      Number(removeAdminRequest.userId),
+      Number(userId),
       UserType.ADMIN,
     );
   }
@@ -260,16 +250,6 @@ export class ChatsController {
     type: 'string',
     example: '1',
   })
-  @ApiBody({
-    schema: {
-      properties: {
-        userId: {
-          type: 'string',
-          example: '1',
-        },
-      },
-    },
-  })
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'))
   @ApiResponse({
@@ -277,14 +257,14 @@ export class ChatsController {
     description: '指定したチャンネルIDの情報を返却',
     type: ChannelInfoDto,
   })
-  @Delete(':channelid/users')
+  @Delete(':channelid/users/:userid')
   async leaveChannel(
     @Param('channelid') channelId: string,
-    @Request() req,
+    @Param('userid') userId: string,
   ): Promise<ChannelInfoDto> {
     return await this.chatsService.removeChannelUsers(
       Number(channelId),
-      Number(req.user.id),
+      Number(userId),
       UserType.USER,
     );
   }
