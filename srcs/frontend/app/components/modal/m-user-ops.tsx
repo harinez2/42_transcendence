@@ -118,7 +118,6 @@ const MUserOps: NextPage<MUserOpsType> = ({
       name: "See Profile",
       onClick: () => router.push(`/profile/other/${user.id}`),
       wantToggle: false,
-      wantBlock: false,
     },
     {
       name: "Send DM",
