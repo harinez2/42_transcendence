@@ -159,7 +159,7 @@ model DmChannels {
   user2Id    Int // relation scalar field  (used in 'user2')
   dmMessages DmMessages[]
 
-  // @@unique([user1Id, user2Id]) // 入れたいがなくても動く
+  @@unique([user1Id, user2Id])
 }
 
 model DmMessages {

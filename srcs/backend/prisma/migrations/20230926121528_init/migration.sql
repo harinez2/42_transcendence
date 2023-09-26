@@ -178,6 +178,9 @@ CREATE UNIQUE INDEX "ChatBan_channelId_bannedUserId_key" ON "ChatBan"("channelId
 CREATE UNIQUE INDEX "ChatMute_channelId_mutedUserId_key" ON "ChatMute"("channelId", "mutedUserId");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "DmChannels_user1Id_user2Id_key" ON "DmChannels"("user1Id", "user2Id");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "GameSettings_gameId_key" ON "GameSettings"("gameId");
 
 -- AddForeignKey
