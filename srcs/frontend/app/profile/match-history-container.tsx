@@ -2,9 +2,11 @@
 
 import { useCallback, useEffect, useState } from "react";
 import makeAPIRequest from "../api/api";
-import { MatchType, UserType } from "./types";
-import ModalPopup from "./modal/modal-popup";
-import MUserOps from "./modal/m-user-ops";
+import { MatchType, UserType } from "@/app/types";
+// eslint-disable-next-line no-unused-vars
+import ModalPopup from "../components/modal/modal-popup"; // TODO: check please! by tsudo
+// eslint-disable-next-line no-unused-vars
+import MUserOps from "../components/modal/m-user-ops"; // TODO: check please! by tsudo
 
 const MatchComponent = ({
   match,
@@ -13,14 +15,17 @@ const MatchComponent = ({
   match: MatchType;
   userId: number;
 }) => {
-  const [isMUserOpsOpen, setMUserOpsOpen] = useState(false);
+  // eslint-disable-next-line no-unused-vars
+  const [isMUserOpsOpen, setMUserOpsOpen] = useState(false); // TODO: check please! by tsudo
   const [opponent, setOpponent] = useState<UserType>();
 
   const openMUserOps = useCallback(() => {
     setMUserOpsOpen(true);
   }, []);
 
+  // eslint-disable-next-line no-unused-vars
   const closeMUserOps = useCallback(() => {
+    // TODO: check please! by tsudo
     setMUserOpsOpen(false);
   }, []);
 
@@ -81,7 +86,7 @@ const MatchComponent = ({
 
   return (
     <>
-      <div className="border-b-10 flex h-[90px] w-[500px] shrink-0 flex-row flex-row items-center justify-start gap-[30px]">
+      <div className="border-b-10 flex h-[90px] w-[500px] shrink-0 flex-row items-center justify-start gap-[30px]">
         <img
           src={icon()}
           className="relative h-[45px] w-[45px] cursor-pointer rounded-full"
@@ -99,6 +104,11 @@ const MatchComponent = ({
           {getDate()}
         </div>
       </div>
+      <div className="text-red">
+        {/* TODO: check please! by tsudo */}
+        Tsudo removed this section because necessary property is missing!
+      </div>
+      {/* 
       {isMUserOpsOpen && (
         <ModalPopup
           overlayColor="rgba(113, 113, 113, 0.3)"
@@ -108,6 +118,7 @@ const MatchComponent = ({
           <MUserOps onClose={closeMUserOps} />
         </ModalPopup>
       )}
+       */}
     </>
   );
 };

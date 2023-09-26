@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import type { NextPage } from "next";
-import { UserType } from "./types";
+import { UserType } from "@/app/types";
 import makeAPIRequest from "@/app/api/api";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context";
 import { Socket } from "socket.io-client";
@@ -8,7 +8,7 @@ import { ProfileType } from "@/app/types";
 
 type MUserOpsType = {
   onClose: () => void;
-  user: UserType;
+  user: UserType | undefined; // TODO: checkお願いします！ by tsudo
   router: AppRouterInstance;
   socket: Socket;
   profile: ProfileType;
@@ -37,6 +37,12 @@ const MUserOps: NextPage<MUserOpsType> = ({
   socket,
   profile,
 }) => {
+  const [error, setError] = useState<string>("");
+
+  if (!user) {
+    return <></>; // TODO: checkお願いします！ by tsudo
+  }
+
   const onClickAddFriend = (userId: number) => {
     makeAPIRequest<UserType>("post", `/friends/follow`, {
       followeeId: userId,
@@ -74,7 +80,6 @@ const MUserOps: NextPage<MUserOpsType> = ({
       });
   };
   // map に直す
-  const [error, setError] = useState<string>("");
 
   const handles = [
     {

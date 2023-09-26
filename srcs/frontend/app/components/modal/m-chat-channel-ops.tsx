@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import type { NextPage } from "next";
 import { useCallback } from "react";
-import { User } from "@/app/chat/user";
+import { UserType } from "@/app/types";
 import { ChannelType } from "@/app/chat/types";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context";
 import { Socket } from "socket.io-client";
@@ -13,7 +13,7 @@ import makeAPIRequest from "@/app/api/api";
 type MChatChannelOpsType = {
   onClose: () => void;
   stopPropagation: any;
-  user: User | undefined;
+  user: UserType | undefined;
   router: AppRouterInstance;
   socket: Socket;
   profile: ProfileType;
