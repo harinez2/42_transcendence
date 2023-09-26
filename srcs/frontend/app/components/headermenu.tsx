@@ -16,8 +16,9 @@ const HeaderMenu: NextPage = () => {
 
   const [user, setUser] = useState<UserType>();
   const [icon, setIcon] = useState<string>(
-    "http://localhost:3000/api/users/avatar/0",
+    "http://localhost:3000/api/users/avatar/0,
   );
+  const [timer, setTimer] = useState<number>(0);
 
   const onMyIconClick = useCallback(() => {
     router.push("/profile/me");
@@ -46,6 +47,7 @@ const HeaderMenu: NextPage = () => {
         .then((result) => {
           if (result.success) {
             setUser(result.data);
+            setTimeout(() => setTimer(timer + 1), 60 * 1000);
               if (user?.avatar) {
     setIcon(`http://localhost:3000/api/users/avatar/${profile.userId}`);
   }
@@ -57,7 +59,7 @@ const HeaderMenu: NextPage = () => {
           console.error("Error:", error.message);
         });
     }
-    }, [profile.userId]);
+    }, [timer]);
   
   const headerMenuStyle: CSS.Properties = useMemo(() => {
     return {

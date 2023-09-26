@@ -25,7 +25,7 @@ const FriendComponent = ({ followee }: { followee: FolloweeType }) => {
     setMUserOpsOpen(false);
   }, []);
 
-  const [status, setStatus] = useState<string>();
+  const [status, setStatus] = useState<string>("offline");
   const [icon, setIcon] = useState<string>(
     `http://localhost:3000/api/users/avatar/${followee.id}`,
   );
