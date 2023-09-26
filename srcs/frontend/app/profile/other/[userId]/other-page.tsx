@@ -1,16 +1,23 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import makeAPIRequest from "@/app/api/api";
 import ModalPopup from "@/app/components/modal/modal-popup";
 // import MUserOps from "@/app/components/modal/m-user-ops";
-import { UserType } from "@/app/types";
+import { ProfileType, UserType } from "@/app/types";
 import HeaderMenu from "@/app/components/headermenu";
 import RankingContainer from "@/app/components/raking-container";
 import MatchHistoryContainer from "../../match-history-container";
 import { StatusType } from "../../me/blocked/types";
+import { ProfileContext, SocketContext } from "@/app/layout";
+import { useRouter } from "next/navigation";
+import MUserOps from "@/app/components/modal/m-user-ops";
 
 const ProfileOtherPage = ({ userId }: any) => {
+  const socket: any = useContext(SocketContext);
+  const profile: ProfileType = useContext(ProfileContext);
+  const router = useRouter();
+  
   const [user, setUser] = useState<UserType>();
   const [icon, setIcon] = useState<string>(
     "http://localhost:3000/api/users/avatar/0",
@@ -85,7 +92,7 @@ const ProfileOtherPage = ({ userId }: any) => {
           alt=""
           src="/line-1.svg"
         />
-        <div className="absolute left-[492px] top-[350px] flex h-[45px] w-[439px] flex-row items-center justify-start  gap-[25px] text-17xl">
+        <div className="absolute left-[492px] top-[350px] flex h-[45px] w-[450px] flex-row items-center justify-start gap-[25px] text-17xl">
           <img
             className="relative h-[45px] w-[45px] cursor-pointer rounded-full"
             alt=""
@@ -95,7 +102,9 @@ const ProfileOtherPage = ({ userId }: any) => {
           <div className="relative w-[175px] truncate tracking-[0.1em]">
             {user?.username}
           </div>
-          <div className="relative w-[70px] text-5xl">{statusstr}</div>
+          <div className="relative w-[70px] tracking-[0.1em]">
+            {statusstr}
+          </div>
         </div>
         <img
           className="absolute left-[470px] top-[473px] h-0.5 w-[500px]"
@@ -116,7 +125,13 @@ const ProfileOtherPage = ({ userId }: any) => {
           placement="Centered"
           onOutsideClick={closeMUserOps}
         >
-          {/* <MUserOps onClose={closeMUserOps} /> tsudo */}
+          <MUserOps
+            onClose={closeMUserOps}
+            user={user}
+            router={router}
+            socket={socket}
+            profile={profile}
+          />
         </ModalPopup>
       )}
     </>
