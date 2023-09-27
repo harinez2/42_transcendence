@@ -18,6 +18,13 @@ export type GameSummaryType = {
   lostCount: number;
 };
 
+export type RankType = {
+  rank: number;
+  userId: number;
+  winCount: number;
+  totalUser: number;
+};
+
 export type MatchType = {
   gameId: number;
   user1Id: number;
