@@ -139,7 +139,7 @@ export class GamesService {
     if (ranking.length > 0) {
       return { ...ranking[0], totalUser: userCount };
     } else {
-      return { rank: -1, userId: userId, winCount: 0, totalUser: userCount };
+      return { rank: 0, userId: userId, winCount: 0, totalUser: userCount };
     }
   }
 
