@@ -56,7 +56,7 @@ const MessageList = ({
   onSendMessage: (channel: DmChannelType, message: string) => void; // eslint-disable-line no-unused-vars
 }) => {
   const handleSendMessage = (event: any) => {
-    if (event.key === "Enter" && channel != null) {
+    if (event.key === "Enter" && channel != null && event.target.value !== "") {
       onSendMessage(channel, event.target.value);
       event.target.value = "";
     }
