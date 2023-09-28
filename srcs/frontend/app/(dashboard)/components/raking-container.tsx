@@ -6,11 +6,11 @@ import makeAPIRequest from "@/app/api/api";
 
 function RankingContainer({ userId }: any) {
   const [gamesum, setGamesum] = useState<GameSummaryType>();
-  const [totalUser, setTotalUser] = useState<number>();
+  const [totalUser, setTotalUser] = useState<number>(0);
   const [ranking, setRanking] = useState<RankType>();
-  const [rank, setRank] = useState<number>();
-  const [woncount, setWonCount] = useState<number>();
-  const [lostcount, setLostCount] = useState<number>();
+  const [rank, setRank] = useState<number>(0);
+  const [woncount, setWonCount] = useState<number>(0);
+  const [lostcount, setLostCount] = useState<number>(0);
 
   useEffect(() => {
     if (userId) {
@@ -18,7 +18,6 @@ function RankingContainer({ userId }: any) {
       makeAPIRequest<GameSummaryType>("get", `/games/summary/user/${userId}`)
         .then((result) => {
           if (result.success) {
-            console.log("4");
             setGamesum(result.data);
           } else {
             console.error(result.error);
@@ -36,7 +35,6 @@ function RankingContainer({ userId }: any) {
       makeAPIRequest<RankType>("get", `/games/ranking/win/${userId}`)
         .then((result) => {
           if (result.success) {
-            console.log("5");
             setRanking(result.data);
           } else {
             console.error(result.error);
@@ -49,18 +47,14 @@ function RankingContainer({ userId }: any) {
   }, []);
 
   useEffect(() => {
-    if (ranking) {
-      console.log("6");
-      setWonCount(ranking.winCount);
+    if (ranking && gamesum) {
       setRank(ranking.rank);
       setTotalUser(ranking.totalUser);
+      setWonCount(gamesum.wonCount);
+      setLostCount(gamesum.lostCount);
     }
-    if (gamesum) {
-        setLostCount(gamesum.lostCount);  
-    }
-    }, [gamesum, ranking]);
+  }, [gamesum, ranking]);
 
-  console.log("raking-container");
   return (
     <div className="absolute left-[590px] top-[506px] h-[227px] w-[300px]">
       <div className="absolute left-[1px] top-[0px] flex h-14 w-[300px] flex-row items-center justify-start gap-[66px] overflow-hidden">
