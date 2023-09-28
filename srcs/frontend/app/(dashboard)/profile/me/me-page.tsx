@@ -15,21 +15,21 @@ const MePage = () => {
 
   const profile = useContext<ProfileType>(ProfileContext);
   const [user, setUser] = useState<UserType>();
-  const [icon, setIcon] = useState<string>(`http://localhost:3000/api/users/avatar/${profile.userId}`);
+  const [icon, setIcon] = useState<string>(
+    `http://localhost:3000/api/users/avatar/${profile.userId}`,
+  );
   const [timer, setTimer] = useState<number>(0);
 
   const onSettingClick = useCallback(() => {
     router.push("/profile/me/settings");
   }, [router]);
 
-  console.log("me-page profile.userId1", profile.userId);
   useEffect(() => {
     if (profile?.userId) {
       // ユーザー情報を取得
       makeAPIRequest<UserType>("get", `/users/${profile.userId}`)
         .then((result) => {
           if (result.success) {
-            console.log("me-page useEffect");
             setUser(result.data);
             setIcon(`http://localhost:3000/api/users/avatar/${profile.userId}`);
             setTimeout(() => setTimer(timer + 1), 60 * 1000);
@@ -42,10 +42,6 @@ const MePage = () => {
         });
     }
   }, [profile, timer]);
-
-  // console.log("profile.userId2", profile.userId);
-  // console.log(user);
-  console.log("timer", timer);
 
   return (
     <>
