@@ -134,10 +134,12 @@ export class GamesService {
         WHERE "userId" = ${userId}
       `;
 
+    const userCount = await this.prisma.user.count();
+
     if (ranking.length > 0) {
-      return ranking[0];
+      return { ...ranking[0], totalUser: userCount };
     } else {
-      return { rank: -1, userId: userId, winCount: 0 };
+      return { rank: 0, userId: userId, winCount: 0, totalUser: userCount };
     }
   }
 
