@@ -268,9 +268,15 @@ export class GamesMatchingGateway {
         );
       }
 
+      // ユーザ名を取得
+      const myUserName =
+        channel.user1.userId === data.myUserId
+          ? channel.user1.username
+          : channel.user2.username;
+
       // メッセージを投稿
       const content =
-        `${channel.user1.username}さんがあなたをゲームに招待しています！` +
+        `${myUserName}さんがあなたをゲームに招待しています！` +
         `http://localhost:3000/game/preparing`;
       const createdMessage = await this.prisma.dmMessages.create({
         data: {
