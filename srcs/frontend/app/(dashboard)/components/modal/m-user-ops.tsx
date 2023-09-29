@@ -72,7 +72,8 @@ const MUserOps: NextPage<MUserOpsType> = ({
       myUserId: profile.userId,
       invitingUserId: invitingUserId,
     });
-    router.push("/game/preparing");
+    // DBにゲーム情報を書きこむのにちょっと時間かかるので1秒待つ
+    setTimeout(() => router.push("/game/preparing"), 1000);
   };
 
   const onClickAddFriend = (userId: number) => {

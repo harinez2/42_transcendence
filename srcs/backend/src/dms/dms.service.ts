@@ -103,29 +103,27 @@ export class DmsService {
     }
   }
 
+  // 本メソッドは例外をトラップせず、呼び出し元で対処する
+  // 単にDB上にレコードが存在するか調べるために呼び出している個所があるため
   async findBTwoUserId(
     user1Id: number,
     user2Id: number,
   ): Promise<DmChannelInfoDto> {
-    try {
-      const channel = await this.prisma.dmChannels.findFirst({
-        where: {
-          OR: [
-            { user1Id: user1Id, user2Id: user2Id },
-            { user1Id: user2Id, user2Id: user1Id },
-          ],
-        },
-        include: {
-          user1: true,
-          user2: true,
-        },
-      });
-      if (!channel) {
-        throw new NotFoundException();
-      }
-      return channel;
-    } catch (e) {
-      throw this.prisma.handleError(e);
+    const channel = await this.prisma.dmChannels.findFirst({
+      where: {
+        OR: [
+          { user1Id: user1Id, user2Id: user2Id },
+          { user1Id: user2Id, user2Id: user1Id },
+        ],
+      },
+      include: {
+        user1: true,
+        user2: true,
+      },
+    });
+    if (!channel) {
+      throw new NotFoundException();
     }
+    return channel;
   }
 }
