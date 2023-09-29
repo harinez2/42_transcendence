@@ -1,36 +1,16 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { GameSummaryType, UserType } from "@/app/types";
+import { GameSummaryType, RankType } from "@/app/types";
 import makeAPIRequest from "@/app/api/api";
 
-// eslint-disable-next-line no-unused-vars
 function RankingContainer({ userId }: any) {
-  const [users, setUsers] = useState<UserType[]>();
   const [gamesum, setGamesum] = useState<GameSummaryType>();
-  const [players, setPlayers] = useState<GameSummaryType[]>([]);
-  const [rank, setRank] = useState<number>(-1);
-  const [count, setCount] = useState<number>(0);
+  const [totalUser, setTotalUser] = useState<number>(0);
+  const [ranking, setRanking] = useState<RankType>();
+  const [rank, setRank] = useState<number>(0);
   const [woncount, setWonCount] = useState<number>(0);
   const [lostcount, setLostCount] = useState<number>(0);
-
-  useEffect(() => {
-    // すべてのユーザー情報を取得
-    makeAPIRequest<UserType[]>("get", `/users`)
-      .then((result) => {
-        if (result.success) {
-          setUsers(result.data);
-          if (users) {
-            setCount(users.length);
-          }
-        } else {
-          console.error(result.error);
-        }
-      })
-      .catch((error) => {
-        console.error("Error:", error.message);
-      });
-  }, []);
 
   useEffect(() => {
     if (userId) {
@@ -39,10 +19,6 @@ function RankingContainer({ userId }: any) {
         .then((result) => {
           if (result.success) {
             setGamesum(result.data);
-            if (gamesum) {
-              setWonCount(gamesum.wonCount);
-              setLostCount(gamesum.lostCount);
-            }
           } else {
             console.error(result.error);
           }
@@ -54,51 +30,37 @@ function RankingContainer({ userId }: any) {
   }, []);
 
   useEffect(() => {
-    if (count) {
-      // 全ユーザーのゲームサマリーを取得
-      const fetchPlayers = async () => {
-        const playerData: GameSummaryType[] = [];
-        for (let i = 1; i <= count; i++) {
-          makeAPIRequest<GameSummaryType>("get", `/games/summary/user/${i}`)
-            .then((result) => {
-              if (result.success) {
-                playerData.push(result.data);
-              } else {
-                console.error(result.error);
-              }
-            })
-            .catch((error) => {
-              console.error("Error:", error.message);
-            });
-        }
-        await setPlayers(playerData);
-      };
-      fetchPlayers();
+    if (userId) {
+      // ランキングを取得
+      makeAPIRequest<RankType>("get", `/games/ranking/win/${userId}`)
+        .then((result) => {
+          if (result.success) {
+            setRanking(result.data);
+          } else {
+            console.error(result.error);
+          }
+        })
+        .catch((error) => {
+          console.error("Error:", error.message);
+        });
     }
-    console.log("players", players);
-  }, [count]);
+  }, []);
 
   useEffect(() => {
-    if (players) {
-      const getRanking = () => {
-        players.sort((a, b) => b.wonCount - a.wonCount);
-        for (let i = 0; i < players.length; i++) {
-          if (players[i].userId === userId) {
-            setRank(i + 1);
-            break;
-          }
-        }
-      };
-      getRanking();
+    if (ranking && gamesum) {
+      setRank(ranking.rank);
+      setTotalUser(ranking.totalUser);
+      setWonCount(gamesum.wonCount);
+      setLostCount(gamesum.lostCount);
     }
-  }, [players]);
+  }, [gamesum, ranking]);
 
   return (
     <div className="absolute left-[590px] top-[506px] h-[227px] w-[300px]">
       <div className="absolute left-[1px] top-[0px] flex h-14 w-[300px] flex-row items-center justify-start gap-[66px] overflow-hidden">
         <div className="relative tracking-[0.1em]">ranking</div>
         <div className="relative text-29xl tracking-[0.1em]">
-          {rank}/{count}
+          {rank}/{totalUser}
         </div>
       </div>
       <div className="absolute left-[5px] top-[83px] flex h-14 w-[300px] flex-row items-center justify-start gap-[118px] overflow-hidden">

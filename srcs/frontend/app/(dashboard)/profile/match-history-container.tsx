@@ -21,6 +21,16 @@ const MatchComponent = ({
 
   const [isMUserOpsOpen, setMUserOpsOpen] = useState(false);
   const [opponent, setOpponent] = useState<UserType>();
+  const [opponentName, setOpponentName] = useState<string>("");
+  const [opponentId, setOpponentId] = useState<number>(0);
+  const [opponentScore, setOpponentScore] = useState<number>(0);
+  const [myScore, setMyScore] = useState<number>(0);
+  const [score, setScore] = useState<string>("");
+  const [date, setDate] = useState<string>("");
+  const [icon, setIcon] = useState<string>(
+    `http://localhost:3000/api/users/avatar/0`,
+  );
+  const [result, setResult] = useState<string>();
 
   const openMUserOps = useCallback(() => {
     setMUserOpsOpen(true);
@@ -30,50 +40,32 @@ const MatchComponent = ({
     setMUserOpsOpen(false);
   }, []);
 
-  const icon = () => {
-    if (userId === match.user1Id) {
-      return `http://localhost:3000/api/users/avatar/${match.user2Id}`;
-    } else {
-      return `http://localhost:3000/api/users/avatar/${userId}`;
+  useEffect(() => {
+    if (userId && match) {
+      if (userId === match.user1Id) {
+        setMyScore(match.user1Score);
+        setOpponentId(match.user2Id);
+        setOpponentScore(match.user2Score);
+      } else {
+        setMyScore(match.user2Score);
+        setOpponentId(match.user1Id);
+        setOpponentScore(match.user1Score);
+      }
+      setScore(match.user1Score + " - " + match.user2Score);
+      const playdate: string = match?.endedAt;
+      const res: string = playdate?.slice(0, 10);
+      setDate(res);
     }
-  };
-
-  const getResult = () => {
-    if (userId === match.user1Id) {
-      if (match.user1Score > match.user2Score) return "Win";
-      else return "Lose";
-    } else {
-      if (match.user1Score < match.user2Score) return "Win";
-      else return "Lose";
-    }
-  };
-
-  const getScore = () => {
-    const score: string = match.user1Score + " - " + match.user2Score;
-    return score;
-  };
-
-  const getOpponentId = () => {
-    if (userId === match.user1Id) {
-      return match.user2Id;
-    } else {
-      return match.user1Id;
-    }
-  };
-
-  const getDate = () => {
-    const date: string = match?.endedAt;
-    const res: string = date?.slice(0, 10);
-    return res;
-  };
+  }, [match]);
 
   useEffect(() => {
-    if (match) {
+    if (match && opponentId) {
       // ユーザー情報を取得
-      makeAPIRequest<UserType>("get", `/users/${getOpponentId()}`)
+      makeAPIRequest<UserType>("get", `/users/${opponentId}`)
         .then((result) => {
           if (result.success) {
             setOpponent(result.data);
+            setIcon(`http://localhost:3000/api/users/avatar/${opponentId}`);
           } else {
             console.error(result.error);
           }
@@ -82,14 +74,26 @@ const MatchComponent = ({
           console.error("Error:", error.message);
         });
     }
-  }, [match]);
-  console.log("match.user1Score", match.user1Score);
+  }, [match, opponentId]);
+
+  useEffect(() => {
+    if (myScore || opponentScore) {
+      if (myScore > opponentScore) setResult("Win");
+      else setResult("Lose");
+    }
+  }, [myScore, opponentScore]);
+
+  useEffect(() => {
+    if (opponent) {
+      setOpponentName(opponent.username);
+    }
+  }, [opponent]);
 
   return (
     <>
       <div className="border-b-10 flex h-[90px] w-[500px] shrink-0 flex-row items-center justify-start gap-[30px]">
         <img
-          src={icon()}
+          src={icon}
           className="relative h-[45px] w-[45px] cursor-pointer rounded-full"
           width={45}
           height={45}
@@ -97,12 +101,12 @@ const MatchComponent = ({
           onClick={openMUserOps}
         />
         <div className="relative w-[150px] truncate tracking-[0.1em]">
-          {opponent?.username}
+          {opponentName}
         </div>
-        <b className="relative tracking-[0.1em]">{getResult()}</b>
-        <div className="relative w-[100px]">{getScore()}</div>
+        <b className="relative tracking-[0.1em]">{result}</b>
+        <div className="relative w-[100px]">{score}</div>
         <div className="relative w-[190px] tracking-[0.1em] text-silver-100">
-          {getDate()}
+          {date}
         </div>
       </div>
 
@@ -125,7 +129,7 @@ const MatchComponent = ({
   );
 };
 
-function MatchHistoryContainer({ userId }: any) {
+function MatchHistoryContainer({ userId }: { userId: number }) {
   const [matches, setMatches] = useState<MatchType[]>([]);
 
   useEffect(() => {

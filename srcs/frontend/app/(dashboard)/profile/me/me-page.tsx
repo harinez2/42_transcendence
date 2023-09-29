@@ -13,16 +13,16 @@ import { useRouter } from "next/navigation";
 const MePage = () => {
   const router = useRouter();
 
-  const onSettingClick = useCallback(() => {
-    router.push("/profile/me/settings");
-  }, [router]);
-
-  const profile: ProfileType = useContext(ProfileContext);
+  const profile = useContext<ProfileType>(ProfileContext);
   const [user, setUser] = useState<UserType>();
   const [icon, setIcon] = useState<string>(
     `http://localhost:3000/api/users/avatar/${profile.userId}`,
   );
   const [timer, setTimer] = useState<number>(0);
+
+  const onSettingClick = useCallback(() => {
+    router.push("/profile/me/settings");
+  }, [router]);
 
   useEffect(() => {
     if (profile?.userId) {
@@ -31,12 +31,8 @@ const MePage = () => {
         .then((result) => {
           if (result.success) {
             setUser(result.data);
+            setIcon(`http://localhost:3000/api/users/avatar/${profile.userId}`);
             setTimeout(() => setTimer(timer + 1), 60 * 1000);
-            if (user?.avatar) {
-              setIcon(
-                `http://localhost:3000/api/users/avatar/${profile.userId}`,
-              );
-            }
           } else {
             console.error(result.error);
           }
