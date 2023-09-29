@@ -243,14 +243,18 @@ export class GamesMatchingGateway {
       );
     } catch (e) {
       if (e instanceof NotFoundException) {
-        this.dmsService.createChannel({
-          user1Id: data.myUserId,
-          user2Id: data.invitingUserId,
-        });
-        channel = await this.dmsService.findBTwoUserId(
-          data.myUserId,
-          data.invitingUserId,
-        );
+        try {
+          await this.dmsService.createChannel({
+            user1Id: data.myUserId,
+            user2Id: data.invitingUserId,
+          });
+          channel = await this.dmsService.findBTwoUserId(
+            data.myUserId,
+            data.invitingUserId,
+          );
+        } catch (e) {
+          throw this.prisma.handleError(e);
+        }
       }
     }
 
@@ -270,7 +274,7 @@ export class GamesMatchingGateway {
 
       // ユーザ名を取得
       const myUserName =
-        channel.user1.userId === data.myUserId
+        channel.user1Id === data.myUserId
           ? channel.user1.username
           : channel.user2.username;
 
