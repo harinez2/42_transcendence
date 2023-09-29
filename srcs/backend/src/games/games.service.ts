@@ -135,7 +135,7 @@ export class GamesService {
       `;
 
     const userCount = await this.prisma.user.count();
-    
+
     if (ranking.length > 0) {
       return { ...ranking[0], totalUser: userCount };
     } else {
