@@ -83,11 +83,11 @@ const MatchComponent = ({
     }
   }, [myScore, opponentScore]);
 
-   useEffect(() => {
+  useEffect(() => {
     if (opponent) {
-     setOpponentName(opponent.username);
+      setOpponentName(opponent.username);
     }
-   }, [opponent]);
+  }, [opponent]);
 
   return (
     <>
@@ -129,9 +129,9 @@ const MatchComponent = ({
   );
 };
 
-function MatchHistoryContainer({ userId }: { userId: number}) {
+function MatchHistoryContainer({ userId }: { userId: number }) {
   const [matches, setMatches] = useState<MatchType[]>([]);
-  
+
   useEffect(() => {
     if (userId != 0) {
       // Match History一覧を取得
