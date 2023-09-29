@@ -25,9 +25,8 @@ const UserComponent = ({
   return (
     <>
       <li>
-        <a
-          href="#"
-          className="group flex items-center rounded-lg p-2 text-white hover:bg-gray-700"
+        <div
+          className="group flex cursor-pointer items-center rounded-lg p-2 text-white hover:bg-gray-700"
           onClick={handleClick}
         >
           <Image
@@ -38,7 +37,7 @@ const UserComponent = ({
             alt=""
           />
           <span className="ml-3 shrink-0 pr-8 text-xl">{user_name}</span>
-        </a>
+        </div>
       </li>
     </>
   );
