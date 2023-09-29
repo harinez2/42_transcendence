@@ -12,8 +12,8 @@ import { useRouter } from "next/navigation";
 import MUserOps from "../../../components/modal/m-user-ops";
 
 const ProfileOtherPage = ({ userId }: any) => {
+  const profile = useContext<ProfileType>(ProfileContext);
   const socket: any = useContext(SocketContext);
-  const profile: ProfileType = useContext(ProfileContext);
   const router = useRouter();
 
   const [user, setUser] = useState<UserType>();
@@ -99,13 +99,13 @@ const ProfileOtherPage = ({ userId }: any) => {
           alt=""
           src="/line-2.svg"
         />
-        <RankingContainer userId={userId} />
+        <RankingContainer userId={Number(userId)} />
         <img
           className="absolute left-[470px] top-[768px] h-0.5 w-[500px]"
           alt=""
           src="/line-2.svg"
         />
-        <MatchHistoryContainer userId={userId} />
+        <MatchHistoryContainer userId={Number(userId)} />
       </div>
       {isMUserOpsOpen && (
         <ModalPopup

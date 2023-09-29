@@ -22,7 +22,7 @@ const MatchComponent = ({
   const [isMUserOpsOpen, setMUserOpsOpen] = useState(false);
   const [opponent, setOpponent] = useState<UserType>();
   const [opponentName, setOpponentName] = useState<string>("");
-  // const [opponentId, setOpponentId] = useState<number>(0);
+  const [opponentId, setOpponentId] = useState<number>(0);
   const [opponentScore, setOpponentScore] = useState<number>(0);
   const [myScore, setMyScore] = useState<number>(0);
   const [score, setScore] = useState<string>("");
@@ -40,19 +40,15 @@ const MatchComponent = ({
     setMUserOpsOpen(false);
   }, []);
 
-  let opponentId: number = 0;
-
   useEffect(() => {
     if (userId && match) {
       if (userId === match.user1Id) {
         setMyScore(match.user1Score);
-        // setOpponentId(match.user2Id);
-        opponentId = match.user2Id;
+        setOpponentId(match.user2Id);
         setOpponentScore(match.user2Score);
       } else {
         setMyScore(match.user2Score);
-        // setOpponentId(match.user1Id);
-        opponentId = match.user1Id;
+        setOpponentId(match.user1Id);
         setOpponentScore(match.user1Score);
       }
       setScore(match.user1Score + " - " + match.user2Score);
@@ -78,7 +74,7 @@ const MatchComponent = ({
           console.error("Error:", error.message);
         });
     }
-  }, [match]);
+  }, [match, opponentId]);
 
   useEffect(() => {
     if (myScore || opponentScore) {
@@ -91,7 +87,7 @@ const MatchComponent = ({
     if (opponent) {
      setOpponentName(opponent.username);
     }
-  }, [opponent]);
+   }, [opponent]);
 
   return (
     <>
@@ -105,7 +101,6 @@ const MatchComponent = ({
           onClick={openMUserOps}
         />
         <div className="relative w-[150px] truncate tracking-[0.1em]">
-          {/* {opponent?.username} */}
           {opponentName}
         </div>
         <b className="relative tracking-[0.1em]">{result}</b>
@@ -134,10 +129,9 @@ const MatchComponent = ({
   );
 };
 
-function MatchHistoryContainer({ userId }: any) {
+function MatchHistoryContainer({ userId }: { userId: number}) {
   const [matches, setMatches] = useState<MatchType[]>([]);
-
-  console.log("matchhistorycontainer_userId", userId);
+  
   useEffect(() => {
     if (userId != 0) {
       // Match History一覧を取得
