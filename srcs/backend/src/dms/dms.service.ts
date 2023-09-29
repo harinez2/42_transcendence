@@ -19,6 +19,20 @@ export class DmsService {
   // channel operations
 
   async createChannel(createDmChannelDto: CreateDmChannelDto): Promise<number> {
+    // ブロックユーザのチャンネルは追加できないようにする
+    const blocklist = await this.blockService.getBlockeds(
+      createDmChannelDto.user1Id,
+    );
+    const blockIdList = blocklist.map((user) => {
+      return user.id;
+    });
+    if (
+      blockIdList.includes(createDmChannelDto.user1Id) ||
+      blockIdList.includes(createDmChannelDto.user2Id)
+    ) {
+      throw new BadRequestException('The specified user is blocked.');
+    }
+
     // すでにある場合はエラーにする
     let isAlreadyExists = true;
     try {

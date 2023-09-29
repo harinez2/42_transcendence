@@ -7,10 +7,11 @@ import { ProfileType, UserType } from "@/app/types";
 
 type MAddUserType = {
   onClose: () => void;
+  onUpdateChannel: () => void;
 };
 
 // eslint-disable-next-line no-unused-vars
-const MAddUserDm: NextPage<MAddUserType> = ({ onClose }) => {
+const MAddUserDm: NextPage<MAddUserType> = ({ onClose, onUpdateChannel }) => {
   const profile: ProfileType = useContext(ProfileContext);
   const [inputValue, setInputValue] = useState("");
   const [error, setError] = useState("");
@@ -52,6 +53,7 @@ const MAddUserDm: NextPage<MAddUserType> = ({ onClose }) => {
         .then((result) => {
           if (result.success) {
             setError("");
+            onUpdateChannel();
             onClose();
           } else {
             setError("Error: " + result.error);
