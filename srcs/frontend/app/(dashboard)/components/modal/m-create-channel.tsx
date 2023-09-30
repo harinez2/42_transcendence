@@ -151,7 +151,7 @@ const MCreateChannel: NextPage<MCreateChannelType> = ({
     setChannelTypeEnabled(false);
     setPublicityButtonDisabled(false);
     setPasswordEnabled(false);
-    setPasswordButtonDisabled(false);
+    setPasswordButtonDisabled(true);
   };
 
   return (
