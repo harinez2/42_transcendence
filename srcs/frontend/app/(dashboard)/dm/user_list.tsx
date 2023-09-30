@@ -22,6 +22,9 @@ const UserComponent = ({
       ? channel.user2.username
       : channel.user1.username;
 
+  const userId =
+    channel.user1.id === profile.userId ? channel.user2.id : channel.user1.id;
+
   return (
     <>
       <li>
@@ -30,7 +33,7 @@ const UserComponent = ({
           onClick={handleClick}
         >
           <Image
-            src="http://localhost:3000/favicon.ico"
+            src={`/api/users/avatar/${userId}`}
             className="h-auto max-w-full rounded-full"
             width={30}
             height={30}

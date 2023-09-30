@@ -47,11 +47,11 @@ const UserComponent = ({
         className="group flex items-center rounded-lg p-2 text-white hover:bg-gray-700"
       >
         <Image
-          src="http://localhost:3000/favicon.ico"
+          src={`/api/users/avatar/${user.id}`}
           className="h-auto max-w-full rounded-full"
           width={30}
           height={30}
-          alt=""
+          alt="User Avatar"
         />
         <span className="ml-3 shrink-0 pr-8 text-black">{user?.username}</span>
       </button>
