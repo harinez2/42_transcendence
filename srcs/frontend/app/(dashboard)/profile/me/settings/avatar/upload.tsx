@@ -7,6 +7,7 @@ import "cropperjs/dist/cropper.css";
 export default function AvatarUpload({ onUpdate }: { onUpdate: () => void }) {
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cropperRef = useRef(null);
 
@@ -37,15 +38,17 @@ export default function AvatarUpload({ onUpdate }: { onUpdate: () => void }) {
               body: formData,
             });
 
+            setError("");
             if (!response.ok) {
-              throw new Error("Network response was not ok");
+              setError(response.statusText);
+              return;
             }
 
             closeModal();
             onUpdate();
             alert("Avatar updated");
           } catch (error) {
-            console.error("Error uploading avatar:", error);
+            setError(`Error uploading avatar: ${String(error)}`);
           }
         }, "image/png");
       }
@@ -58,12 +61,16 @@ export default function AvatarUpload({ onUpdate }: { onUpdate: () => void }) {
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
+    setError("");
   };
 
   return (
     <>
       <button
-        onClick={() => setIsModalOpen(true)}
+        onClick={() => {
+          setIsModalOpen(true);
+          setError("");
+        }}
         className="rounded bg-blue-500 px-4 py-2 text-white"
       >
         Upload Avatar
@@ -100,6 +107,7 @@ export default function AvatarUpload({ onUpdate }: { onUpdate: () => void }) {
             >
               Close
             </button>
+            {error && <p className="text-red-600">Error: {error}</p>}
           </div>
         </div>
       )}
