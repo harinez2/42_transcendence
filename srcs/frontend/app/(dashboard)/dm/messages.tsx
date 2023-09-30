@@ -1,8 +1,53 @@
 import Image from "next/image";
 import { DmChannelType, DmMessageType } from "./types";
 import Link from "next/link";
+import ModalPopup from "../components/modal/modal-popup";
+import MUserOps from "../components/modal/m-user-ops";
+import { useCallback, useContext, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { ProfileType, UserType } from "@/app/types";
+import { ProfileContext, SocketContext } from "../layout";
+import makeAPIRequest from "@/app/api/api";
 
-const MessageComponent = ({ message }: { message: DmMessageType }) => {
+const MessageComponent = ({
+  message,
+  socket,
+  profile,
+  router,
+}: {
+  message: DmMessageType;
+  socket: any;
+  profile: ProfileType;
+  router: any;
+}) => {
+  const [isMUserOpsOpen, setMUserOpsOpen] = useState(false);
+  const [user, setUser] = useState<UserType>();
+
+  const openMUserOps = useCallback(() => {
+    setMUserOpsOpen(true);
+  }, []);
+
+  const closeMUserOps = useCallback(() => {
+    setMUserOpsOpen(false);
+  }, []);
+
+  useEffect(() => {
+    if (message) {
+      // ユーザー情報を取得
+      makeAPIRequest<UserType>("get", `/users/${message.senderId}`)
+        .then((result) => {
+          if (result.success) {
+            setUser(result.data);
+          } else {
+            console.error(result.error);
+          }
+        })
+        .catch((error) => {
+          console.error("Error:", error.message);
+        });
+    }
+  }, [message]);
+
   return (
     <>
       <div className="mt-2 p-4">
@@ -13,6 +58,7 @@ const MessageComponent = ({ message }: { message: DmMessageType }) => {
             width={30}
             height={30}
             alt=""
+            onClick={openMUserOps}
           />
           <div className="flex-initial shrink-0 text-2xl font-bold text-gray-300">
             {message.sender.username}
@@ -41,6 +87,21 @@ const MessageComponent = ({ message }: { message: DmMessageType }) => {
           <p className="px-2 text-base text-gray-300">{message.content}</p>
         )}
       </div>
+      {isMUserOpsOpen && (
+        <ModalPopup
+          overlayColor="rgba(113, 113, 113, 0.3)"
+          placement="Centered"
+          onOutsideClick={closeMUserOps}
+        >
+          <MUserOps
+            onClose={closeMUserOps}
+            user={user}
+            router={router}
+            socket={socket}
+            profile={profile}
+          />
+        </ModalPopup>
+      )}
     </>
   );
 };
@@ -61,6 +122,10 @@ const MessageList = ({
     }
   };
 
+  const socket: any = useContext(SocketContext);
+  const profile: ProfileType = useContext(ProfileContext);
+  const router = useRouter();
+
   return (
     <div className="mx-72 shrink-0 grow bg-darkslategray-100">
       {/* sidebar の 64 + px-3 だけずらす */}
@@ -71,7 +136,13 @@ const MessageList = ({
                   */}
         <div className="w-[calc(100%-288px-74px)] flex-col-reverse divide-y divide-gray-500/30 hyphens-auto whitespace-normal break-all px-4">
           {messages?.map((message) => (
-            <MessageComponent key={message.messageId} message={message} />
+            <MessageComponent
+              key={message.messageId}
+              message={message}
+              socket={socket}
+              profile={profile}
+              router={router}
+            />
           ))}
         </div>
       </div>
