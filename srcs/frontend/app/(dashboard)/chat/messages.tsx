@@ -7,11 +7,11 @@ const MessageComponent = ({ message }: { message: MessageType }) => {
       <div className="mt-2 p-4">
         <div className="mb-2 flex flex-row items-end space-x-6">
           <Image
-            src="http://localhost:3000/favicon.ico"
+            src={`/api/users/avatar/${message.senderId}`}
             className="h-auto max-w-full rounded-full"
             width={30}
             height={30}
-            alt=""
+            alt="User Avatar"
           />
           <div className="flex-initial shrink-0 text-2xl font-bold text-gray-300">
             {message.sender.username}
