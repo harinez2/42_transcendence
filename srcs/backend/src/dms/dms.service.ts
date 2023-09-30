@@ -1,7 +1,9 @@
 import {
   BadRequestException,
+  Inject,
   Injectable,
   NotFoundException,
+  forwardRef,
 } from '@nestjs/common';
 import { CreateDmChannelDto } from './dto/create-dm-channel.dto';
 import { DmChannelInfoDto } from './dto/dm-channel-info.dto';
@@ -13,6 +15,7 @@ import { BlockService } from 'src/friends/block/block.service';
 export class DmsService {
   constructor(
     private prisma: PrismaService,
+    @Inject(forwardRef(() => BlockService))
     private readonly blockService: BlockService,
   ) {}
 

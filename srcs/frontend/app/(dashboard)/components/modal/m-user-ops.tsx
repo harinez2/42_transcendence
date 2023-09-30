@@ -96,20 +96,32 @@ const MUserOps: NextPage<MUserOpsType> = ({
 
   const onClickBlock = (userId: number) => {
     // POST /friends/block
-    makeAPIRequest<UserType>("post", `/friends/block`, {
-      blockedId: userId,
-    })
-      .then((result) => {
-        if (result.success) {
-          setError("");
+    // makeAPIRequest<UserType>("post", `/friends/block`, {
+    //   blockedId: userId,
+    // })
+    //   .then((result) => {
+    //     if (result.success) {
+    //       setError("");
+    //       onClose();
+    //     } else {
+    //       setError(result.error);
+    //     }
+    //   })
+    //   .catch((error) => {
+    //     setError(error.message);
+    //   });
+    if (profile.userId) {
+      socket?.once('block-user-response', (data: any) => {
+        setError(data.err);
+        if (data.err === "") {
           onClose();
-        } else {
-          setError(result.error);
         }
-      })
-      .catch((error) => {
-        setError(error.message);
       });
+      socket?.emit('block-user', {
+        blockerId: profile.userId,
+        blockedId: userId,
+      });
+    }
   };
 
   const onClickUnblock = (userId: number) => {
