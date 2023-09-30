@@ -80,7 +80,7 @@ export class GamesPlayGateway {
       console.error(
         `The user is not part of this game: gameId=${gameId}, userId=${data.userId}`,
       );
-      socket.emit(
+      socket?.emit(
         'exception',
         `The user is not part of this game: gameId=${gameId}, userId=${data.userId}`,
       );
@@ -101,7 +101,7 @@ export class GamesPlayGateway {
       !this.gameList[gameId].socket.user2Socket
     ) {
       console.log('Waiting for the opponent...');
-      socket.emit('info', 'Waiting for the opponent...');
+      socket?.emit('info', 'Waiting for the opponent...');
       return;
     }
 
@@ -113,11 +113,11 @@ export class GamesPlayGateway {
     // 開始時刻をDBに保存
     this.storeGameStartTime(gameId);
     // クライアントに通知
-    this.gameList[gameId].socket.user1Socket.emit('game-start', gameId);
-    this.gameList[gameId].socket.user2Socket.emit('game-start', gameId);
+    this.gameList[gameId].socket.user1Socket?.emit('game-start', gameId);
+    this.gameList[gameId].socket.user2Socket?.emit('game-start', gameId);
     // ゲームタイマー開始
     this.gameList[gameId].play.interval = setInterval(async () => {
-      await this.emitUpdateGame(gameId);
+      await this?.emitUpdateGame(gameId);
     }, TIMER_INTERVAL);
   }
 
@@ -141,7 +141,7 @@ export class GamesPlayGateway {
         isGameFinished: true,
       };
       console.log('gameId: ', data.gameId, ', sendData:  ', sendData);
-      socket.emit('game-update_score', sendData);
+      socket?.emit('game-update_score', sendData);
     }
   }
 
@@ -173,72 +173,69 @@ export class GamesPlayGateway {
   }
 
   private emitUpdateGame = async (gameId: number) => {
-    await new Promise(() => {
-      // すでにゲームが終わっていれば抜ける
-      if (!this.gameList[gameId]) return;
+    // すでにゲームが終わっていれば抜ける
+    if (!this.gameList[gameId]) return;
 
-      // ゲームデータ送付
-      const sendData = {
-        ballPos: {
-          x: this.gameList[gameId].play.ballPos.x,
-          y: this.gameList[gameId].play.ballPos.y,
-        },
-        lPaddleY: this.gameList[gameId].play.lPaddlePos.y,
-        rPaddleY: this.gameList[gameId].play.rPaddlePos.y,
-      };
-      this.gameList[gameId].socket.user1Socket.emit(
-        'game-update_canvas',
-        sendData,
-      );
-      this.gameList[gameId].socket.user2Socket.emit(
-        'game-update_canvas',
-        sendData,
-      );
+    // ゲームデータ送付
+    const sendData = {
+      ballPos: {
+        x: this.gameList[gameId].play.ballPos.x,
+        y: this.gameList[gameId].play.ballPos.y,
+      },
+      lPaddleY: this.gameList[gameId].play.lPaddlePos.y,
+      rPaddleY: this.gameList[gameId].play.rPaddlePos.y,
+    };
+    this.gameList[gameId].socket.user1Socket?.emit(
+      'game-update_canvas',
+      sendData,
+    );
+    this.gameList[gameId].socket.user2Socket?.emit(
+      'game-update_canvas',
+      sendData,
+    );
 
-      // 左右の壁判定
-      const newBallX =
-        this.gameList[gameId].play.ballPos.x +
-        this.gameList[gameId].play.ballDxDy.x;
-      const newBallY =
-        this.gameList[gameId].play.ballPos.y +
-        this.gameList[gameId].play.ballDxDy.y;
-      if (newBallX < 0) {
-        // 左
-        this.addAndEmitScore(gameId, 0, 1);
-        this.resetBallPos(gameId);
-      } else if (CANVAS_WIDTH <= newBallX + BALL_SIZE) {
-        // 右
-        this.addAndEmitScore(gameId, 1, 0);
-        this.resetBallPos(gameId);
-      }
-      // ゲーム終了判定
-      if (this.isGameFinished(gameId)) {
-        this.finishGame(gameId);
-        return;
-      }
-      // パドルの跳ね返り判定
-      if (
-        (newBallX <= L_PADDLE_RIGHTX &&
-          L_PADDLE_RIGHTX - BALL_SIZE < newBallX &&
-          this.gameList[gameId].play.lPaddlePos.y <= newBallY &&
-          newBallY <=
-            this.gameList[gameId].play.lPaddlePos.y + PADDLE_HEIGHT) || // 左
-        (R_PADDLE_X <= newBallX + BALL_SIZE &&
-          newBallX + BALL_SIZE < R_PADDLE_X + BALL_SIZE &&
-          this.gameList[gameId].play.rPaddlePos.y <= newBallY &&
-          newBallY <= this.gameList[gameId].play.rPaddlePos.y + PADDLE_HEIGHT) // 右
-      ) {
-        this.gameList[gameId].play.ballDxDy.x *= -1;
-      }
-      this.gameList[gameId].play.ballPos.x +=
-        this.gameList[gameId].play.ballDxDy.x;
-      // 上下の跳ね返り判定
-      if (newBallY < 0 || CANVAS_HEIGHT <= newBallY + BALL_SIZE) {
-        this.gameList[gameId].play.ballDxDy.y *= -1;
-      }
-      this.gameList[gameId].play.ballPos.y +=
-        this.gameList[gameId].play.ballDxDy.y;
-    });
+    // 左右の壁判定
+    const newBallX =
+      this.gameList[gameId].play.ballPos.x +
+      this.gameList[gameId].play.ballDxDy.x;
+    const newBallY =
+      this.gameList[gameId].play.ballPos.y +
+      this.gameList[gameId].play.ballDxDy.y;
+    if (newBallX < 0) {
+      // 左
+      this.addAndEmitScore(gameId, 0, 1);
+      this.resetBallPos(gameId);
+    } else if (CANVAS_WIDTH <= newBallX + BALL_SIZE) {
+      // 右
+      this.addAndEmitScore(gameId, 1, 0);
+      this.resetBallPos(gameId);
+    }
+    // ゲーム終了判定
+    if (this.isGameFinished(gameId)) {
+      this.finishGame(gameId);
+      return;
+    }
+    // パドルの跳ね返り判定
+    if (
+      (newBallX <= L_PADDLE_RIGHTX &&
+        L_PADDLE_RIGHTX - BALL_SIZE < newBallX &&
+        this.gameList[gameId].play.lPaddlePos.y <= newBallY &&
+        newBallY <= this.gameList[gameId].play.lPaddlePos.y + PADDLE_HEIGHT) || // 左
+      (R_PADDLE_X <= newBallX + BALL_SIZE &&
+        newBallX + BALL_SIZE < R_PADDLE_X + BALL_SIZE &&
+        this.gameList[gameId].play.rPaddlePos.y <= newBallY &&
+        newBallY <= this.gameList[gameId].play.rPaddlePos.y + PADDLE_HEIGHT) // 右
+    ) {
+      this.gameList[gameId].play.ballDxDy.x *= -1;
+    }
+    this.gameList[gameId].play.ballPos.x +=
+      this.gameList[gameId].play.ballDxDy.x;
+    // 上下の跳ね返り判定
+    if (newBallY < 0 || CANVAS_HEIGHT <= newBallY + BALL_SIZE) {
+      this.gameList[gameId].play.ballDxDy.y *= -1;
+    }
+    this.gameList[gameId].play.ballPos.y +=
+      this.gameList[gameId].play.ballDxDy.y;
   };
 
   private addAndEmitScore = (
@@ -257,11 +254,11 @@ export class GamesPlayGateway {
       isGameFinished: this.isGameFinished(gameId),
     };
     console.log('gameId: ', gameId, ', sendData:  ', sendData);
-    this.gameList[gameId].socket.user1Socket.emit(
+    this.gameList[gameId].socket.user1Socket?.emit(
       'game-update_score',
       sendData,
     );
-    this.gameList[gameId].socket.user2Socket.emit(
+    this.gameList[gameId].socket.user2Socket?.emit(
       'game-update_score',
       sendData,
     );

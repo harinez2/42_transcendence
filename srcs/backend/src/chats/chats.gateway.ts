@@ -49,7 +49,7 @@ export class ChatsGateway {
         include: { sender: true },
       });
       for (const post of posts) {
-        client.emit('chat-message', post);
+        client?.emit('chat-message', post);
       }
     } catch (e) {
       throw new WsException(e.message);
@@ -95,9 +95,9 @@ export class ChatsGateway {
       // MessageDtoを作成
       const addedMessage = await this.findMessageById(createdMessage.messageId);
       // メッセージをブロードキャスト(自分以外)
-      socket.to('chat_' + data.channelId).emit('chat-message', addedMessage);
+      socket.to('chat_' + data.channelId)?.emit('chat-message', addedMessage);
       // メッセージを自分にも送信
-      socket.emit('chat-message', addedMessage);
+      socket?.emit('chat-message', addedMessage);
     } catch (e) {
       throw new WsException(e.message);
     }
