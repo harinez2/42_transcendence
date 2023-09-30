@@ -49,7 +49,7 @@ export default function Page() {
       {otpauthUrl ? (
         <div>
           <p>Scan this QR code with your 2FA app:</p>
-          <QRCode value={otpauthUrl} />
+          <QRCode value={otpauthUrl} className="bg-white p-2" />
           <div>
             <form onSubmit={handleCodeSubmit}>
               <label htmlFor="code">OTP Code: </label>
