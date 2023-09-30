@@ -46,7 +46,7 @@ const GamePreparingUI = () => {
         if (gameId) setGameId(gameId);
       });
       console.log("emitted game-getstatus: userId=", profile.userId);
-      socket.emit("game-getstatus", profile);
+      socket?.emit("game-getstatus", profile);
     }
   }, [socket]);
 

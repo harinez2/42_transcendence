@@ -48,7 +48,7 @@ export class GamesMatchingGateway {
     const query = await this.getNotStartedGameInfo(data.userId);
     if (query) {
       if (query.gameSettings) {
-        socket.emit('game-status', WaitStatus.Gaming, query.gameId);
+        socket?.emit('game-status', WaitStatus.Gaming, query.gameId);
         console.log(
           `[game-status] userId=${data.userId}, Resuming to ${WaitStatus.Gaming}`,
         );
@@ -67,7 +67,7 @@ export class GamesMatchingGateway {
 
         if (query.user1Id === data.userId) {
           this.gameList[query.gameId].socket.user1Socket = socket;
-          socket.emit(
+          socket?.emit(
             'game-status',
             WaitStatus.WaitingForSetting,
             query.gameId,
@@ -77,7 +77,7 @@ export class GamesMatchingGateway {
           );
         } else {
           this.gameList[query.gameId].socket.user2Socket = socket;
-          socket.emit(
+          socket?.emit(
             'game-status',
             WaitStatus.WaitingForOpponentSetting,
             query.gameId,
@@ -94,12 +94,12 @@ export class GamesMatchingGateway {
         // 改めてwaitListに登録
         this.handleAddWaitList(socket, data);
 
-        socket.emit('game-status', WaitStatus.NotMatched);
+        socket?.emit('game-status', WaitStatus.NotMatched);
         console.log(
           `[game-status] userId=${data.userId}, Resuming to ${WaitStatus.NotMatched}`,
         );
       } else {
-        socket.emit('game-status', WaitStatus.NotStarted);
+        socket?.emit('game-status', WaitStatus.NotStarted);
         console.log(
           `[game-status] userId=${data.userId}, Resuming to ${WaitStatus.NotStarted}`,
         );
@@ -161,11 +161,11 @@ export class GamesMatchingGateway {
           'waiting for configuring the game: ',
           storedGameInfo.gameId,
         );
-        this.gameList[storedGameInfo.gameId].socket.user1Socket.emit(
+        this.gameList[storedGameInfo.gameId].socket.user1Socket?.emit(
           'game-configrequest',
           storedGameInfo,
         );
-        this.gameList[storedGameInfo.gameId].socket.user2Socket.emit(
+        this.gameList[storedGameInfo.gameId].socket.user2Socket?.emit(
           'game-configuring',
           storedGameInfo,
         );
@@ -199,13 +199,13 @@ export class GamesMatchingGateway {
     console.log('gameSettings:', gameSettings);
     // コンフィグの妥当性チェック
     if (gameSettings.points < 3 || 7 < gameSettings.points) {
-      socket.emit('error', 'Config error: point range is invalid.');
+      socket?.emit('error', 'Config error: point range is invalid.');
       return;
     }
 
     // ゲーム情報を検索
     if (!this.gameList[gameSettings.gameId]) {
-      socket.emit('error', 'Game not found.');
+      socket?.emit('error', 'Game not found.');
       return;
     }
 
@@ -213,11 +213,11 @@ export class GamesMatchingGateway {
     this.storeGameSettings(gameSettings);
 
     // ゲーム開始
-    this.gameList[gameSettings.gameId].socket.user1Socket.emit(
+    this.gameList[gameSettings.gameId].socket.user1Socket?.emit(
       'game-ready',
       gameSettings.gameId,
     );
-    this.gameList[gameSettings.gameId].socket.user2Socket.emit(
+    this.gameList[gameSettings.gameId].socket.user2Socket?.emit(
       'game-ready',
       gameSettings.gameId,
     );
@@ -294,9 +294,9 @@ export class GamesMatchingGateway {
         createdMessage.messageId,
       );
       // メッセージをブロードキャスト(自分以外、すなわち相手)
-      socket.to('dm_' + channel.channelId).emit('dm-message', addedMessage);
+      socket.to('dm_' + channel.channelId)?.emit('dm-message', addedMessage);
       // メッセージを自分にも送信
-      socket.emit('dm-message', addedMessage);
+      socket?.emit('dm-message', addedMessage);
       return storedGameInfo.gameId;
     } catch (e) {
       throw this.prisma.handleError(e);
