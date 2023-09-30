@@ -57,19 +57,31 @@ export class GamesPlayGateway {
 
     // ゲームIDの情報を保持していなければDBより取得
     if (!this.gameList[gameId]) {
-      this.gameList[gameId] = {
-        info: await this.getGameInfo(gameId),
-        socket: {
-          user1Socket: undefined,
-          user2Socket: undefined,
-        },
-        play: this.getInitialGamePlayType(),
-      };
-      if (this.gameList[gameId].info.gameSettings.isSpeedUp) {
-        this.gameList[gameId].play.ballDxDy.x += SPEEDUP_AMOUNT;
-        this.gameList[gameId].play.ballDxDy.y += SPEEDUP_AMOUNT;
+      try {
+        this.gameList[gameId] = {
+          info: await this.getGameInfo(gameId),
+          socket: {
+            user1Socket: undefined,
+            user2Socket: undefined,
+          },
+          play: this.getInitialGamePlayType(),
+        };
+        if (this.gameList[gameId].info.gameSettings.isSpeedUp) {
+          this.gameList[gameId].play.ballDxDy.x += SPEEDUP_AMOUNT;
+          this.gameList[gameId].play.ballDxDy.y += SPEEDUP_AMOUNT;
+        }
+        isFetchedFromDb = true;
+      } catch (error) {
+        if (error instanceof NotFoundException) {
+          socket?.emit(
+            'exception',
+            `The user is not part of this game: gameId=${gameId}, userId=${data.userId}`,
+          );
+        } else {
+          console.error(error);
+        }
+        return;
       }
-      isFetchedFromDb = true;
     }
 
     // ログインユーザがゲームに含まれていなければエラー
