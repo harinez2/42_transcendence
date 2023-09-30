@@ -28,7 +28,7 @@ const MatchComponent = ({
   const [score, setScore] = useState<string>("");
   const [date, setDate] = useState<string>("");
   const [icon, setIcon] = useState<string>(
-    `http://localhost:3000/api/users/avatar/0`,
+    `/api/users/avatar/${profile.userId}`,
   );
   const [result, setResult] = useState<string>();
 
@@ -65,7 +65,9 @@ const MatchComponent = ({
         .then((result) => {
           if (result.success) {
             setOpponent(result.data);
-            setIcon(`http://localhost:3000/api/users/avatar/${opponentId}`);
+            setIcon(
+              `/api/users/avatar/${result.data.id}?stamp=${result.data.updated}`,
+            );
           } else {
             console.error(result.error);
           }

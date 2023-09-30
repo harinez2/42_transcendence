@@ -16,7 +16,7 @@ const HeaderMenu: NextPage = () => {
 
   const [user, setUser] = useState<UserType>();
   const [icon, setIcon] = useState<string>(
-    `http://localhost:3000/api/users/avatar/${profile.userId}`,
+    `/api/users/avatar/${profile.userId}`,
   );
   const [timer, setTimer] = useState<number>(0);
 
@@ -48,10 +48,8 @@ const HeaderMenu: NextPage = () => {
           if (result.success) {
             setUser(result.data);
             setTimeout(() => setTimer(timer + 1), 60 * 1000);
-            if (user?.avatar) {
-              setIcon(
-                `http://localhost:3000/api/users/avatar/${profile.userId}`,
-              );
+            if (user) {
+              setIcon(`/api/users/avatar/${user.id}?stamp=${user.updated}`);
             }
           } else {
             console.error(result.error);

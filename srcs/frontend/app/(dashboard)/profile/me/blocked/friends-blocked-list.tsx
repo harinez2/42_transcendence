@@ -5,9 +5,8 @@ import { useContext, useEffect } from "react";
 import MUserOps from "../../../components/modal/m-user-ops";
 import ModalPopup from "../../../components/modal/modal-popup";
 import { useState, useCallback } from "react";
-import { ProfileType } from "@/app/types";
+import { ProfileType, UserType } from "@/app/types";
 import makeAPIRequest from "@/app/api/api";
-import { UserType } from "./types";
 import { useRouter } from "next/navigation";
 import { ProfileContext, SocketContext } from "../../../layout";
 
@@ -28,7 +27,7 @@ const BlockedComponent = ({ blocked }: { blocked: UserType }) => {
 
   const [status, setStatus] = useState<string>("offline");
   const [icon, setIcon] = useState<string>(
-    `http://localhost:3000/api/users/avatar/${blocked.id}`,
+    `/api/users/avatar/${blocked.id}?stamp=${blocked.updated}`,
   );
   const [timer, setTimer] = useState<number>(0);
 
@@ -40,7 +39,7 @@ const BlockedComponent = ({ blocked }: { blocked: UserType }) => {
           if (result.success) {
             setStatus(result.data);
             setTimeout(() => setTimer(timer + 1), 60 * 1000);
-            setIcon(`http://localhost:3000/api/users/avatar/${blocked.id}`);
+            setIcon(`/api/users/avatar/${blocked.id}?stamp=${blocked.updated}`);
           } else {
             console.error(result.error);
           }

@@ -47,7 +47,7 @@ const UserComponent = ({
         className="group flex items-center rounded-lg p-2 text-white hover:bg-gray-700"
       >
         <Image
-          src={`/api/users/avatar/${user.id}`}
+          src={`/api/users/avatar/${user.id}?stamp=${user.updated}`}
           className="h-auto max-w-full rounded-full"
           width={30}
           height={30}

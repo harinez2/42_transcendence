@@ -8,7 +8,7 @@ CREATE TYPE "UserType" AS ENUM ('OWNER', 'ADMIN', 'USER');
 CREATE TABLE "User" (
     "id" SERIAL NOT NULL,
     "username" TEXT NOT NULL,
-    "avatar" BYTEA,
+    "updated" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
@@ -24,6 +24,16 @@ CREATE TABLE "Auth" (
     "twoFactorAuthSecret" TEXT,
 
     CONSTRAINT "Auth_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Avatar" (
+    "id" SERIAL NOT NULL,
+    "userId" INTEGER NOT NULL,
+    "data" BYTEA,
+    "updated" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Avatar_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -157,6 +167,9 @@ CREATE UNIQUE INDEX "Auth_userId_key" ON "Auth"("userId");
 CREATE UNIQUE INDEX "Auth_email_key" ON "Auth"("email");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "Avatar_userId_key" ON "Avatar"("userId");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "Profile_userId_key" ON "Profile"("userId");
 
 -- CreateIndex
@@ -185,6 +198,9 @@ CREATE UNIQUE INDEX "GameSettings_gameId_key" ON "GameSettings"("gameId");
 
 -- AddForeignKey
 ALTER TABLE "Auth" ADD CONSTRAINT "Auth_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Avatar" ADD CONSTRAINT "Avatar_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Profile" ADD CONSTRAINT "Profile_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

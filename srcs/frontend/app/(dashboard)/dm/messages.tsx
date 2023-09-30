@@ -8,7 +8,7 @@ const MessageComponent = ({ message }: { message: DmMessageType }) => {
       <div className="mt-2 p-4">
         <div className="mb-2 flex flex-row items-end space-x-6">
           <Image
-            src={`/api/users/avatar/${message.senderId}`}
+            src={`/api/users/avatar/${message.senderId}?stamp=${message.sender.updated}`}
             className="h-auto max-w-full rounded-full"
             width={30}
             height={30}

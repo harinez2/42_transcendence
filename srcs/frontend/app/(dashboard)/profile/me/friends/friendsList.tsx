@@ -4,13 +4,12 @@ import { useContext, useEffect } from "react";
 import MUserOps from "../../../components/modal/m-user-ops";
 import ModalPopup from "../../../components/modal/modal-popup";
 import { useState, useCallback } from "react";
-import { ProfileType } from "@/app/types";
+import { ProfileType, UserType } from "@/app/types";
 import makeAPIRequest from "@/app/api/api";
-import { FolloweeType } from "./types";
 import { useRouter } from "next/navigation";
 import { ProfileContext, SocketContext } from "../../../layout";
 
-const FriendComponent = ({ followee }: { followee: FolloweeType }) => {
+const FriendComponent = ({ followee }: { followee: UserType }) => {
   const router = useRouter();
 
   const profile: ProfileType = useContext(ProfileContext);
@@ -27,7 +26,7 @@ const FriendComponent = ({ followee }: { followee: FolloweeType }) => {
 
   const [status, setStatus] = useState<string>("offline");
   const [icon, setIcon] = useState<string>(
-    `http://localhost:3000/api/users/avatar/${followee.id}`,
+    `/api/users/avatar/${followee.id}?stamp=${followee.updated}`,
   );
   const [timer, setTimer] = useState<number>(0);
 
@@ -39,7 +38,9 @@ const FriendComponent = ({ followee }: { followee: FolloweeType }) => {
           if (result.success) {
             setStatus(result.data);
             setTimeout(() => setTimer(timer + 1), 60 * 1000);
-            setIcon(`http://localhost:3000/api/users/avatar/${followee.id}`);
+            setIcon(
+              `/api/users/avatar/${followee.id}?stamp=${followee.updated}`,
+            );
           } else {
             console.error(result.error);
           }
@@ -89,12 +90,12 @@ const FriendComponent = ({ followee }: { followee: FolloweeType }) => {
 
 const FriendsList = () => {
   const profile: ProfileType = useContext(ProfileContext);
-  const [followees, setFollowees] = useState<FolloweeType[]>([]);
+  const [followees, setFollowees] = useState<UserType[]>([]);
 
   useEffect(() => {
     if (profile.userId != 0) {
       // followees一覧を取得
-      makeAPIRequest<FolloweeType[]>(
+      makeAPIRequest<UserType[]>(
         "get",
         `/friends/follow/followees/${profile.userId}`,
       )
