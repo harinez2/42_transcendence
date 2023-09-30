@@ -34,7 +34,7 @@ const MatchMakingDialog = ({
   return (
     <div
       onClick={stopPropagation}
-      className="h-[338px] w-[420px] overflow-hidden bg-darkslategray-100 text-left font-body text-5xl text-base-white"
+      className="relative h-[338px] w-[420px] overflow-hidden bg-darkslategray-100 text-left font-body text-5xl text-base-white"
     >
       <div className="absolute left-[27px] top-[30px] tracking-[0.1em]">
         Match making
