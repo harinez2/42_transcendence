@@ -13,20 +13,30 @@ const ChannelCategory = ({
   setChannels: (channels: ChannelType[]) => void; // eslint-disable-line no-unused-vars
 }) => {
   const { ref, showModal, closeModal } = useModal();
+  const [open, setOpen] = React.useState(false);
+  const onClose = () => {
+    setOpen(false);
+    closeModal();
+  };
+  const openModal = () => {
+    setOpen(true);
+    showModal();
+  };
 
   return (
     <span className="flex flex-row items-center justify-between p-2 font-bold uppercase text-gray-500">
       <div>{categoryName}</div>
-      <ShowDialogButton showModal={showModal} />
+      <ShowDialogButton showModal={openModal} />
 
       <dialog
-        onClick={closeModal}
+        onClick={onClose}
         ref={ref}
         style={{ top: "30px" }}
         className="rounded-lg bg-gray-600"
       >
         <MCreateChannel
-          closeModal={closeModal}
+          isClose={!open}
+          closeModal={onClose}
           channels={channels}
           setChannels={setChannels}
         />
