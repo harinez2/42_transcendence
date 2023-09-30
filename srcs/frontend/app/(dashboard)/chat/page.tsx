@@ -114,7 +114,7 @@ const ChatUI = () => {
   }, [error]);
 
   useEffect(() => {
-    socket?.emit("chat-init");
+    socket?.emit("chat-reset");
     makeAPIRequest<UserType[]>("get", "/friends/block/blockeds")
       .then((result) => {
         if (result.success) {
@@ -136,6 +136,8 @@ const ChatUI = () => {
         console.log("退室:", selectedChannel);
         socket?.emit("chat-leave", selectedChannel);
       }
+      console.log("退室(all)");
+      socket?.emit("chat-reset");
       // イベントハンドラの解除
       socket?.off("chat-message");
       setMessages([]);
