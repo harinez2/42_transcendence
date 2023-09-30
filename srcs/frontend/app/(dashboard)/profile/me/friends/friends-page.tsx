@@ -1,7 +1,7 @@
 "use client";
 
 import HeaderMenu from "../../../components/headermenu";
-import FriendsList from "./friendsList";
+import FriendsList from "./friends-list";
 import FriendsMenu from "../../../components/friendsmenu";
 
 const FriendsPage = () => {

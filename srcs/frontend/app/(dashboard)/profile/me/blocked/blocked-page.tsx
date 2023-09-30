@@ -7,7 +7,7 @@ import MAddFriend from "../../../components/modal/m-add-friend";
 import { useRouter } from "next/navigation";
 import HeaderMenu from "../../../components/headermenu";
 import ModalPopup from "../../../components/modal/modal-popup";
-import BlockedList from "./friends-blocked-list";
+import BlockedList from "./blocked-list";
 
 const FriendsBlockedPage: NextPage = () => {
   const [isMAddFriendPopupOpen, setMAddFriendPopupOpen] = useState(false);
@@ -27,9 +27,9 @@ const FriendsBlockedPage: NextPage = () => {
 
   return (
     <>
-      <div className="relative h-screen w-full bg-darkslategray-100 text-left font-body text-5xl text-base-white">
+      <div className="relative h-screen w-full bg-darkslategray-100 overflow-y-auto text-left font-body text-5xl text-base-white">
         <HeaderMenu />
-        <div className="absolute left-[470px] top-[327px] h-screen w-[500px] overflow-y-auto text-xl">
+        <div className="absolute left-[470px] top-[327px] h-screen w-[500px] text-xl">
           <div className="absolute left-[calc(50%_-_250px)] top-[-5px] h-[52px] w-[500px]">
             <img
               className="absolute left-[calc(50%_-_250px)] top-[49.5px] h-[5px] w-[500px]"
