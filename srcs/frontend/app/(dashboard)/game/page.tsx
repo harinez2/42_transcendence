@@ -43,9 +43,9 @@ const GameUI = () => {
             onClick={() => router.push("/game/preparing")}
             className="group flex cursor-pointer items-center rounded-lg bg-black p-2 text-white hover:bg-gray-700"
           >
-            <span className="shrink-0 pl-8 pr-8 text-29xl">Play game</span>
+            <span className="shrink-0 px-8 text-29xl">Play game</span>
           </button>
-          <span className="pl-8 pr-8 text-xl">
+          <span className="px-8 text-xl">
             - w key to move up your paddle, s key to move down!
             <br />- The first one to get displayed points wins.
           </span>

@@ -123,7 +123,7 @@ const ShowSettingComponent = ({
           onOutsideClick={onClose}
         >
           <MChatChannelOps
-            onClose={openModal}
+            onClose={onClose}
             stopPropagation={stopPropagation}
             user={user}
             router={router}

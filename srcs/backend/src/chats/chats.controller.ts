@@ -279,6 +279,33 @@ export class ChatsController {
     );
   }
 
+  @ApiOperation({ summary: '他の人をチャンネルから退室させる' })
+  @ApiParam({
+    name: 'channelid',
+    type: 'string',
+    example: '1',
+  })
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
+  @ApiResponse({
+    status: 200,
+    description: '指定したチャンネルIDの情報を返却',
+    type: ChannelInfoDto,
+  })
+  @Delete(':channelid/users/:userid')
+  async leaveOthersFromChannel(
+    @Param('channelid') channelId: string,
+    @Param('userid') userId: string,
+    @Request() req,
+  ): Promise<ChannelInfoDto> {
+    return await this.chatsService.removeChannelUsers(
+      Number(channelId),
+      Number(userId),
+      UserType.USER,
+      req.user.id,
+    );
+  }
+
   @ApiOperation({ summary: '現在Banしているユーザ一覧を取得する' })
   @ApiParam({
     name: 'channelid',

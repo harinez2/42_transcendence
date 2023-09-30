@@ -295,6 +295,15 @@ export class ChatsService {
           'Admin rights required to operate this method.',
         );
       }
+      if (
+        type === UserType.USER &&
+        userId !== operatorUserId &&
+        !(await this.isAdminUsers(channelId, operatorUserId))
+      ) {
+        throw new UnauthorizedException(
+          'Admin rights required to operate this method.',
+        );
+      }
 
       const isChannelOwner = await this.isChannelUsers(
         channelId,
