@@ -33,12 +33,6 @@ export const MChatChannelOps: NextPage<MChatChannelOpsType> = ({
 
   const onClickKick = useCallback(async () => {
     if (channel && user) {
-      // admin権限チェック
-      if (!channel.users.admin.includes(profile.userId)) {
-        setError("Kick: Admin rights required to operate this method.");
-        return;
-      }
-
       await makeAPIRequest<ChannelType>(
         "delete",
         `/chats/${channel.channelId}/users/${user.id}`,
