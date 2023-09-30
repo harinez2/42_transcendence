@@ -5,9 +5,8 @@ import { useContext, useEffect } from "react";
 import MUserOps from "../../../components/modal/m-user-ops";
 import ModalPopup from "../../../components/modal/modal-popup";
 import { useState, useCallback } from "react";
-import { ProfileType } from "@/app/types";
+import { ProfileType, UserType } from "@/app/types";
 import makeAPIRequest from "@/app/api/api";
-import { UserType } from "./types";
 import { useRouter } from "next/navigation";
 import { ProfileContext, SocketContext } from "../../../layout";
 

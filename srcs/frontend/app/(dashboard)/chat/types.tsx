@@ -1,3 +1,5 @@
+import { UserType } from "@/app/types";
+
 export type ChannelType = {
   channelId: number;
   channelName: string;
@@ -16,12 +18,7 @@ export type ChannelType = {
 export type MessageType = {
   messageId: number;
   channelId: number;
-  sender: {
-    id: number;
-    email: string;
-    username: string;
-    staff: boolean;
-  };
+  sender: UserType;
   senderId: number;
   content: string;
   createdAt: Date;

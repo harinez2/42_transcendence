@@ -3,11 +3,10 @@
 import HeaderMenu from "../../components/headermenu";
 import RankingContainer from "../../components/raking-container";
 import MatchHistoryContainer from "../match-history-container";
-import { ProfileType } from "@/app/types";
+import { ProfileType, UserType } from "@/app/types";
 import { useCallback, useContext, useEffect, useState } from "react";
 import { ProfileContext } from "../../layout";
 import makeAPIRequest from "@/app/api/api";
-import { UserType } from "./blocked/types";
 import { useRouter } from "next/navigation";
 
 const MePage = () => {

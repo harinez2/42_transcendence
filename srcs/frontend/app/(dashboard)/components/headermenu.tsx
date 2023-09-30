@@ -48,10 +48,8 @@ const HeaderMenu: NextPage = () => {
           if (result.success) {
             setUser(result.data);
             setTimeout(() => setTimer(timer + 1), 60 * 1000);
-            if (user?.avatar) {
-              setIcon(
-                `http://localhost:3000/api/users/avatar/${profile.userId}`,
-              );
+            if (user) {
+              setIcon(`http://localhost:3000/api/users/avatar/${user.id}`);
             }
           } else {
             console.error(result.error);

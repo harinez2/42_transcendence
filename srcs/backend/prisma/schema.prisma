@@ -17,9 +17,11 @@ datasource db {
 model User {
   id       Int      @id @default(autoincrement())
   username String   @unique
-  avatar   Bytes?
-  profile  Profile?
-  auth     Auth?
+  updated  DateTime @updatedAt
+
+  avatar  Avatar?
+  auth    Auth?
+  profile Profile?
 
   followee Follow[] @relation("Followee")
   follower Follow[] @relation("Follower")
@@ -49,6 +51,15 @@ model Auth {
   password             String?
   twoFactorAuthEnabled Boolean @default(false)
   twoFactorAuthSecret  String?
+}
+
+model Avatar {
+  id     Int  @id @default(autoincrement())
+  userId Int  @unique
+  user   User @relation(fields: [userId], references: [id])
+
+  data    Bytes
+  updated DateTime @updatedAt
 }
 
 model Profile {

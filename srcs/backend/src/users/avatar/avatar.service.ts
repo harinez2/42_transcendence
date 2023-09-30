@@ -14,15 +14,15 @@ export class AvatarService {
 
   async getAvatar(userId: number) {
     try {
-      const user = await this.prisma.user.findUnique({
-        where: { id: userId },
-        select: { avatar: true },
+      const avatar = await this.prisma.avatar.findUnique({
+        where: { userId: userId },
+        select: { data: true },
       });
-      const avatar = user?.avatar || null;
-      if (!avatar) {
+      const data = avatar?.data || null;
+      if (!data) {
         return await this.getDefaultAvatar();
       }
-      return avatar;
+      return data;
     } catch {
       throw new NotFoundException();
     }
@@ -49,9 +49,17 @@ export class AvatarService {
     }
 
     try {
-      await this.prisma.user.update({
-        where: { id: userId },
-        data: { avatar: jpegBuffer },
+      await this.prisma.avatar.upsert({
+        create: {
+          userId: userId,
+          data: jpegBuffer,
+        },
+        update: {
+          data: jpegBuffer,
+        },
+        where: {
+          userId: userId,
+        },
       });
     } catch (e) {
       console.log(e);
@@ -61,9 +69,8 @@ export class AvatarService {
 
   async deleteAvatar(userId: number) {
     try {
-      await this.prisma.user.update({
+      await this.prisma.avatar.delete({
         where: { id: userId },
-        data: { avatar: null },
       });
     } catch (e) {
       console.log(e);

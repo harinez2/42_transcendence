@@ -4,9 +4,7 @@ import React, { useEffect, useState } from "react";
 import makeAPIRequest from "@/app/api/api";
 import Link from "next/link";
 import Image from "next/image";
-
-export type UserType = { id: number; username: string };
-export type AuthType = { staff: boolean; twoFactorAuthEnabled: boolean };
+import { UserType } from "@/app/types";
 
 export default function Profile() {
   const [profile, setProfile] = useState<UserType | null>(null);
