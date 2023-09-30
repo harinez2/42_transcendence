@@ -44,6 +44,7 @@ const MEditChannel: NextPage<MEditChannelType> = ({
     setChannelTypeEnabled(channel.channelType === "PRIVATE" ? true : false);
     setPublicityButtonDisabled(channel.isPassword);
     setPasswordEnabled(channel.isPassword);
+    setPasswordDisabled(!channel.isPassword);
     setPasswordButtonDisabled(channel.channelType === "PRIVATE" ? false : true);
   }, [channel, isClose]);
 
