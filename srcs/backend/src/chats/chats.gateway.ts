@@ -57,8 +57,19 @@ export class ChatsGateway {
         where: { channelId: Number(data.channelId) },
         include: { sender: true },
       });
+
+      const blockeds = await this.prisma.block.findMany({
+        where: { blockerId: data.requestUserId },
+        select: { blockedId: true },
+      });
+      const blockedIds = blockeds.map((data) => {
+        return data.blockedId;
+      });
+
       for (const post of posts) {
-        client?.emit('chat-message', post);
+        if (!blockedIds.includes(post.senderId)) {
+          client?.emit('chat-message', post);
+        }
       }
     } catch (e) {
       throw new WsException(e.message);
