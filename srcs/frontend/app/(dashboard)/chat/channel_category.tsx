@@ -1,7 +1,7 @@
-import React from "react";
-import useModal from "../components/useModal";
+import React, { useCallback, useState } from "react";
 import { ChannelType } from "./types";
 import MCreateChannel from "../components/modal/m-create-channel";
+import ModalPopup from "../components/modal/modal-popup";
 
 const ChannelCategory = ({
   categoryName,
@@ -12,35 +12,33 @@ const ChannelCategory = ({
   channels: ChannelType[];
   setChannels: (channels: ChannelType[]) => void; // eslint-disable-line no-unused-vars
 }) => {
-  const { ref, showModal, closeModal } = useModal();
-  const [open, setOpen] = React.useState(false);
-  const onClose = () => {
+  const [open, setOpen] = useState(false);
+  const onClose = useCallback(() => {
     setOpen(false);
-    closeModal();
-  };
-  const openModal = () => {
+  }, []);
+  const openModal = useCallback(() => {
     setOpen(true);
-    showModal();
-  };
+  }, []);
 
   return (
     <span className="flex flex-row items-center justify-between p-2 font-bold uppercase text-gray-500">
       <div>{categoryName}</div>
       <ShowDialogButton showModal={openModal} />
 
-      <dialog
-        onClick={onClose}
-        ref={ref}
-        style={{ top: "30px" }}
-        className="rounded-lg bg-gray-600"
-      >
-        <MCreateChannel
-          isClose={!open}
-          closeModal={onClose}
-          channels={channels}
-          setChannels={setChannels}
-        />
-      </dialog>
+      {open && (
+        <ModalPopup
+          overlayColor="rgba(113, 113, 113, 0.3)"
+          placement="Centered"
+          onOutsideClick={onClose}
+        >
+          <MCreateChannel
+            isClose={!open}
+            closeModal={onClose}
+            channels={channels}
+            setChannels={setChannels}
+          />
+        </ModalPopup>
+      )}
     </span>
   );
 };
