@@ -51,7 +51,7 @@ export class DmsGateway {
         include: { sender: true },
       });
       for (const post of posts) {
-        client.emit('dm-message', post);
+        client?.emit('dm-message', post);
       }
     } catch (e) {
       throw new WsException(e.message);
@@ -84,9 +84,9 @@ export class DmsGateway {
         createdMessage.messageId,
       );
       // メッセージをブロードキャスト(自分以外)
-      socket.to('dm_' + data.channelId).emit('dm-message', addedMessage);
+      socket.to('dm_' + data.channelId)?.emit('dm-message', addedMessage);
       // メッセージを自分にも送信
-      socket.emit('dm-message', addedMessage);
+      socket?.emit('dm-message', addedMessage);
     } catch (e) {
       throw new WsException(e.message);
     }

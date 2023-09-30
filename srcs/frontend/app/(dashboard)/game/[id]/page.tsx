@@ -50,7 +50,7 @@ const GamePlayingUI = ({ params }: { params: { id: string } }) => {
 
   useEffect(() => {
     if (socket && profile) {
-      socket.emit("game-join", { gameId: params.id, userId: profile.userId });
+      socket?.emit("game-join", { gameId: params.id, userId: profile.userId });
       // スコアを受け取る
       socket.on("game-update_score", (data: any) => {
         console.log("update_score: ", data);

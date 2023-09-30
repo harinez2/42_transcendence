@@ -38,7 +38,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
         console.log("connected:", socket.id);
         // オンラインを申告
         console.log("sent status-add_to_online: userId=", profile.userId);
-        socket.emit("status-add_to_online", profile.userId);
+        socket?.emit("status-add_to_online", profile.userId);
       });
 
       socket.on("info", (data: any) => {
