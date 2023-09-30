@@ -35,6 +35,7 @@ const ChatUI = () => {
   const [messages, setMessages] = useState<MessageType[]>([]);
   const [status, setStatus] = useState<StatusType[]>([]);
   const [timer, setTimer] = useState<number>(0);
+  const [blockedUserids, setBlockedUserids] = useState<number[]>([]);
 
   const profile: ProfileType = useContext(ProfileContext);
   const socket: any = useContext(SocketContext);
@@ -100,6 +101,7 @@ const ChatUI = () => {
 
       // socketのイベントハンドラを登録
       socket?.on("chat-message", (message: MessageType) => {
+        if (blockedUserids.includes(message.senderId)) return;
         setMessages((prevMessages) => [...prevMessages, message]);
       });
     }
@@ -112,6 +114,20 @@ const ChatUI = () => {
   }, [error]);
 
   useEffect(() => {
+    makeAPIRequest<UserType[]>("get", "/friends/block/blockeds")
+      .then((result) => {
+        if (result.success) {
+          const blockedIds = result.data.map((user) => {
+            return user.id;
+          });
+          setBlockedUserids(blockedIds);
+        } else {
+          console.error(result.error);
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error.message);
+      });
     // このコンポーネントがアンマウントされた時にクリーンアップ
     return () => {
       // 他の画面へ遷移したときは退室する
@@ -121,6 +137,7 @@ const ChatUI = () => {
       }
       // イベントハンドラの解除
       socket?.off("chat-message");
+      setMessages([]);
     };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
