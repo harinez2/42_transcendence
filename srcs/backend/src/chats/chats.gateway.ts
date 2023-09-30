@@ -24,6 +24,7 @@ export class ChatsGateway {
   resetChatStatus(@ConnectedSocket() socket: Socket) {
     for (const room of socket.rooms) {
       if (room.startsWith('chat_')) {
+        socket.to(room).emit('userUpdated');
         socket.leave(room);
         console.log(`left on reset: room: ${room}, socket id: ${socket.id}`);
       }
@@ -33,7 +34,9 @@ export class ChatsGateway {
   // 入室
   @SubscribeMessage('chat-join')
   joinRoom(@ConnectedSocket() socket: Socket, @MessageBody() data: any) {
-    socket.join('chat_' + data.channelId);
+    const roomName = `chat_${data.channelId}`;
+    socket.join(roomName);
+    socket.to(roomName).emit('userUpdated');
     console.log(
       `joined: channelId: ${data.channelId}, socket id: ${socket.id}`,
     );
@@ -42,7 +45,9 @@ export class ChatsGateway {
   // 退室(socket切断時はleaveログが出ないがleaveしたことになっている)
   @SubscribeMessage('chat-leave')
   leaveRoom(@ConnectedSocket() socket: Socket, @MessageBody() data: any) {
-    socket.leave('chat_' + data.channelId);
+    const roomName = `chat_${data.channelId}`;
+    socket.to(roomName).emit('userUpdated');
+    socket.leave(roomName);
     console.log(`left: channelId: ${data.channelId}, socket id: ${socket.id}`);
   }
 

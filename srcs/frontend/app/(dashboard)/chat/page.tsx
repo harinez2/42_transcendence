@@ -13,6 +13,7 @@ import UserStatusCategory from "./user_status_category";
 import HeaderMenu from "../components/headermenu";
 import MessageList from "./messages";
 import { useRouter } from "next/navigation";
+import { Socket } from "socket.io-client";
 
 enum OnlineStatus { // eslint-disable-line no-unused-vars
   OFFLINE = "offline", // eslint-disable-line no-unused-vars
@@ -38,7 +39,7 @@ const ChatUI = () => {
   const [blockedUserids, setBlockedUserids] = useState<number[]>([]);
 
   const profile: ProfileType = useContext(ProfileContext);
-  const socket: any = useContext(SocketContext);
+  const socket = useContext<Socket>(SocketContext);
   const error: any = useContext(ErrorContext);
   const router = useRouter();
 
@@ -54,15 +55,18 @@ const ChatUI = () => {
     });
   };
 
-  useEffect(() => {
+  function fetchStatus() {
     if (profile && profile.userId && selectedChannel) {
-      // 選択したチャンネルのステータス一覧を取得
       makeAPIRequest<StatusType[]>(
         "get",
         `/status/channel/${selectedChannel.channelId}`,
       )
         .then((result) => {
           if (result.success) {
+            console.log("loaded status data: ", result.data);
+            for (const res of result.data) {
+              console.log(res);
+            }
             setStatus(result.data);
             // 1分後に再度APIをたたいてオンライン状態を取得する
             setTimeout(() => setTimer(timer + 1), 60 * 1000);
@@ -74,6 +78,10 @@ const ChatUI = () => {
           console.error("Error:", error.message);
         });
     }
+  }
+
+  useEffect(() => {
+    fetchStatus();
   }, [selectedChannel, timer]);
 
   useEffect(() => {
@@ -100,6 +108,11 @@ const ChatUI = () => {
       socket?.emit("status-switch_to_online");
 
       // socketのイベントハンドラを登録
+      socket?.off("userUpdated");
+      socket?.on("userUpdated", () => {
+        console.log("received userUpdated");
+        fetchStatus();
+      });
       socket?.off("chat-message");
       socket?.on("chat-message", (message: MessageType) => {
         if (blockedUserids.includes(message.senderId)) return;
@@ -141,6 +154,7 @@ const ChatUI = () => {
       socket?.emit("chat-reset");
       // イベントハンドラの解除
       socket?.off("chat-message");
+      socket?.off("userUpdated");
       setMessages([]);
     };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -250,66 +264,62 @@ const ChatUI = () => {
           />
           {error != null && <p>{error}</p>}
           <div className="z-50 h-full w-48 flex-none bg-darkslategray-200 px-3 py-4">
-            <UserStatusCategory categoryName="gaming" />
-            <ul className="space-y-2 font-medium">
-              {selectedChannel?.users.user.map(
-                (userId) =>
-                  status.some(
-                    (data) =>
-                      data.userId === userId &&
-                      data.status === OnlineStatus.GAMING,
-                  ) && (
-                    <UserComponent
-                      key={userId}
-                      user={status.find((e) => e.userId === userId)?.user}
-                      router={router}
-                      socket={socket}
-                      profile={profile}
-                      channel={selectedChannel}
-                    />
-                  ),
-              )}
-            </ul>
-            <UserStatusCategory categoryName="online" />
-            <ul className="space-y-2 font-medium">
-              {selectedChannel?.users.user.map(
-                (userId) =>
-                  status.some(
-                    (data) =>
-                      data.userId === userId &&
-                      data.status === OnlineStatus.ONLINE,
-                  ) && (
-                    <UserComponent
-                      key={userId}
-                      user={status.find((e) => e.userId === userId)?.user}
-                      router={router}
-                      socket={socket}
-                      profile={profile}
-                      channel={selectedChannel}
-                    />
-                  ),
-              )}
-            </ul>
-            <UserStatusCategory categoryName="offline" />
-            <ul className="mt-4 space-y-2 border-t border-gray-700 pt-4 font-medium">
-              {selectedChannel?.users.user.map(
-                (userId) =>
-                  status.some(
-                    (data) =>
-                      data.userId === userId &&
-                      data.status === OnlineStatus.OFFLINE,
-                  ) && (
-                    <UserComponent
-                      key={userId}
-                      user={status.find((e) => e.userId === userId)?.user}
-                      router={router}
-                      socket={socket}
-                      profile={profile}
-                      channel={selectedChannel}
-                    />
-                  ),
-              )}
-            </ul>
+            {selectedChannel && (
+              <>
+                <div>{selectedChannel.channelName}</div>
+                <UserStatusCategory categoryName="gaming" />
+                <ul className="space-y-2 font-medium">
+                  {status.map((s) =>
+                    s.status == OnlineStatus.GAMING ? (
+                      <UserComponent
+                        key={`${s.userId}_${s.status}`}
+                        user={s.user}
+                        router={router}
+                        socket={socket}
+                        profile={profile}
+                        channel={selectedChannel}
+                      />
+                    ) : (
+                      <></>
+                    ),
+                  )}
+                </ul>
+                <UserStatusCategory categoryName="online" />
+                <ul className="space-y-2 font-medium">
+                  {status.map((s) =>
+                    s.status == OnlineStatus.ONLINE ? (
+                      <UserComponent
+                        key={`${s.userId}_${s.status}`}
+                        user={s.user}
+                        router={router}
+                        socket={socket}
+                        profile={profile}
+                        channel={selectedChannel}
+                      />
+                    ) : (
+                      <></>
+                    ),
+                  )}
+                </ul>
+                <UserStatusCategory categoryName="offline" />
+                <ul className="space-y-2 font-medium">
+                  {status.map((s) =>
+                    s.status == OnlineStatus.OFFLINE ? (
+                      <UserComponent
+                        key={`${s.userId}_${s.status}`}
+                        user={s.user}
+                        router={router}
+                        socket={socket}
+                        profile={profile}
+                        channel={selectedChannel}
+                      />
+                    ) : (
+                      <></>
+                    ),
+                  )}
+                </ul>
+              </>
+            )}
           </div>
         </div>
       </div>
