@@ -1,8 +1,9 @@
 import Image from "next/image";
 import { DmChannelType } from "./types";
 import { ProfileType } from "@/app/types";
-import useModal from "../components/useModal";
 import MAddUserDm from "./m-add-user-dm";
+import ModalPopup from "../components/modal/modal-popup";
+import { useCallback, useState } from "react";
 
 const UserComponent = ({
   profile,
@@ -57,7 +58,13 @@ const UserListComponent = ({
   onSelectChannel: (c: DmChannelType) => void; // eslint-disable-line no-unused-vars
   onUpdateChannel: () => void;
 }) => {
-  const { ref, showModal, closeModal } = useModal();
+  const [open, setOpen] = useState(false);
+  const onClose = useCallback(() => {
+    setOpen(false);
+  }, []);
+  const openModal = useCallback(() => {
+    setOpen(true);
+  }, []);
 
   return (
     <div className="fixed h-[calc(100%_-_132px)] w-64 shrink-0 bg-darkslategray-200 px-3 py-4">
@@ -74,20 +81,21 @@ const UserListComponent = ({
         </ul>
         <button
           className="fixed bottom-5 ml-6 h-[38px] w-[160px] cursor-pointer items-center justify-center  rounded-[5px] bg-neutral-400"
-          onClick={showModal}
+          onClick={openModal}
         >
           <div className="text-center text-xl font-normal tracking-widest text-white">
             Add user
           </div>
         </button>
-        <dialog
-          onClick={closeModal}
-          ref={ref}
-          style={{ top: "30px" }}
-          className="rounded-lg bg-darkslategray-100 px-6 py-2"
-        >
-          <MAddUserDm onClose={closeModal} onUpdateChannel={onUpdateChannel} />
-        </dialog>
+        {open && (
+          <ModalPopup
+            overlayColor="rgba(113, 113, 113, 0.3)"
+            placement="Centered"
+            onOutsideClick={onClose}
+          >
+            <MAddUserDm onClose={onClose} onUpdateChannel={onUpdateChannel} />
+          </ModalPopup>
+        )}
       </div>
     </div>
   );

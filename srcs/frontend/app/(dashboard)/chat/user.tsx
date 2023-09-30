@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import React, { useCallback, useState } from "react";
-import useModal from "../components/useModal";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context";
 import { Socket } from "socket.io-client";
 import { ProfileType } from "@/app/types";
@@ -91,7 +90,13 @@ const ShowSettingComponent = ({
   profile,
   channel,
 }: UserProps) => {
-  const { ref, showModal, closeModal } = useModal();
+  const [open, setOpen] = useState(false);
+  const onClose = useCallback(() => {
+    setOpen(false);
+  }, []);
+  const openModal = useCallback(() => {
+    setOpen(true);
+  }, []);
 
   const stopPropagation = useCallback(
     (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -104,28 +109,30 @@ const ShowSettingComponent = ({
     <>
       {user?.id !== profile.userId && (
         <button
-          onClick={showModal}
+          onClick={openModal}
           className="group flex items-center rounded-lg p-2 text-white hover:bg-gray-700"
         >
           <SettingIcon />
         </button>
       )}
-      <dialog
-        onClick={closeModal}
-        ref={ref}
-        style={{ top: "30px" }}
-        className="rounded-lg bg-darkslategray-100 px-6 py-2"
-      >
-        <MChatChannelOps
-          onClose={closeModal}
-          stopPropagation={stopPropagation}
-          user={user}
-          router={router}
-          socket={socket}
-          profile={profile}
-          channel={channel}
-        />
-      </dialog>
+
+      {open && (
+        <ModalPopup
+          overlayColor="rgba(113, 113, 113, 0.3)"
+          placement="Centered"
+          onOutsideClick={onClose}
+        >
+          <MChatChannelOps
+            onClose={openModal}
+            stopPropagation={stopPropagation}
+            user={user}
+            router={router}
+            socket={socket}
+            profile={profile}
+            channel={channel}
+          />
+        </ModalPopup>
+      )}
     </>
   );
 };

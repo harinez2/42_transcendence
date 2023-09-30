@@ -1,5 +1,4 @@
 import React, { useContext } from "react";
-import useModal from "../components/useModal";
 import Image from "next/image";
 import type { ChannelType } from "./types";
 import MEditChannel from "../components/modal/m-edit-channel";
@@ -7,6 +6,7 @@ import { Tooltip } from "@mui/material";
 import { ProfileType } from "../../types";
 import { ProfileContext } from "../layout";
 import makeAPIRequest from "../../api/api";
+import ModalPopup from "../components/modal/modal-popup";
 
 const ChannelName = ({
   channel,
@@ -23,18 +23,15 @@ const ChannelName = ({
   removeChannel: (channelId: number) => void; // eslint-disable-line no-unused-vars
   handleChannelLeave: (channelId: ChannelType) => void; // eslint-disable-line no-unused-vars
 }) => {
-  const { ref, showModal, closeModal } = useModal();
   const [open, setOpen] = React.useState(false);
   const profile: ProfileType = useContext(ProfileContext);
 
   const onClose = () => {
     setOpen(false);
-    closeModal();
   };
 
   const openModal = () => {
     setOpen(true);
-    showModal();
   };
 
   const handleClick = () => {
@@ -98,20 +95,22 @@ const ChannelName = ({
               />
             </Tooltip>
           )}
-          <dialog
-            onClick={onClose}
-            ref={ref}
-            style={{ top: "30px" }}
-            className="rounded-lg bg-gray-600"
-          >
-            <MEditChannel
-              isClose={!open}
-              onClose={onClose}
-              channel={channel}
-              setChannel={setChannel}
-              removeChannel={removeChannel}
-            />
-          </dialog>
+
+          {open && (
+            <ModalPopup
+              overlayColor="rgba(113, 113, 113, 0.3)"
+              placement="Centered"
+              onOutsideClick={onClose}
+            >
+              <MEditChannel
+                isClose={!open}
+                onClose={onClose}
+                channel={channel}
+                setChannel={setChannel}
+                removeChannel={removeChannel}
+              />
+            </ModalPopup>
+          )}
         </span>
       </div>
     </li>
