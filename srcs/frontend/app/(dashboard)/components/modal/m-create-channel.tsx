@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import makeAPIRequest from "@/app/api/api";
 import type { NextPage } from "next";
 import { TextField, FormControlLabel, Switch } from "@mui/material";
@@ -7,16 +7,24 @@ import { ChannelType, Publicity, createChannelDTO } from "../../chat/types";
 type MCreateChannelType = {
   closeModal: () => void;
   channels: ChannelType[];
+  isClose: boolean;
   setChannels: (channels: ChannelType[]) => void; // eslint-disable-line no-unused-vars
 };
 
 const MCreateChannel: NextPage<MCreateChannelType> = ({
   closeModal,
   channels,
+  isClose,
   setChannels,
 }) => {
   const inputPasswordRef = useRef<HTMLInputElement>(null);
   const inputChannelNameRef = useRef<HTMLInputElement>(null);
+  const [error, setError] = useState("");
+
+  // パスワードボタンが ON か OFF かを管理する
+  const [passwordEnabled, setPasswordEnabled] = useState<boolean>(false);
+  // チャンネルタイプボタンが ON か OFF かどうかを管理する
+  const [channelTypeEnabled, setChannelTypeEnabled] = useState<boolean>(false);
 
   const [channelDTO, setChannelDTO] = useState<createChannelDTO>({
     channelName: "",
@@ -25,12 +33,20 @@ const MCreateChannel: NextPage<MCreateChannelType> = ({
     password: null,
   });
 
+  // modal を閉じるタイミングで channelDTO を初期化する
+  useEffect(() => {
+    // channelDTO を channel の値で更新する
+    if (isClose) {
+      clearModal();
+    }
+  }, [isClose]);
+
   const [publicityButtonDisabled, setPublicityButtonDisabled] =
     useState<boolean>(false); // [true: private, false: public
+  // パスワードボタンが disabled かどうかを管理する
   const [passwordButtonDisabled, setPasswordButtonDisabled] =
     useState<boolean>(true);
   const [passwordDisabled, setPasswordDisabled] = useState<boolean>(true);
-  const [error, setError] = useState("");
 
   // dialog の外側をクリックしたときに閉じるために使用する
   const stopPropagation = useCallback(
@@ -43,16 +59,18 @@ const MCreateChannel: NextPage<MCreateChannelType> = ({
   // channelDTO の channelType を変更する
   const onSwitchType = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      setChannelDTO((channel) => {
-        channel.channelType = Publicity.PRIVATE;
-        setPasswordButtonDisabled(false);
-        return channel;
+      setPasswordButtonDisabled(false);
+      setChannelTypeEnabled(true);
+      setChannelDTO((c) => {
+        c.channelType = Publicity.PRIVATE;
+        return { ...c };
       });
     } else {
-      setChannelDTO((channel) => {
-        channel.channelType = Publicity.PUBLIC;
-        setPasswordButtonDisabled(true);
-        return channel;
+      setPasswordButtonDisabled(true);
+      setChannelTypeEnabled(false);
+      setChannelDTO((c) => {
+        c.channelType = Publicity.PUBLIC;
+        return { ...c };
       });
     }
   };
@@ -66,8 +84,6 @@ const MCreateChannel: NextPage<MCreateChannelType> = ({
           if (result.success) {
             setError("");
             setChannels([...channels, result.data]);
-            // チャンネル作成後にmodalに使用するデータを初期化する
-            clearModal();
             // チャンネル作成後に modal を閉じる
             closeModal();
           } else {
@@ -83,17 +99,17 @@ const MCreateChannel: NextPage<MCreateChannelType> = ({
 
   // チャンネル名を設定する
   const setChannelName = (channelName: string) => {
-    setChannelDTO((channel) => {
-      channel.channelName = channelName;
-      return channel;
+    setChannelDTO((c) => {
+      c.channelName = channelName;
+      return { ...c };
     });
   };
 
   // チャンネルのパスワードを設定する
   const setChannelPassword = (channelPassword: string) => {
-    setChannelDTO((channel) => {
-      channel.password = channelPassword;
-      return channel;
+    setChannelDTO((c) => {
+      c.password = channelPassword;
+      return { ...c };
     });
   };
 
@@ -101,17 +117,19 @@ const MCreateChannel: NextPage<MCreateChannelType> = ({
   const onSwitchPassword = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
       setPublicityButtonDisabled(true);
+      setPasswordEnabled(true);
       setPasswordDisabled(false);
     } else {
       setPasswordDisabled(true);
+      setPasswordEnabled(false);
       setPublicityButtonDisabled(false);
       // チェックボックスを off にしたときに password を空にする
       if (inputPasswordRef.current) {
         inputPasswordRef.current.value = "";
       }
-      setChannelDTO((channel) => {
-        channel.password = null;
-        return channel;
+      setChannelDTO((c) => {
+        c.password = null;
+        return { ...c };
       });
     }
   };
@@ -129,6 +147,11 @@ const MCreateChannel: NextPage<MCreateChannelType> = ({
       channelType: Publicity.PUBLIC,
       password: null,
     });
+    setError("");
+    setChannelTypeEnabled(false);
+    setPublicityButtonDisabled(false);
+    setPasswordEnabled(false);
+    setPasswordButtonDisabled(true);
   };
 
   return (
@@ -148,6 +171,7 @@ const MCreateChannel: NextPage<MCreateChannelType> = ({
           label="Channel name"
           size="medium"
           margin="none"
+          value={channelDTO.channelName}
           inputRef={inputChannelNameRef}
           onChange={(e) => setChannelName(e.target.value)}
         />
@@ -162,6 +186,7 @@ const MCreateChannel: NextPage<MCreateChannelType> = ({
               color="info"
               size="medium"
               onChange={(e) => onSwitchType(e)}
+              checked={channelTypeEnabled}
             />
           }
           disabled={publicityButtonDisabled}
@@ -180,6 +205,7 @@ const MCreateChannel: NextPage<MCreateChannelType> = ({
               onChange={(e) => {
                 onSwitchPassword(e);
               }}
+              checked={passwordEnabled}
             />
           }
           disabled={passwordButtonDisabled}
@@ -197,6 +223,7 @@ const MCreateChannel: NextPage<MCreateChannelType> = ({
           label="Password"
           size="medium"
           margin="none"
+          value={channelDTO.password ? channelDTO.password : ""}
           onChange={(e) => {
             setChannelPassword(e.target.value);
           }}
