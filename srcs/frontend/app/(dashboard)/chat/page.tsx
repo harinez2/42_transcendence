@@ -100,12 +100,13 @@ const ChatUI = () => {
       socket?.emit("status-switch_to_online");
 
       // socketのイベントハンドラを登録
+      socket?.off("chat-message");
       socket?.on("chat-message", (message: MessageType) => {
         if (blockedUserids.includes(message.senderId)) return;
         setMessages((prevMessages) => [...prevMessages, message]);
       });
     }
-  }, [socket]);
+  }, [socket, blockedUserids]);
 
   useEffect(() => {
     if (error) {
@@ -161,7 +162,10 @@ const ChatUI = () => {
     console.log("入室:", channel);
     socket?.emit("chat-join", channel);
     // 過去のメッセージを要求
-    socket?.emit("chat-getPastMessages", { channelId: channel.channelId });
+    socket?.emit("chat-getPastMessages", {
+      channelId: channel.channelId,
+      requestUserId: profile?.userId,
+    });
   };
 
   // チャンネルから退出するハンドラ
@@ -190,6 +194,14 @@ const ChatUI = () => {
       return newChannels;
     });
   };
+
+  if (profile === null || profile === undefined) {
+    return (
+      <div className="h-screen w-full bg-darkslategray-100 text-left font-body text-xl text-base-white">
+        <HeaderMenu />
+      </div>
+    );
+  }
 
   return (
     <>
