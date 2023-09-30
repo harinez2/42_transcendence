@@ -49,7 +49,7 @@ export class AvatarService {
     }
 
     try {
-      await this.prisma.avatar.upsert({
+      const updated = await this.prisma.avatar.upsert({
         create: {
           userId: userId,
           data: jpegBuffer,
@@ -61,6 +61,10 @@ export class AvatarService {
           userId: userId,
         },
       });
+      await this.prisma.user.update({
+        where: { id: userId },
+        data: { updated: updated.updated },
+      });
     } catch (e) {
       console.log(e);
       throw new BadRequestException();
@@ -69,8 +73,12 @@ export class AvatarService {
 
   async deleteAvatar(userId: number) {
     try {
-      await this.prisma.avatar.delete({
+      const updated = await this.prisma.avatar.delete({
         where: { id: userId },
+      });
+      await this.prisma.user.update({
+        where: { id: userId },
+        data: { updated: updated.updated },
       });
     } catch (e) {
       console.log(e);
