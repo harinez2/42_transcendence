@@ -3,7 +3,7 @@ import React from "react";
 export type UserType = {
   id: number;
   username: string;
-  update: Date;
+  updated: Date;
 };
 
 export type ProfileType = {

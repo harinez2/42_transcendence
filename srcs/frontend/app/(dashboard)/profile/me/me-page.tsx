@@ -31,7 +31,7 @@ const MePage = () => {
           if (result.success) {
             setUser(result.data);
             setIcon(
-              `/api/users/avatar/${result.data.id}?stamp=${result.data.update}`,
+              `/api/users/avatar/${result.data.id}?stamp=${result.data.updated}`,
             );
             setTimeout(() => setTimer(timer + 1), 60 * 1000);
           } else {

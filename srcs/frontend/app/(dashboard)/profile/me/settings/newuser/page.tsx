@@ -33,7 +33,7 @@ export default function Profile() {
       {profile ? (
         <div className="m-2 flex items-end">
           <Image
-            src={`/api/users/avatar/${profile.id}?stamp=${profile.update}`}
+            src={`/api/users/avatar/${profile.id}?stamp=${profile.updated}`}
             alt="User Avatar"
             width={50}
             height={50}

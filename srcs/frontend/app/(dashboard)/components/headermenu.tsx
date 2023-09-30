@@ -49,7 +49,7 @@ const HeaderMenu: NextPage = () => {
             setUser(result.data);
             setTimeout(() => setTimer(timer + 1), 60 * 1000);
             if (user) {
-              setIcon(`/api/users/avatar/${user.id}?stamp=${user.update}`);
+              setIcon(`/api/users/avatar/${user.id}?stamp=${user.updated}`);
             }
           } else {
             console.error(result.error);

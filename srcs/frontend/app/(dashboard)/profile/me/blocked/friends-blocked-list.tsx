@@ -27,7 +27,7 @@ const BlockedComponent = ({ blocked }: { blocked: UserType }) => {
 
   const [status, setStatus] = useState<string>("offline");
   const [icon, setIcon] = useState<string>(
-    `/api/users/avatar/${blocked.id}?stamp=${blocked.update}`,
+    `/api/users/avatar/${blocked.id}?stamp=${blocked.updated}`,
   );
   const [timer, setTimer] = useState<number>(0);
 
@@ -39,7 +39,7 @@ const BlockedComponent = ({ blocked }: { blocked: UserType }) => {
           if (result.success) {
             setStatus(result.data);
             setTimeout(() => setTimer(timer + 1), 60 * 1000);
-            setIcon(`/api/users/avatar/${blocked.id}?stamp=${blocked.update}`);
+            setIcon(`/api/users/avatar/${blocked.id}?stamp=${blocked.updated}`);
           } else {
             console.error(result.error);
           }

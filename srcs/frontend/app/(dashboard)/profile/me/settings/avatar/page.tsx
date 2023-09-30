@@ -18,7 +18,7 @@ export default function AvatarSettingsPage() {
       );
       if (!result.success) throw new Error(result.error);
       setAvatarSrc(
-        `/api/users/avatar/${result.data.user.id}?stamp=${result.data.user.update}`,
+        `/api/users/avatar/${result.data.user.id}?stamp=${result.data.user.updated}`,
       );
     } catch (error) {
       console.error("There was an error fetching the avatar:", error);

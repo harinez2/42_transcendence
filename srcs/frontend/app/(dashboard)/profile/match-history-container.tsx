@@ -66,7 +66,7 @@ const MatchComponent = ({
           if (result.success) {
             setOpponent(result.data);
             setIcon(
-              `/api/users/avatar/${result.data.id}?stamp=${result.data.update}`,
+              `/api/users/avatar/${result.data.id}?stamp=${result.data.updated}`,
             );
           } else {
             console.error(result.error);
