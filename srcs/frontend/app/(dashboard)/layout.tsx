@@ -31,25 +31,29 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
 
   // ソケット接続(認証後)
   useEffect(() => {
-    if (profile && profile.userId) {
-      const socket = io("http://localhost:5000");
+    if (
+      profile &&
+      profile.userId &&
+      (socket === undefined || !socket?.active)
+    ) {
+      const newSocket = io("http://localhost:5000");
 
-      socket.on("connect", () => {
-        console.log("connected:", socket.id);
+      newSocket.on("connect", () => {
+        console.log("connected:", newSocket.id);
         // オンラインを申告
         console.log("sent status-add_to_online: userId=", profile.userId);
-        socket?.emit("status-add_to_online", profile.userId);
+        newSocket?.emit("status-add_to_online", profile.userId);
       });
 
-      socket.on("info", (data: any) => {
+      newSocket.on("info", (data: any) => {
         console.log("info:", data);
       });
 
-      socket.on("exception", (data: any) => {
+      newSocket.on("exception", (data: any) => {
         console.error("exception:", data);
       });
 
-      setSocket(socket);
+      setSocket(newSocket);
     }
   }, [profile]);
 
