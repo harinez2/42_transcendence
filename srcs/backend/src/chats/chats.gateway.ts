@@ -20,12 +20,12 @@ export class ChatsGateway {
   constructor(private prisma: PrismaService) {}
 
   // chatの状態を初期化
-  @SubscribeMessage('chat-init')
-  initChatStatus(@ConnectedSocket() socket: Socket) {
+  @SubscribeMessage('chat-reset')
+  resetChatStatus(@ConnectedSocket() socket: Socket) {
     for (const room of socket.rooms) {
       if (room.startsWith('chat_')) {
         socket.leave(room);
-        console.log(`left on init: room: ${room}, socket id: ${socket.id}`);
+        console.log(`left on reset: room: ${room}, socket id: ${socket.id}`);
       }
     }
   }
