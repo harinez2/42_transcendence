@@ -103,13 +103,9 @@ const DirectMessageUI = () => {
   };
 
   return (
-    <div className="relative h-screen w-full bg-darkslategray-100 text-left font-body text-xl text-base-white">
+    <div className="h-screen w-full bg-darkslategray-100 text-left font-body text-xl text-base-white">
       <HeaderMenu />
-      <aside
-        id="separator-sidebar"
-        className="absolute left-0 top-[100px] z-40 h-[calc(100%_-_131px)]  w-64 translate-x-0 bg-darkslategray-200 transition-transform"
-        aria-label="Sidebar"
-      >
+      <div className="relative top-[100px] flex h-[calc(100%_-_132px)] w-full flex-row">
         {profile != null && (
           <UserListComponent
             profile={profile}
@@ -118,13 +114,13 @@ const DirectMessageUI = () => {
             onUpdateChannel={updateChannel}
           />
         )}
-      </aside>
-      <MessageList
-        channel={selectedChannel}
-        messages={messages}
-        onSendMessage={handleSendMessage}
-      />
-      {error != null && <p>{error}</p>}
+        <MessageList
+          channel={selectedChannel}
+          messages={messages}
+          onSendMessage={handleSendMessage}
+        />
+        {error != null && <p>{error}</p>}
+      </div>
     </div>
   );
 };

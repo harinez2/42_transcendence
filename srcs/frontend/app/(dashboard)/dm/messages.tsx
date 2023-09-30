@@ -18,7 +18,6 @@ const MessageComponent = ({ message }: { message: DmMessageType }) => {
             {message.sender.username}
           </div>
           <div className="shrink-0 py-1 pr-8 text-sm text-gray-400">
-            {" "}
             {message?.createdAt?.toLocaleString()}
           </div>
         </div>
@@ -63,13 +62,20 @@ const MessageList = ({
   };
 
   return (
-    <div className="container relative left-[310px] w-full bg-darkslategray-100">
-      <div className="grow flex-col-reverse divide-y divide-gray-500/30 px-4">
-        {messages?.map((message) => (
-          <MessageComponent key={message.messageId} message={message} />
-        ))}
+    <div className="mx-72 shrink-0 grow bg-darkslategray-100">
+      {/* sidebar の 64 + px-3 だけずらす */}
+      <div className="fixed mr-72 h-[calc(100%-132px-36px)] w-full overflow-x-hidden overflow-y-scroll">
+        {/* 
+                    header の高さ 132px と input の高さ 36px 分だけずらす 
+                    幅は 100% で、sidebar の数値分だけずらす(288px * 2)
+                  */}
+        <div className="w-[calc(100%-288px-74px)] flex-col-reverse divide-y divide-gray-500/30 hyphens-auto whitespace-normal break-all px-4">
+          {messages?.map((message) => (
+            <MessageComponent key={message.messageId} message={message} />
+          ))}
+        </div>
       </div>
-      <div className="fixed bottom-0 mx-4 mb-4 w-full">
+      <div className="fixed bottom-0 mx-4 mb-4 w-[calc(100%-288px-74px)]">
         <input
           type="text"
           className="h-[51px] w-full rounded-[5px] bg-zinc-600 px-[17.75px] text-xl font-normal tracking-widest text-zinc-500"
