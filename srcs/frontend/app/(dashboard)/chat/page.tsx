@@ -114,6 +114,7 @@ const ChatUI = () => {
   }, [error]);
 
   useEffect(() => {
+    socket?.emit("chat-init");
     makeAPIRequest<UserType[]>("get", "/friends/block/blockeds")
       .then((result) => {
         if (result.success) {

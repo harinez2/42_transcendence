@@ -19,6 +19,17 @@ import { NotFoundException } from '@nestjs/common';
 export class ChatsGateway {
   constructor(private prisma: PrismaService) {}
 
+  // chatの状態を初期化
+  @SubscribeMessage('chat-init')
+  initChatStatus(@ConnectedSocket() socket: Socket) {
+    for (const room of socket.rooms) {
+      if (room.startsWith('chat_')) {
+        socket.leave(room);
+        console.log(`left on init: room: ${room}, socket id: ${socket.id}`);
+      }
+    }
+  }
+
   // 入室
   @SubscribeMessage('chat-join')
   joinRoom(@ConnectedSocket() socket: Socket, @MessageBody() data: any) {
@@ -32,9 +43,7 @@ export class ChatsGateway {
   @SubscribeMessage('chat-leave')
   leaveRoom(@ConnectedSocket() socket: Socket, @MessageBody() data: any) {
     socket.leave('chat_' + data.channelId);
-    console.log(
-      `leaved: channelId: ${data.channelId}, socket id: ${socket.id}`,
-    );
+    console.log(`left: channelId: ${data.channelId}, socket id: ${socket.id}`);
   }
 
   // 過去のチャットログをDBから取得
