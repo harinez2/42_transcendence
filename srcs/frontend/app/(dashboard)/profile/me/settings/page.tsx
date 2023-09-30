@@ -11,7 +11,6 @@ export type AuthType = { staff: boolean; twoFactorAuthEnabled: boolean };
 
 export default function Profile() {
   const [profile, setProfile] = useState<UserType | null>(null);
-  const [randomQuery, setRandomQuery] = useState<string>("");
   const [auth, setAuth] = useState<AuthType | null>(null);
   const [error, setError] = useState<string>("");
 
@@ -22,7 +21,6 @@ export default function Profile() {
       .then((result) => {
         if (result.success) {
           setProfile(result.data.user);
-          setRandomQuery(`?stamp=${Date.now()}`);
           setError("");
         } else {
           setError(result.error);
@@ -71,7 +69,7 @@ export default function Profile() {
       {profile ? (
         <div className="m-2 flex items-end">
           <Image
-            src={`/api/users/avatar/${profile.id}${randomQuery}`}
+            src={`/api/users/avatar/${profile.id}?stamp=${profile.update}`}
             alt="User Avatar"
             width={50}
             height={50}

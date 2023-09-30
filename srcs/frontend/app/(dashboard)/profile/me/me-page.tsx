@@ -15,7 +15,7 @@ const MePage = () => {
   const profile = useContext<ProfileType>(ProfileContext);
   const [user, setUser] = useState<UserType>();
   const [icon, setIcon] = useState<string>(
-    `http://localhost:3000/api/users/avatar/${profile.userId}`,
+    `/api/users/avatar/${profile.userId}`,
   );
   const [timer, setTimer] = useState<number>(0);
 
@@ -30,7 +30,9 @@ const MePage = () => {
         .then((result) => {
           if (result.success) {
             setUser(result.data);
-            setIcon(`http://localhost:3000/api/users/avatar/${profile.userId}`);
+            setIcon(
+              `/api/users/avatar/${result.data.id}?stamp=${result.data.update}`,
+            );
             setTimeout(() => setTimer(timer + 1), 60 * 1000);
           } else {
             console.error(result.error);

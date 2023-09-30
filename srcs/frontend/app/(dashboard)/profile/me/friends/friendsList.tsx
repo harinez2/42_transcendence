@@ -26,7 +26,7 @@ const FriendComponent = ({ followee }: { followee: UserType }) => {
 
   const [status, setStatus] = useState<string>("offline");
   const [icon, setIcon] = useState<string>(
-    `http://localhost:3000/api/users/avatar/${followee.id}`,
+    `/api/users/avatar/${followee.id}?stamp=${followee.update}`,
   );
   const [timer, setTimer] = useState<number>(0);
 
@@ -38,7 +38,9 @@ const FriendComponent = ({ followee }: { followee: UserType }) => {
           if (result.success) {
             setStatus(result.data);
             setTimeout(() => setTimer(timer + 1), 60 * 1000);
-            setIcon(`http://localhost:3000/api/users/avatar/${followee.id}`);
+            setIcon(
+              `/api/users/avatar/${followee.id}?stamp=${followee.update}`,
+            );
           } else {
             console.error(result.error);
           }

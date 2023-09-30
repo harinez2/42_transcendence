@@ -5,19 +5,20 @@ import Image from "next/image";
 import { useState, useEffect } from "react";
 import AvatarUpload from "./upload";
 import Link from "next/link";
+import { UserType } from "@/app/types";
 
 export default function AvatarSettingsPage() {
   const [avatarSrc, setAvatarSrc] = useState<string | null>(null);
 
   const fetchAvatar = async () => {
     try {
-      const result = await makeAPIRequest<{ user: { id: number } }>(
+      const result = await makeAPIRequest<{ user: UserType }>(
         "get",
         "auth/validate",
       );
       if (!result.success) throw new Error(result.error);
       setAvatarSrc(
-        `/api/users/avatar/${result.data.user.id}?stamp=${Date.now()}`,
+        `/api/users/avatar/${result.data.user.id}?stamp=${result.data.user.update}`,
       );
     } catch (error) {
       console.error("There was an error fetching the avatar:", error);

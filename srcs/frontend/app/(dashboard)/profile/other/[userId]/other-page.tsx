@@ -17,9 +17,7 @@ const ProfileOtherPage = ({ userId }: any) => {
   const router = useRouter();
 
   const [user, setUser] = useState<UserType>();
-  const [icon, setIcon] = useState<string>(
-    `http://localhost:3000/api/users/avatar/${userId}`,
-  );
+  const [icon, setIcon] = useState<string>(`/api/users/avatar/${userId}`);
   const [status, setStatus] = useState<string>("offline");
   const [timer, setTimer] = useState<number>(0);
 
@@ -57,7 +55,7 @@ const ProfileOtherPage = ({ userId }: any) => {
           if (result.success) {
             setStatus(result.data);
             setTimeout(() => setTimer(timer + 1), 60 * 1000);
-            setIcon(`http://localhost:3000/api/users/avatar/${userId}`);
+            setIcon(`/api/users/avatar/${userId}`);
           } else {
             console.error(result.error);
           }
