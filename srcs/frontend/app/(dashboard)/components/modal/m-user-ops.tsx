@@ -111,13 +111,13 @@ const MUserOps: NextPage<MUserOpsType> = ({
     //     setError(error.message);
     //   });
     if (profile.userId) {
-      socket?.once('block-user-response', (data: any) => {
+      socket?.once("block-user-response", (data: any) => {
         setError(data.err);
         if (data.err === "") {
           onClose();
         }
       });
-      socket?.emit('block-user', {
+      socket?.emit("block-user", {
         blockerId: profile.userId,
         blockedId: userId,
       });
