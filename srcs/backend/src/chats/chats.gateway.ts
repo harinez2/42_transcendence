@@ -109,7 +109,7 @@ export class ChatsGateway {
           channelUserId: data.senderId,
         },
       });
-      if (validUser.length > 0) {
+      if (validUser.length < 1) {
         throw new WsException(
           'Cannot send the message because the user is not in the channel.',
         );
