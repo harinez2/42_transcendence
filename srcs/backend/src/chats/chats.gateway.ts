@@ -102,6 +102,18 @@ export class ChatsGateway {
           'Cannot send the message because the user is muted.',
         );
       }
+      // also Ban
+      const validUser = await this.prisma.chatChannelUsers.findMany({
+        where: {
+          channelId: data.channelId,
+          channelUserId: data.senderId,
+        },
+      });
+      if (validUser.length > 0) {
+        throw new WsException(
+          'Cannot send the message because the user is not in the channel.',
+        );
+      }
 
       console.log(
         `channelId: ${data.channelId}, senderId: ${data.senderId}, ` +
