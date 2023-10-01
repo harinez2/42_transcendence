@@ -10,6 +10,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { AddMessageDto } from './dto/add-message.dto';
 import { MessageDto } from './dto/message.dto';
 import { NotFoundException } from '@nestjs/common';
+import { UserType } from '@prisma/client';
 
 @WebSocketGateway({
   cors: {
@@ -106,10 +107,11 @@ export class ChatsGateway {
       const validUser = await this.prisma.chatChannelUsers.findMany({
         where: {
           channelId: data.channelId,
-          channelUserId: data.senderId,
+          userId: data.senderId,
+          type: UserType.USER,
         },
       });
-      if (validUser.length > 0) {
+      if (validUser.length < 1) {
         throw new WsException(
           'Cannot send the message because the user is not in the channel.',
         );
