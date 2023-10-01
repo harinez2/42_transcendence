@@ -102,6 +102,20 @@ export class ChatsGateway {
           'Cannot send the message because the user is muted.',
         );
       }
+      // also Ban
+      const banInfo = await this.prisma.chatBan.findUnique({
+        where: {
+          channelId_bannedUserId: {
+            channelId: data.channelId,
+            bannedUserId: data.senderId,
+          },
+        },
+      });
+      if (banInfo) {
+        throw new WsException(
+          'Cannot send the message because the user is banned.',
+        );
+      }
 
       console.log(
         `channelId: ${data.channelId}, senderId: ${data.senderId}, ` +
