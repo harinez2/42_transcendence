@@ -1,4 +1,4 @@
-FROM postgres:15.3-alpine3.17
+FROM postgres:16.0-alpine3.18
 
 HEALTHCHECK \
   --interval=2s \
