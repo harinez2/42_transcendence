@@ -164,6 +164,7 @@ export class AuthController {
   logout(@Res() res: Response) {
     res.cookie('jwt', '', {
       httpOnly: true,
+      sameSite: 'lax',
       expires: new Date(0),
     });
 
