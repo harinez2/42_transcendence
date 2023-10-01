@@ -103,17 +103,15 @@ export class ChatsGateway {
         );
       }
       // also Ban
-      const banInfo = await this.prisma.chatBan.findUnique({
+      const validUser = await this.prisma.chatChannelUsers.findMany({
         where: {
-          channelId_bannedUserId: {
-            channelId: data.channelId,
-            bannedUserId: data.senderId,
-          },
+          channelId: data.channelId,
+          channelUserId: data.senderId,
         },
       });
-      if (banInfo) {
+      if (validUser.length > 0) {
         throw new WsException(
-          'Cannot send the message because the user is banned.',
+          'Cannot send the message because the user is not in the channel.',
         );
       }
 
