@@ -87,30 +87,3 @@ export default async function makeAPIRequest<T>(
     };
   }
 }
-
-export async function getAllProfile() {
-  const response = await fetch("http://localhost:5000/users", {
-    method: "GET",
-    cache: "no-store",
-  });
-  return response.json();
-}
-
-export async function getProfileByUserId(userId: string) {
-  try {
-    const response = await fetch(`http://localhost:5000/users/${userId}`, {
-      method: "GET",
-      cache: "no-store",
-    });
-    // Check if the response status is OK (200) before parsing JSON.
-    if (response.status === 200) {
-      const data = await response.json();
-      return data;
-    } else {
-      throw new Error(`Failed to fetch post with ID ${userId}`);
-    }
-  } catch (error) {
-    console.error("Error fetching post:", error);
-    throw error; // Re-throw the error to handle it in your component.
-  }
-}

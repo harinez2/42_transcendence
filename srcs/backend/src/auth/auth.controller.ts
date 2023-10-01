@@ -64,7 +64,7 @@ export class AuthController {
     }
 
     const jwt = this.authService.accessToken(user);
-    res.cookie('jwt', jwt, { httpOnly: true });
+    res.cookie('jwt', jwt, { httpOnly: true, sameSite: 'lax' });
 
     if (newuser) {
       // TODO: WIP: redirect to displayname setting page
@@ -86,7 +86,7 @@ export class AuthController {
       loginDto.username,
       loginDto.password,
     );
-    res.cookie('jwt', jwt, { httpOnly: true });
+    res.cookie('jwt', jwt, { httpOnly: true, sameSite: 'lax' });
     res.redirect(`${FRONT_URL}/chat`);
   }
 
@@ -113,7 +113,7 @@ export class AuthController {
   async login2FA(@Body() login2fa: Login2faDto, @Res() res: Response) {
     const { token, code } = login2fa;
     const jwt = await this.authService.response2FA(token, code);
-    res.cookie('jwt', jwt, { httpOnly: true });
+    res.cookie('jwt', jwt, { httpOnly: true, sameSite: 'lax' });
     res.redirect(`${FRONT_URL}/chat`);
   }
 
@@ -164,6 +164,7 @@ export class AuthController {
   logout(@Res() res: Response) {
     res.cookie('jwt', '', {
       httpOnly: true,
+      sameSite: 'lax',
       expires: new Date(0),
     });
 
@@ -184,6 +185,6 @@ export class AuthController {
   @Get('refresh')
   async refresh(@Req() req, @Res() res: Response) {
     const newToken = this.authService.accessToken(req.user);
-    return res.cookie('jwt', newToken, { httpOnly: true });
+    res.cookie('jwt', newToken, { httpOnly: true, sameSite: 'lax' });
   }
 }
